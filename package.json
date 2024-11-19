@@ -8,8 +8,6 @@
     "build": "tsup src",
     "start:dev": "tsx ./src/infa/http/server.ts",
     "start:watch": "tsx watch ./src/infa/http/server.ts",
-    "lint": "eslint . --ext .ts --fix",
-    "prettier": "prettier --config .prettierrc src/*.ts --write",
     "prepare": "husky"
   },
   "keywords": [],
