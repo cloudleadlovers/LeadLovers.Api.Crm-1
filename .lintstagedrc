@@ -1,0 +1,6 @@
+{
+    "*.ts": [
+        eslint . --ext .ts --fix,
+        prettier --config .prettierrc src/**/*.ts --write
+    ]
+}
