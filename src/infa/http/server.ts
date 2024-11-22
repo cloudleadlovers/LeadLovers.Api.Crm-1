@@ -1,16 +1,18 @@
-import "dotenv/config";
-import "express-async-errors";
-import "reflect-metadata";
+import 'dotenv/config';
+import 'express-async-errors';
+import 'reflect-metadata';
 
-import cors from "cors";
-import express from "express";
-import helmet from "helmet";
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
 
-import corsOptions from "@common/config/cors";
-import { doGracefullShutdown } from "@common/utils/gracefullShutdown";
-import server from "common/config/server";
-import { logger } from "infa/logger/pinoLogger";
-import routes from "./routes";
+import corsOptions from '@common/config/cors';
+import { doGracefullShutdown } from '@common/utils/gracefullShutdown';
+import server from 'common/config/server';
+import { logger } from 'infa/logger/pinoLogger';
+import routes from './routes';
+
+import '@common/providers';
 
 const app = express();
 app.use(express.json());
