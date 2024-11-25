@@ -28,14 +28,14 @@ export class AverageDaysAnOpportunitySpendsInAStageRepository
                 AVG(
                     DATEDIFF(
                         DAY,
-                        Movimentos.DataMovimentacao,
-                        ISNULL(Movimentos.ProximaData, GETDATE())
+                        Movimentos.actionDate,
+                        ISNULL(Movimentos.nextDate, GETDATE())
                     )
                 ) AS averageDays,
                 ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS orderNumber
             FROM (${this.makeQuery(pipelineFilters)}) AS Movimentos
             INNER JOIN 
-                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movimentos.OrigemEtapaId
+                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movimentos.ColumnFromId
             GROUP BY 
                 PCL.Title,
                 PCL.[Order],
@@ -48,37 +48,32 @@ export class AverageDaysAnOpportunitySpendsInAStageRepository
     const filters = this.makeFilters(pipelineFilters);
     let query = `
         SELECT
-            h.id,
-            h.dealId AS NegociacaoId,
-            h.columnSourceId AS OrigemEtapaId,
-            h.columnDestinationId AS DestinoEtapaId,
-            h.createdAt AS DataMovimentacao,
-            LEAD(h.createdAt) OVER (
-                PARTITION BY h.dealId
-                ORDER BY h.createdAt
-            ) AS ProximaData
+            PDH.id,
+            PDH.dealId AS cardId,
+            PDH.columnSourceId AS ColumnFromId,
+            PDH.columnDestinationId AS ColumnToId,
+            PDH.createdAt AS actionDate,
+            LEAD(PDH.createdAt) OVER (
+                PARTITION BY PDH.dealId
+                ORDER BY PDH.createdAt
+            ) AS nextDate
         FROM 
-            pipelineDealHistory h
+            pipelineDealHistory PDH WITH(NOLOCK)
         INNER JOIN 
-            Pipeline_Card PC WITH(NOLOCK) ON PC.Id = h.dealId
+            Pipeline_Card PC WITH(NOLOCK) ON PC.Id = PDH.dealId
         INNER JOIN 
             Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
         INNER JOIN 
             Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
     `;
 
-    if (filters.closedDate) {
-      query +=
-        ' LEFT JOIN [PipelineDealHistory] PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
-    }
-
     query += `
       WHERE
-        (h.historyTypeId = 1 OR h.historyTypeId = 2)
+        (PDH.historyTypeId = 1 OR PDH.historyTypeId = 2)
         AND PBD.Id = @BoardId
         AND PC.Status = 1
         AND PCL.Status = 1
-        AND h.createdAt >= DATEADD(DAY, -@Days, GETDATE())
+        AND PDH.createdAt >= DATEADD(DAY, -@Days, GETDATE())
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
