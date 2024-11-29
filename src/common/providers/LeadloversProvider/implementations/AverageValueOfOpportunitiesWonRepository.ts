@@ -44,7 +44,7 @@ export class AverageValueOfOpportunitiesWonRepository
       WHERE
         PBD.Id = @BoardId
         AND PC.Status = 1
-        AND PC.DealStatus = 1')
+        AND PC.DealStatus = 1
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
