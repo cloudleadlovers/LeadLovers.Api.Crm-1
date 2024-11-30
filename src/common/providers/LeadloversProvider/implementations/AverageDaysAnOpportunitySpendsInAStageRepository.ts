@@ -24,18 +24,18 @@ export class AverageDaysAnOpportunitySpendsInAStageRepository
       .input('BoardId', mssql.Int, boardId)
       .input('Days', mssql.Int, days).query<AverageDays>(`
             SELECT
-                PCL.Title AS title,
+                PCL.Title AS stageTitle,
                 AVG(
                     DATEDIFF(
                         DAY,
-                        Movimentos.actionDate,
-                        ISNULL(Movimentos.nextDate, GETDATE())
+                        Movements.actionDate,
+                        ISNULL(Movements.nextDate, GETDATE())
                     )
-                ) AS averageDays,
-                ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS orderNumber
-            FROM (${this.makeQuery(pipelineFilters)}) AS Movimentos
+                ) AS averageDealDuration,
+                ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS stageOrderNumber
+            FROM (${this.makeQuery(pipelineFilters)}) AS Movements
             INNER JOIN 
-                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movimentos.ColumnFromId
+                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movements.ColumnFromId
             GROUP BY 
                 PCL.Title,
                 PCL.[Order],

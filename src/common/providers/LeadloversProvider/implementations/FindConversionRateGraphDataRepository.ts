@@ -27,13 +27,13 @@ export class FindConversionRateGraphDataRepository
     const filters = this.makeFilters(pipelineFilters);
     let query = `
         SELECT
-            PCL.Id AS columnId,
-            PCL.Title AS columnName,
-            COUNT(PC.ID) AS columnCards,
-            ISNULL(SUM(PC.CardValue), 0) AS columnAmount,
-            'Custom' AS columnType,
-            COUNT(IIF(PC.DealStatus = 1, 1, NULL)) AS winCountCardsInColumn,
-            SUM(CASE WHEN PC.DealStatus = 1 THEN PC.CardValue ELSE 0 END) AS winAmountCardsInColumn
+            PCL.Id AS stageId,
+            PCL.Title AS stageTitle,
+            'Custom' AS stageType,
+            COUNT(PC.ID) AS quantityOpportunities,
+            ISNULL(SUM(PC.CardValue), 0) AS totalValueOpportunities,
+            COUNT(IIF(PC.DealStatus = 1, 1, NULL)) AS winCountOpportunitiesInStage,
+            SUM(CASE WHEN PC.DealStatus = 1 THEN PC.CardValue ELSE 0 END) AS winAmountOpportunitiesInStage
         FROM
             [Pipeline_Column] PCL WITH(NOLOCK)
         LEFT JOIN [Pipeline_Card] PC WITH(NOLOCK) ON PCL.Id = PC.ColumnId AND PC.[Status] = 1 

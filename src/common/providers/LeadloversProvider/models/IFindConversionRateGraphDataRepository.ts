@@ -17,13 +17,13 @@ export type PipelineReportsQueryFilters = {
 };
 
 export type ConversionRateGraphData = {
-  columnId: number;
-  columnName: string;
-  columnCards: number;
-  columnAmount: number;
-  columnType: string;
-  winCountCardsInColumn: number | null;
-  winAmountCardsInColumn: number;
+  stageId: number;
+  stageTitle: string;
+  stageType: string;
+  quantityOpportunities: number;
+  totalValueOpportunities: number;
+  winCountOpportunitiesInStage: number | null;
+  winAmountOpportunitiesInStage: number | null;
 };
 
 export interface IFindConversionRateGraphDataRepository {

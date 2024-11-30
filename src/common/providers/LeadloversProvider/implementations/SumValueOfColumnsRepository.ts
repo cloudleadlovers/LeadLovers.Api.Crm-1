@@ -49,6 +49,8 @@ export class SumValueOfColumnsRepository
             AND PC.Status = 1
     `;
 
+    if (filters.status) query += ` ${filters.status}`;
+
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
@@ -77,6 +79,16 @@ export class SumValueOfColumnsRepository
     };
 
     if (!filters) return where;
+
+    if (filters.createInitialDate && filters.createEndDate) {
+      const createEndDate = new Date(filters.createEndDate);
+      const formattedCreateEndDate = createEndDate
+        .toISOString()
+        .replace('T', ' ')
+        .slice(0, -1);
+
+      where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+    }
 
     if (filters.responsibleId && filters.responsibleId > 0) {
       where.user += `AND PC.AcesCodi = '${filters.responsibleId}' `;

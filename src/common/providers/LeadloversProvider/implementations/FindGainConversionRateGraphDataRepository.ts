@@ -15,7 +15,6 @@ export class FindGainConversionRateGraphDataRepository
 {
   async find(
     boardId: number,
-    showGain: boolean,
     pipelineFilters?: PipelineReportsFilters
   ): Promise<GainConversionRateGraphData | undefined> {
     const pool = await mssqlPoolConnect('leadlovers');
@@ -24,7 +23,6 @@ export class FindGainConversionRateGraphDataRepository
       .input('BoardId', mssql.Int, boardId)
       .query<GainConversionRateGraphData>(this.makeQuery(pipelineFilters));
     if (!recordset.length) return undefined;
-    if (!showGain) recordset[0].columnCards = 0;
     return recordset[0];
   }
 
@@ -32,9 +30,9 @@ export class FindGainConversionRateGraphDataRepository
     const filters = this.makeFilters(pipelineFilters);
     let query = `
         SELECT
-            COUNT(DISTINCT PC.ID) AS columnCards,
-            ISNULL(SUM(PC.CardValue), 0) AS columnAmount,
-            'WIN' AS columnType
+          'WIN' AS stageType,
+          COUNT(DISTINCT PC.ID) AS quantityOpportunities,
+          ISNULL(SUM(PC.CardValue), 0) AS totalValueOpportunities
         FROM
             [Pipeline_Column] PCL WITH(NOLOCK)
         LEFT JOIN 
