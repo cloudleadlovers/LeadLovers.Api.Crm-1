@@ -7,6 +7,7 @@ import express from 'express';
 import helmet from 'helmet';
 
 import corsOptions from '@common/config/cors';
+import { handleErrors } from '@common/utils/errorHandler';
 import { doGracefullShutdown } from '@common/utils/gracefullShutdown';
 import server from 'common/config/server';
 import { logger } from 'infa/logger/pinoLogger';
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(routes);
+app.use(handleErrors);
 const port = server.port;
 
 async function main() {

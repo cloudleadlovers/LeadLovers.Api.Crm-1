@@ -33,12 +33,12 @@ export class FindOpportunityStatisticsByResponsibleRepository
         SELECT
             USA.AcesUsuaNome AS responsibleName,
             AVG(PC.CardValue) AS valueOportunities,
-            COUNT(DISTINCT CASE WHEN PC.DealStatus = 1 THEN PDH.dealId END) AS countWinOpportunities,
+            ISNULL(COUNT(DISTINCT CASE WHEN PC.DealStatus = 1 THEN PDH.dealId END), 0) AS countWinOpportunities,
             ISNULL(SUM(CASE WHEN PC.DealStatus = 1 THEN PC.CardValue END), 0) AS winAmount,
             AVG(CASE 
                     WHEN PC.DealStatus = 1 THEN DATEDIFF(SECOND, PDH.createdAt, PDHW.latestCreatedAt) 
                 END) / 86400.0 AS averageTimeToWinDays,
-            COUNT(DISTINCT PDH.dealId) AS totalOpportunities
+            ISNULL(COUNT(DISTINCT PDH.dealId), 0) AS totalOpportunities
         FROM
             Pipeline_Card PC WITH(NOLOCK)
         INNER JOIN 
@@ -67,7 +67,6 @@ export class FindOpportunityStatisticsByResponsibleRepository
         WHERE 
             PBD.Id = @BoardId
             AND PC.Status = 1
-            AND PC.AcesCodi = @AcesCodi 
     `;
 
     if (filters.status) query += ` ${filters.status}`;

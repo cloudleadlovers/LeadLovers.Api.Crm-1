@@ -1,11 +1,12 @@
-import { inject } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 
-import { IFindOpportunityStatisticsByResponsibleRepository } from '@common/providers/LeadloversProvider/models/IFindOpportunityStatisticsByResponsibleRepository';
+import { IFindOpportunityStatisticsByResponsibleRepository } from '@common/providers/LeadloversDB/models/IFindOpportunityStatisticsByResponsibleRepository';
 import ITeamReportProvider, {
   TeamReport,
   TeamReportFilters
 } from '../../models/ITeamReportProvider';
 
+@injectable()
 export default class LeadloversTeamReportProvider
   implements ITeamReportProvider
 {
@@ -26,9 +27,12 @@ export default class LeadloversTeamReportProvider
     return result.map(item => {
       return {
         responsibleName: item.responsibleName,
-        winRate: (item.countWinOpportunities / item.totalOpportunities) * 100,
+        winRate:
+          item.totalOpportunities > 0
+            ? (item.countWinOpportunities / item.totalOpportunities) * 100
+            : 0,
         valueOportunities: item.valueOportunities,
-        averageTimeToWinDays: item.averageTimeToWinDays,
+        averageTimeToWinDays: item.averageTimeToWinDays ?? 0,
         winAmount: item.winAmount,
         countWinOpportunities: item.countWinOpportunities
       };

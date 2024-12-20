@@ -5,7 +5,7 @@ import IConversionRateProvider, {
   ConversionRate,
   ConversionRateFilters,
   LossReasons
-} from '@modules/dashboard/external/providers/DbProviders/models/IConversionRateProvider';
+} from '@modules/dashboard/external/providers/DBProviders/models/IConversionRateProvider';
 
 type ConversionRateInsights = {
   averageDealDuration: AverageDealDuration[];

@@ -1,13 +1,14 @@
-import { inject } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 
-import { ISumValueOfColumnsRepository } from '@common/providers/LeadloversProvider/models/ISumValueOfColumnsRepository';
-import { ISumWonOpportunitiesGroupedByCreationDateRepository } from '@common/providers/LeadloversProvider/models/ISumWonOpportunitiesGroupedByCreationDateRepository';
+import { ISumValueOfColumnsRepository } from '@common/providers/LeadloversDB/models/ISumValueOfColumnsRepository';
+import { ISumWonOpportunitiesGroupedByCreationDateRepository } from '@common/providers/LeadloversDB/models/ISumWonOpportunitiesGroupedByCreationDateRepository';
 import IRevenueReportProvider, {
   CurrentCRMValue,
   EarnedRevenue,
   RevenueReportFilters
 } from '../../models/IRevenueReportProvider';
 
+@injectable()
 export default class LeadloversRevenueReportProvider
   implements IRevenueReportProvider
 {

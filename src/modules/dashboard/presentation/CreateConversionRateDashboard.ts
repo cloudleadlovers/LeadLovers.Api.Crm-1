@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-
 import { container } from 'tsyringe';
+
 import GetConversionRateInsightsService from '../application/leadlovers/GetConversionRateInsightsService';
 import {
   createConversionRateDashboardIntput,

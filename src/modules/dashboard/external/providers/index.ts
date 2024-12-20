@@ -1,12 +1,12 @@
 import { container } from 'tsyringe';
 
-import IConversionRateProvider from './DbProviders/models/IConversionRateProvider';
-import IRevenueReportProvider from './DbProviders/models/IRevenueReportProvider';
-import ITeamReportProvider from './DbProviders/models/ITeamReportProvider';
+import IConversionRateProvider from './DBProviders/models/IConversionRateProvider';
+import IRevenueReportProvider from './DBProviders/models/IRevenueReportProvider';
+import ITeamReportProvider from './DBProviders/models/ITeamReportProvider';
 
-import LeadloversConversionRateProvider from './DbProviders/implementations/leadlovers/LeadloversConversionRateProvider';
-import LeadloversRevenueReportProvider from './DbProviders/implementations/leadlovers/LeadloversRevenueReportProvider';
-import LeadloversTeamReportProvider from './DbProviders/implementations/leadlovers/LeadloversTeamReportProvider';
+import LeadloversConversionRateProvider from './DBProviders/implementations/leadlovers/LeadloversConversionRateProvider';
+import LeadloversRevenueReportProvider from './DBProviders/implementations/leadlovers/LeadloversRevenueReportProvider';
+import LeadloversTeamReportProvider from './DBProviders/implementations/leadlovers/LeadloversTeamReportProvider';
 
 container.registerSingleton<IConversionRateProvider>(
   'LeadloversConversionRateProvider',

@@ -4,7 +4,7 @@ import IRevenueReportProvider, {
   CurrentCRMValue,
   EarnedRevenue,
   RevenueReportFilters
-} from '@modules/dashboard/external/providers/DbProviders/models/IRevenueReportProvider';
+} from '@modules/dashboard/external/providers/DBProviders/models/IRevenueReportProvider';
 
 type RevenueReportInsight = {
   earnedRevenue: {

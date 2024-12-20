@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import ITeamReportProvider, {
   TeamReport,
   TeamReportFilters
-} from '@modules/dashboard/external/providers/DbProviders/models/ITeamReportProvider';
+} from '@modules/dashboard/external/providers/DBProviders/models/ITeamReportProvider';
 
 type TeamReportInsights = {
   teamReport: TeamReport[];

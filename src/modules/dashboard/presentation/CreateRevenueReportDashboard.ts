@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-
 import { container } from 'tsyringe';
+
 import GetRevenueReportInsightsService from '../application/leadlovers/GetRevenueReportInsightsService';
 import {
   createRevenueReportDashboardIntput,
