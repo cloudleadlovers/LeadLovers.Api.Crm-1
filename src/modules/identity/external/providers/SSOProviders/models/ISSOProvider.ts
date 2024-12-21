@@ -9,6 +9,6 @@ export type Session = {
   name: string;
 };
 
-export default interface ISessionProvider {
+export default interface ISSOProvider {
   validateToken(params: ValidateTokenParams): Promise<Session>;
 }

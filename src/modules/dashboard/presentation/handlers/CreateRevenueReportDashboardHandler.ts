@@ -1,27 +1,27 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import GetConversionRateInsightsService from '../application/leadlovers/GetConversionRateInsightsService';
+import GetRevenueReportInsightsService from '@modules/dashboard/application/leadlovers/GetRevenueReportInsightsService';
 import {
-  createConversionRateDashboardIntput,
-  createConversionRateDashboardOutput
-} from './dtos/CreateConversionRateDashboardDTO';
+  createRevenueReportDashboardIntput,
+  createRevenueReportDashboardOutput
+} from '../dtos/CreateRevenueReportDashboardDTO';
 
-export class CreateConversionRateDashboard {
+export class CreateRevenueReportDashboardHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
     try {
-      const getConversionRateInsightsService = container.resolve(
-        GetConversionRateInsightsService
+      const getRevenueReportInsightsService = container.resolve(
+        GetRevenueReportInsightsService
       );
 
-      const input = createConversionRateDashboardIntput.safeParse(request.body);
+      const input = createRevenueReportDashboardIntput.safeParse(request.body);
       if (!input.success) {
         return response
           .status(400)
           .json({ status: 'error', result: input.error });
       }
-      const data = await getConversionRateInsightsService.execute(input.data);
-      const output = createConversionRateDashboardOutput.safeParse(data);
+      const data = await getRevenueReportInsightsService.execute(input.data);
+      const output = createRevenueReportDashboardOutput.safeParse(data);
       if (!output.success) {
         return response
           .status(400)

@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import CreateSessionPayloadService from '../application/CreateSessionPayloadService';
-import ValidateSSOTokenService from '../application/ValidateSSOTokenService';
+import CreateSessionPayloadService from '../../application/CreateSessionPayloadService';
+import ValidateSSOTokenService from '../../application/leadlovers/ValidateSSOTokenService';
 import {
   createSessionIntput,
   createSessionOutput
-} from './dtos/CreateSessionDTO';
+} from '../dtos/CreateSessionDTO';
 
-export class CreateSession {
+export class CreateSessionHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
     const validateSSOTokenService = container.resolve(ValidateSSOTokenService);
     const createSessionPayloadService = container.resolve(

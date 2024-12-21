@@ -1,13 +1,13 @@
 import { inject, injectable } from 'tsyringe';
 
 import { ILeadLoversSSOProvider } from '@common/providers/LeadloversSSO/models/ILeadLoversSSOProvider';
-import ISessionProvider, {
+import ISSOProvider, {
   Session,
   ValidateTokenParams
-} from '../../models/ISessionProvider';
+} from '../../models/ISSOProvider';
 
 @injectable()
-export default class LeadloversSessionProvider implements ISessionProvider {
+export default class LeadloversSSOProvider implements ISSOProvider {
   constructor(
     @inject('LeadLoversSSOProvider')
     private ssoProvider: ILeadLoversSSOProvider

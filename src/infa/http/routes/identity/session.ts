@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import { CreateSession } from '@modules/identity/presentation/CreateSession';
+import { CreateSessionHandler } from '@modules/identity/presentation/handlers/CreateSessionHandler';
 
-const createSession = new CreateSession();
+const createSession = new CreateSessionHandler();
 
 const sessionRouter = Router();
 

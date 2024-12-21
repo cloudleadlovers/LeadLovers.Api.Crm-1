@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
-import { HealthCheck } from '@modules/monitor/presentation/handlers/HealthCheck';
+import { HealthCheckHandler } from '@modules/monitor/presentation/handlers/HealthCheckHandler';
 
-const healthCheckHandler = new HealthCheck();
+const healthCheck = new HealthCheckHandler();
 const healthCheckRouter = Router();
 
-healthCheckRouter.get('/', healthCheckHandler.handle);
+healthCheckRouter.get('/', healthCheck.handle);
 
 export default healthCheckRouter;

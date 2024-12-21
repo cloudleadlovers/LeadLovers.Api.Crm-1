@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import ICRMProvider, {
   CRM,
   FindCRMsFilters
-} from '../external/providers/DBProviders/models/ICRMProvider';
+} from '../../external/providers/DBProviders/models/ICRMProvider';
 
 @injectable()
 export default class GetCRMsByUserIdService {

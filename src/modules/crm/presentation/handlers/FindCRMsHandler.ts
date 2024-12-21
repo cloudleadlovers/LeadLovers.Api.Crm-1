@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import GetCRMsByUserIdService from '../application/GetCRMsByUserIdService';
-import { findCRMsIntput, findCRMsOutput } from './dtos/FindCRMsDTO';
+import GetCRMsByUserIdService from '../../application/leadlovers/GetCRMsByUserIdService';
+import { findCRMsIntput, findCRMsOutput } from '../dtos/FindCRMsDTO';
 
-export class FindCRMs {
+export class FindCRMsHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
     const getCRMsByUserIdService = container.resolve(GetCRMsByUserIdService);
 

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import server from '@common/config/server';
 
-export class HealthCheck {
+export class HealthCheckHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
     try {
       return response.status(200).json({

@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { AppError } from '@common/errors/AppError';
-import ISessionProvider from '../external/providers/SessionProviders/models/ISessionProvider';
+import ISSOProvider from '../../external/providers/SSOProviders/models/ISSOProvider';
 
 type SSOPayload = {
   id: string;
@@ -18,7 +18,7 @@ type Params = {
 export default class ValidateSSOTokenService {
   constructor(
     @inject('LeadloversSessionProvider')
-    private sessionProvider: ISessionProvider
+    private sessionProvider: ISSOProvider
   ) {}
 
   public async execute({ token, refreshToken }: Params): Promise<SSOPayload> {

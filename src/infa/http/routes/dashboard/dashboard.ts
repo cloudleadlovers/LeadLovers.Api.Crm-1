@@ -1,25 +1,19 @@
 import { Router } from 'express';
 
-import { CreateConversionRateDashboard } from '@modules/dashboard/presentation/CreateConversionRateDashboard';
-import { CreateRevenueReportDashboard } from '@modules/dashboard/presentation/CreateRevenueReportDashboard';
-import { CreateTeamReportDashboard } from '@modules/dashboard/presentation/CreateTeamReportDashboard';
+import { CreateConversionRateDashboardHandler } from '@modules/dashboard/presentation/handlers/CreateConversionRateDashboardHandler';
+import { CreateRevenueReportDashboardHandler } from '@modules/dashboard/presentation/handlers/CreateRevenueReportDashboardHandler';
+import { CreateTeamReportDashboardHandler } from '@modules/dashboard/presentation/handlers/CreateTeamReportDashboardHandler';
 import { authenticate } from 'infa/http/middlewares/authJWT';
 
-const createConversionRateDashboardHandler =
-  new CreateConversionRateDashboard();
-const createRevenueReportDashboardHandler = new CreateRevenueReportDashboard();
-const createTeamReportDashboardkHandler = new CreateTeamReportDashboard();
+const createConversionRateDashboard =
+  new CreateConversionRateDashboardHandler();
+const createRevenueReportDashboard = new CreateRevenueReportDashboardHandler();
+const createTeamReportDashboard = new CreateTeamReportDashboardHandler();
 const dashboardRouter = Router();
 
 dashboardRouter.use(authenticate);
-dashboardRouter.post(
-  '/conversion-rate',
-  createConversionRateDashboardHandler.handle
-);
-dashboardRouter.post(
-  '/revenue-report',
-  createRevenueReportDashboardHandler.handle
-);
-dashboardRouter.post('/team-report', createTeamReportDashboardkHandler.handle);
+dashboardRouter.post('/conversion-rate', createConversionRateDashboard.handle);
+dashboardRouter.post('/revenue-report', createRevenueReportDashboard.handle);
+dashboardRouter.post('/team-report', createTeamReportDashboard.handle);
 
 export default dashboardRouter;

@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import GetTeamReportInsightsService from '../application/leadlovers/GetTeamReportInsightsService';
+import GetTeamReportInsightsService from '@modules/dashboard/application/leadlovers/GetTeamReportInsightsService';
 import {
   createTeamReportDashboardIntput,
   createTeamReportDashboardOutput
-} from './dtos/CreateTeamReportDashboardDTO';
+} from '../dtos/CreateTeamReportDashboardDTO';
 
-export class CreateTeamReportDashboard {
+export class CreateTeamReportDashboardHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
     try {
       const getTeamReportInsightsService = container.resolve(
