@@ -31,8 +31,8 @@ export default class LeadloversCRMProvider implements ICRMProvider {
           goal: board.goal,
           createdAt: board.createdAt,
           opportunity: {
-            totalQuantity: board.cardQuantity,
-            totalValueWon: board.totalCardValue
+            overallQuantity: board.cardQuantity,
+            amountWonValue: board.totalCardValue
           },
           responsible: responsibles.map(responsible => ({
             id: responsible.id,

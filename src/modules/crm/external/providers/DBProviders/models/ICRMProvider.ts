@@ -5,8 +5,8 @@ export type CRM = {
   goal: number;
   createdAt: Date;
   opportunity: {
-    totalQuantity: number;
-    totalValueWon: number;
+    overallQuantity: number;
+    amountWonValue: number;
   };
   responsible: {
     id: number;

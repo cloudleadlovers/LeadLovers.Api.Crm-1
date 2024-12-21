@@ -18,10 +18,10 @@ export const findCRMsOutput = z.array(
     logo: z.string(),
     title: z.string(),
     goal: z.number().int(),
-    createdAt: z.string().datetime(),
+    createdAt: z.date(),
     opportunity: z.object({
-      totalQuantity: z.number().int(),
-      totalValueWon: z.number().int()
+      overallQuantity: z.number().int(),
+      amountWonValue: z.number().int()
     }),
     responsible: z.array(
       z.object({
