@@ -2,9 +2,9 @@ import { container } from 'tsyringe';
 
 import ISessionProvider from './SessionProviders/models/ISessionProvider';
 
-import SessionProvider from './SessionProviders/implementations/leadlovers/SessionProvider';
+import LeadloversSessionProvider from './SessionProviders/implementations/leadlovers/LeadloversSessionProvider';
 
 container.registerSingleton<ISessionProvider>(
   'LeadloversSessionProvider',
-  SessionProvider
+  LeadloversSessionProvider
 );

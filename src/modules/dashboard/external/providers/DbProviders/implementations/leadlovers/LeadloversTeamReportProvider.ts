@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
-import { IFindOpportunityStatisticsByResponsibleRepository } from '@common/providers/LeadloversDB/models/IFindOpportunityStatisticsByResponsibleRepository';
+import { IFindOpportunityStatisticsByResponsibleRepository } from '@common/providers/LeadloversDB/models/insights/IFindOpportunityStatisticsByResponsibleRepository';
 import ITeamReportProvider, {
   TeamReport,
   TeamReportFilters

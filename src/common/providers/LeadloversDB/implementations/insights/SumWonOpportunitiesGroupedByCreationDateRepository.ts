@@ -4,11 +4,11 @@ import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
-} from '../models/IFindConversionRateGraphDataRepository';
+} from '../../models/insights/IFindConversionRateGraphDataRepository';
 import {
   ISumWonOpportunitiesGroupedByCreationDateRepository,
   SumWonOpportunities
-} from '../models/ISumWonOpportunitiesGroupedByCreationDateRepository';
+} from '../../models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 
 export class SumWonOpportunitiesGroupedByCreationDateRepository
   implements ISumWonOpportunitiesGroupedByCreationDateRepository

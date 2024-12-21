@@ -22,8 +22,7 @@ export function authenticate(
         .json({ status: 'error', message: 'JWT token is missing.' });
     }
     const [, token] = authorization.split(' ');
-    const secret = auth.jwt.secret;
-    const decoded = verify(token, secret);
+    const decoded = verify(token, auth.jwt.secret);
     const { sub } = decoded as ITokenPayload;
     request.user = { key: sub };
     return next();

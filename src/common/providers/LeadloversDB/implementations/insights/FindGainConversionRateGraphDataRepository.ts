@@ -1,38 +1,50 @@
 import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
-import { IAverageValueOfOpportunitiesWonRepository } from '../models/IAverageValueOfOpportunitiesWonRepository';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
-} from '../models/IFindConversionRateGraphDataRepository';
+} from '../../models/insights/IFindConversionRateGraphDataRepository';
+import {
+  GainConversionRateGraphData,
+  IFindGainConversionRateGraphDataRepository
+} from '../../models/insights/IFindGainConversionRateGraphDataRepository';
 
-export class AverageValueOfOpportunitiesWonRepository
-  implements IAverageValueOfOpportunitiesWonRepository
+export class FindGainConversionRateGraphDataRepository
+  implements IFindGainConversionRateGraphDataRepository
 {
-  async average(
+  async find(
     boardId: number,
     pipelineFilters?: PipelineReportsFilters
-  ): Promise<number> {
+  ): Promise<GainConversionRateGraphData | undefined> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
-      .query<{ average: number }>(this.makeQuery(pipelineFilters));
-    return recordset.length ? recordset[0].average : 0;
+      .query<GainConversionRateGraphData>(this.makeQuery(pipelineFilters));
+    if (!recordset.length) return undefined;
+    return recordset[0];
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-      SELECT 
-        AVG(PC.CardValue) AS average
-      FROM 
-        Pipeline_Card PC WITH(NOLOCK)
-      INNER JOIN 
-        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
-      INNER JOIN 
-        Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
+        SELECT
+          'WIN' AS stageType,
+          COUNT(DISTINCT PC.ID) AS quantityOpportunities,
+          ISNULL(SUM(PC.CardValue), 0) AS totalValueOpportunities
+        FROM
+            [Pipeline_Column] PCL WITH(NOLOCK)
+        LEFT JOIN 
+            [Pipeline_Card] PC WITH(NOLOCK) 
+        ON 
+            PCL.Id = PC.ColumnId 
+            AND PC.[Status] = 1 
+            AND PC.DealStatus = 1
+        LEFT JOIN 
+            [UsuaSistAces] UA WITH(NOLOCK) 
+        ON 
+            UA.AcesCodi = PC.AcesCodi 
     `;
 
     if (filters.closedDate) {
@@ -41,10 +53,9 @@ export class AverageValueOfOpportunitiesWonRepository
     }
 
     query += `
-      WHERE
-        PBD.Id = @BoardId
-        AND PC.Status = 1
-        AND PC.DealStatus = 1
+        WHERE 
+            PCL.BoardId = @BoardId
+            AND PCL.[Status] = 1 
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
@@ -52,6 +63,13 @@ export class AverageValueOfOpportunitiesWonRepository
     if (filters.status) query += ` ${filters.status}`;
 
     if (filters.user) query += ` ${filters.user}`;
+
+    query += `
+        GROUP BY 
+            PCL.Id, PCL.Title, PCL.[Order]
+        ORDER BY 
+            PCL.[Order]
+    `;
 
     return query;
   }
@@ -86,6 +104,7 @@ export class AverageValueOfOpportunitiesWonRepository
         .replace('T', ' ')
         .slice(0, -1);
 
+      where.status += 'AND PC.DealStatus = 1 ';
       where.closedDate += `AND HistoryTypeId = 7 AND PDH.CreatedAt BETWEEN '${filters.closedInitialDate}' AND '${formattedClosedEndDate}' `;
     }
 

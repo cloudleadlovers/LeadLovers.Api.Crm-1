@@ -6,7 +6,7 @@ import {
   IFindConversionRateGraphDataRepository,
   PipelineReportsFilters,
   PipelineReportsQueryFilters
-} from '../models/IFindConversionRateGraphDataRepository';
+} from '../../models/insights/IFindConversionRateGraphDataRepository';
 
 export class FindConversionRateGraphDataRepository
   implements IFindConversionRateGraphDataRepository

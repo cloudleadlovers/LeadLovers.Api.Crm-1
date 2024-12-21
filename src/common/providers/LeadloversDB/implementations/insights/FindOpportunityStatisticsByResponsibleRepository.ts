@@ -4,11 +4,11 @@ import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
-} from '../models/IFindConversionRateGraphDataRepository';
+} from '../../models/insights/IFindConversionRateGraphDataRepository';
 import {
   IFindOpportunityStatisticsByResponsibleRepository,
   OpportunityStatisticsByResponsible
-} from '../models/IFindOpportunityStatisticsByResponsibleRepository';
+} from '../../models/insights/IFindOpportunityStatisticsByResponsibleRepository';
 
 export class FindOpportunityStatisticsByResponsibleRepository
   implements IFindOpportunityStatisticsByResponsibleRepository

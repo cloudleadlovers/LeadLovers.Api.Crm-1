@@ -2,78 +2,54 @@ import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
-  AverageDays,
-  IAverageDaysAnOpportunitySpendsInAStageRepository
-} from '../models/IAverageDaysAnOpportunitySpendsInAStageRepository';
+  ICountLostOpportunitiesRepository,
+  LostOpportunitie
+} from '../../models/insights/ICountLostOpportunitiesRepository';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
-} from '../models/IFindConversionRateGraphDataRepository';
+} from '../../models/insights/IFindConversionRateGraphDataRepository';
 
-export class AverageDaysAnOpportunitySpendsInAStageRepository
-  implements IAverageDaysAnOpportunitySpendsInAStageRepository
+export class CountLostOpportunitiesRepository
+  implements ICountLostOpportunitiesRepository
 {
-  async average(
+  async count(
     boardId: number,
-    days: number,
     pipelineFilters?: PipelineReportsFilters
-  ): Promise<AverageDays[]> {
+  ): Promise<LostOpportunitie[]> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
-      .input('Days', mssql.Int, days).query<AverageDays>(`
-            SELECT
-                PCL.Title AS stageTitle,
-                AVG(
-                    DATEDIFF(
-                        DAY,
-                        Movements.actionDate,
-                        ISNULL(Movements.nextDate, GETDATE())
-                    )
-                ) AS averageDealDuration,
-                ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS stageOrderNumber
-            FROM (${this.makeQuery(pipelineFilters)}) AS Movements
-            INNER JOIN 
-                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movements.ColumnFromId
-            GROUP BY 
-                PCL.Title,
-                PCL.[Order],
-                PCL.[CreateDate];
-        `);
+      .query<LostOpportunitie>(this.makeQuery(pipelineFilters));
     return recordset;
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-        SELECT
-            PDH.id,
-            PDH.dealId AS cardId,
-            PDH.columnSourceId AS ColumnFromId,
-            PDH.columnDestinationId AS ColumnToId,
-            PDH.createdAt AS actionDate,
-            LEAD(PDH.createdAt) OVER (
-                PARTITION BY PDH.dealId
-                ORDER BY PDH.createdAt
-            ) AS nextDate
-        FROM 
-            pipelineDealHistory PDH WITH(NOLOCK)
-        INNER JOIN 
-            Pipeline_Card PC WITH(NOLOCK) ON PC.Id = PDH.dealId
-        INNER JOIN 
-            Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
-        INNER JOIN 
-            Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
+      SELECT 
+        PC.DealStatusMotive AS reason,
+        COUNT(*) AS count
+      FROM 
+        Pipeline_Card PC WITH(NOLOCK)
+      INNER JOIN 
+        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
+      INNER JOIN 
+        Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
     `;
+
+    if (filters.closedDate) {
+      query +=
+        ' LEFT JOIN [PipelineDealHistory] PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
+    }
 
     query += `
       WHERE
-        (PDH.historyTypeId = 1 OR PDH.historyTypeId = 2)
-        AND PBD.Id = @BoardId
+        PBD.Id = @BoardId
         AND PC.Status = 1
-        AND PCL.Status = 1
-        AND PDH.createdAt >= DATEADD(DAY, -@Days, GETDATE())
+        AND PC.DealStatus = 0
+        AND PC.DealStatusMotive IN ('Preço muito alto', 'Não interessado', 'Optou por concorrente', 'Problemas no atendimento')
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
@@ -81,6 +57,11 @@ export class AverageDaysAnOpportunitySpendsInAStageRepository
     if (filters.status) query += ` ${filters.status}`;
 
     if (filters.user) query += ` ${filters.user}`;
+
+    query += `
+      GROUP BY 
+        PC.DealStatusMotive;
+    `;
 
     return query;
   }

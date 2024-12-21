@@ -1,10 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 
-import { IAverageDaysAnOpportunitySpendsInAStageRepository } from '@common/providers/LeadloversDB/models/IAverageDaysAnOpportunitySpendsInAStageRepository';
-import { IAverageValueOfOpportunitiesWonRepository } from '@common/providers/LeadloversDB/models/IAverageValueOfOpportunitiesWonRepository';
-import { ICountLostOpportunitiesRepository } from '@common/providers/LeadloversDB/models/ICountLostOpportunitiesRepository';
-import { IFindConversionRateGraphDataRepository } from '@common/providers/LeadloversDB/models/IFindConversionRateGraphDataRepository';
-import { IFindGainConversionRateGraphDataRepository } from '@common/providers/LeadloversDB/models/IFindGainConversionRateGraphDataRepository';
+import { IAverageDaysAnOpportunitySpendsInAStageRepository } from '@common/providers/LeadloversDB/models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
+import { IAverageValueOfOpportunitiesWonRepository } from '@common/providers/LeadloversDB/models/insights/IAverageValueOfOpportunitiesWonRepository';
+import { ICountLostOpportunitiesRepository } from '@common/providers/LeadloversDB/models/insights/ICountLostOpportunitiesRepository';
+import { IFindConversionRateGraphDataRepository } from '@common/providers/LeadloversDB/models/insights/IFindConversionRateGraphDataRepository';
+import { IFindGainConversionRateGraphDataRepository } from '@common/providers/LeadloversDB/models/insights/IFindGainConversionRateGraphDataRepository';
 import IConversionRateProvider, {
   AverageDealDuration,
   ConversionRate,

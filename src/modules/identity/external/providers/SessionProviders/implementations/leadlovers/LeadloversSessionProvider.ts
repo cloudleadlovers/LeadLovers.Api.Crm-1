@@ -7,7 +7,7 @@ import ISessionProvider, {
 } from '../../models/ISessionProvider';
 
 @injectable()
-export default class SessionProvider implements ISessionProvider {
+export default class LeadloversSessionProvider implements ISessionProvider {
   constructor(
     @inject('LeadLoversSSOProvider')
     private ssoProvider: ILeadLoversSSOProvider
@@ -19,6 +19,6 @@ export default class SessionProvider implements ISessionProvider {
       refresh_token: params.refreshToken
     });
     if (!user) throw new Error('Authentication failed');
-    return { id: user.id.toString(), email: user.email, name: user.name };
+    return { id: user.user_id.toString(), email: user.email, name: user.name };
   }
 }

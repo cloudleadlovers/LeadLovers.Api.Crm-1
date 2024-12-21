@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
-import { ISumValueOfColumnsRepository } from '@common/providers/LeadloversDB/models/ISumValueOfColumnsRepository';
-import { ISumWonOpportunitiesGroupedByCreationDateRepository } from '@common/providers/LeadloversDB/models/ISumWonOpportunitiesGroupedByCreationDateRepository';
+import { ISumValueOfColumnsRepository } from '@common/providers/LeadloversDB/models/insights/ISumValueOfColumnsRepository';
+import { ISumWonOpportunitiesGroupedByCreationDateRepository } from '@common/providers/LeadloversDB/models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 import IRevenueReportProvider, {
   CurrentCRMValue,
   EarnedRevenue,

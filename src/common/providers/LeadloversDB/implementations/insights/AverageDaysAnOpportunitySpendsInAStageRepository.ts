@@ -2,54 +2,78 @@ import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
-  ICountLostOpportunitiesRepository,
-  LostOpportunitie
-} from '../models/ICountLostOpportunitiesRepository';
+  AverageDays,
+  IAverageDaysAnOpportunitySpendsInAStageRepository
+} from '../../models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
-} from '../models/IFindConversionRateGraphDataRepository';
+} from '../../models/insights/IFindConversionRateGraphDataRepository';
 
-export class CountLostOpportunitiesRepository
-  implements ICountLostOpportunitiesRepository
+export class AverageDaysAnOpportunitySpendsInAStageRepository
+  implements IAverageDaysAnOpportunitySpendsInAStageRepository
 {
-  async count(
+  async average(
     boardId: number,
+    days: number,
     pipelineFilters?: PipelineReportsFilters
-  ): Promise<LostOpportunitie[]> {
+  ): Promise<AverageDays[]> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
-      .query<LostOpportunitie>(this.makeQuery(pipelineFilters));
+      .input('Days', mssql.Int, days).query<AverageDays>(`
+            SELECT
+                PCL.Title AS stageTitle,
+                AVG(
+                    DATEDIFF(
+                        DAY,
+                        Movements.actionDate,
+                        ISNULL(Movements.nextDate, GETDATE())
+                    )
+                ) AS averageDealDuration,
+                ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS stageOrderNumber
+            FROM (${this.makeQuery(pipelineFilters)}) AS Movements
+            INNER JOIN 
+                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movements.ColumnFromId
+            GROUP BY 
+                PCL.Title,
+                PCL.[Order],
+                PCL.[CreateDate];
+        `);
     return recordset;
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-      SELECT 
-        PC.DealStatusMotive AS reason,
-        COUNT(*) AS count
-      FROM 
-        Pipeline_Card PC WITH(NOLOCK)
-      INNER JOIN 
-        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
-      INNER JOIN 
-        Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
+        SELECT
+            PDH.id,
+            PDH.dealId AS cardId,
+            PDH.columnSourceId AS ColumnFromId,
+            PDH.columnDestinationId AS ColumnToId,
+            PDH.createdAt AS actionDate,
+            LEAD(PDH.createdAt) OVER (
+                PARTITION BY PDH.dealId
+                ORDER BY PDH.createdAt
+            ) AS nextDate
+        FROM 
+            pipelineDealHistory PDH WITH(NOLOCK)
+        INNER JOIN 
+            Pipeline_Card PC WITH(NOLOCK) ON PC.Id = PDH.dealId
+        INNER JOIN 
+            Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
+        INNER JOIN 
+            Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
     `;
-
-    if (filters.closedDate) {
-      query +=
-        ' LEFT JOIN [PipelineDealHistory] PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
-    }
 
     query += `
       WHERE
-        PBD.Id = @BoardId
+        (PDH.historyTypeId = 1 OR PDH.historyTypeId = 2)
+        AND PBD.Id = @BoardId
         AND PC.Status = 1
-        AND PC.DealStatus = 0
-        AND PC.DealStatusMotive IN ('Preço muito alto', 'Não interessado', 'Optou por concorrente', 'Problemas no atendimento')
+        AND PCL.Status = 1
+        AND PDH.createdAt >= DATEADD(DAY, -@Days, GETDATE())
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
@@ -57,11 +81,6 @@ export class CountLostOpportunitiesRepository
     if (filters.status) query += ` ${filters.status}`;
 
     if (filters.user) query += ` ${filters.user}`;
-
-    query += `
-      GROUP BY 
-        PC.DealStatusMotive;
-    `;
 
     return query;
   }
