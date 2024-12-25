@@ -70,7 +70,7 @@ export class SumWonOpportunitiesGroupedByCreationDateRepository
 
     query += `
         WHERE
-            PBD.Id = @Board
+            PBD.Id = @BoardId
             AND PC.DealStatus = 1
             AND PDH.HistoryTypeId = 7
             AND PDH.CreatedAt BETWEEN @InitialDate AND @EndDate
@@ -84,7 +84,7 @@ export class SumWonOpportunitiesGroupedByCreationDateRepository
         GROUP BY
             PDH.dealId,
             PC.CardValue,
-            PDH.CreatedAt;
+            PDH.CreatedAt
     `;
 
     return query;

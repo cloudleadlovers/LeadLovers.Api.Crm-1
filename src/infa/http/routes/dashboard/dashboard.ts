@@ -12,7 +12,10 @@ const createTeamReportDashboard = new CreateTeamReportDashboardHandler();
 const dashboardRouter = Router();
 
 dashboardRouter.use(authenticate);
-dashboardRouter.post('/conversion-rate', createConversionRateDashboard.handle);
+dashboardRouter.post(
+  '/conversion-rate-report',
+  createConversionRateDashboard.handle
+);
 dashboardRouter.post('/revenue-report', createRevenueReportDashboard.handle);
 dashboardRouter.post('/team-report', createTeamReportDashboard.handle);
 

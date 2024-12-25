@@ -17,30 +17,26 @@ export const createRevenueReportDashboardIntput = z.object({
 });
 
 export const createRevenueReportDashboardOutput = z.object({
-  earnedRevenue: z.array(
-    z.object({
-      totalRevenue: z.number().int(),
-      items: z.array(
-        z.object({
-          creationDate: z.string().datetime(),
-          opportunitiesValue: z.number().int(),
-          opportunitiesNumber: z.number().int()
-        })
-      )
-    })
-  ),
-  currentCRMValue: z.array(
-    z.object({
-      currentValue: z.number().int(),
-      estimatedGoal: z.number().int(),
-      items: z.array(
-        z.object({
-          columName: z.string(),
-          estimatedGoal: z.number().int(),
-          opportunitiesValue: z.number().int(),
-          orderNumber: z.number().int()
-        })
-      )
-    })
-  )
+  earnedRevenue: z.object({
+    totalRevenue: z.number().int(),
+    items: z.array(
+      z.object({
+        creationDate: z.date(),
+        opportunitiesValue: z.number().int(),
+        opportunitiesNumber: z.number().int()
+      })
+    )
+  }),
+  currentCRMValue: z.object({
+    currentValue: z.number().int(),
+    estimatedGoal: z.number().int(),
+    items: z.array(
+      z.object({
+        columName: z.string(),
+        estimatedGoal: z.number().int(),
+        opportunitiesValue: z.number().int(),
+        orderNumber: z.number().int()
+      })
+    )
+  })
 });

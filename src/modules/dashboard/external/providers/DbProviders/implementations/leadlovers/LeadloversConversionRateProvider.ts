@@ -45,7 +45,7 @@ export default class LeadloversConversionRateProvider
       return {
         stageTitle: item.stageTitle,
         averageDealDuration: item.averageDealDuration,
-        stageOrderNumber: item.stageOrderNumber
+        stageOrderNumber: Number(item.stageOrderNumber)
       };
     });
   }

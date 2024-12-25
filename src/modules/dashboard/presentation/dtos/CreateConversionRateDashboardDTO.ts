@@ -23,7 +23,7 @@ export const createConversionRateDashboardOutput = z.object({
       stageOrderNumber: z.number().int()
     })
   ),
-  averageValueOfWonOpportunities: z.number().int(),
+  averageValueOfWonOpportunities: z.number(),
   conversionRate: z.array(
     z.object({
       stageId: z.number().int(),
