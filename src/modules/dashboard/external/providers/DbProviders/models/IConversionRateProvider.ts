@@ -6,7 +6,7 @@ export type ConversionRateFilters = {
   createEndDate?: string;
   closedInitialDate?: string;
   closedEndDate?: string;
-  responsibleId?: number;
+  responsibles?: { in: number[]; notIn: number[] };
 };
 
 export type AverageDealDuration = {

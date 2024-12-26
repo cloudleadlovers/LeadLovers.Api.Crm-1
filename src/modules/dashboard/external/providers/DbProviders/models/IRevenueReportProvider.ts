@@ -6,7 +6,7 @@ export type RevenueReportFilters = {
   createEndDate?: string;
   closedInitialDate?: string;
   closedEndDate?: string;
-  responsibleId?: number;
+  responsibles?: { in: number[]; notIn: number[] };
 };
 
 export type EarnedRevenue = {

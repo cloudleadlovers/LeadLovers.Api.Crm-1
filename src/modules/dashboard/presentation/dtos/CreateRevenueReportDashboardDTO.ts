@@ -11,7 +11,12 @@ export const createRevenueReportDashboardIntput = z.object({
       createEndDate: z.string().optional(),
       closedInitialDate: z.string().optional(),
       closedEndDate: z.string().optional(),
-      responsibleId: z.number().int().optional()
+      responsibles: z
+        .object({
+          in: z.array(z.number().int()),
+          notIn: z.array(z.number().int())
+        })
+        .optional()
     })
     .optional()
 });

@@ -99,8 +99,12 @@ export class CountLostOpportunitiesRepository
       where.closedDate += `AND HistoryTypeId = 7 AND PDH.CreatedAt BETWEEN '${filters.closedInitialDate}' AND '${formattedClosedEndDate}' `;
     }
 
-    if (filters.responsibleId && filters.responsibleId > 0) {
-      where.user += `AND PC.AcesCodi = '${filters.responsibleId}' `;
+    if (filters.responsibles?.notIn.length) {
+      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+    }
+
+    if (filters.responsibles?.in.length) {
+      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     return where;

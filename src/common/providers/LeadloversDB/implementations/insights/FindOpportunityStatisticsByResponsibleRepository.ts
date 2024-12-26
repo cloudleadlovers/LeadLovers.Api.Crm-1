@@ -103,8 +103,12 @@ export class FindOpportunityStatisticsByResponsibleRepository
       where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
-    if (filters.responsibleId && filters.responsibleId > 0) {
-      where.user += `AND PC.AcesCodi = '${filters.responsibleId}' `;
+    if (filters.responsibles?.notIn.length) {
+      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+    }
+
+    if (filters.responsibles?.in.length) {
+      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     return where;
