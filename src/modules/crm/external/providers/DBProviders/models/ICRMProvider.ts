@@ -17,6 +17,19 @@ export type CRM = {
   }[];
 };
 
+export type CRMTemplateSteps = {
+  id: number;
+  title: string;
+  color: string;
+  order: number;
+};
+
+export type CRMTemplate = {
+  id: number;
+  title: string;
+  steps: CRMTemplateSteps[];
+};
+
 export type FindCRMsFilters = {
   createInitialDate?: string;
   createEndDate?: string;
@@ -26,4 +39,5 @@ export type FindCRMsFilters = {
 
 export default interface ICRMProvider {
   findCRMsByUserId(userId: number, filters?: FindCRMsFilters): Promise<CRM[]>;
+  findCRMTemplates(): Promise<CRMTemplate[]>;
 }

@@ -2,11 +2,19 @@ import { inject, injectable } from 'tsyringe';
 
 import { IFindBoardResponsiblesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardsByUsuaSistCodiRepository';
-import ICRMProvider, { CRM, FindCRMsFilters } from '../../models/ICRMProvider';
+import { IFindBoardTemplatesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardTemplatesRepository';
+import ICRMProvider, {
+  CRM,
+  CRMTemplate,
+  CRMTemplateSteps,
+  FindCRMsFilters
+} from '../../models/ICRMProvider';
 
 @injectable()
 export default class LeadloversCRMProvider implements ICRMProvider {
   constructor(
+    @inject('FindBoardTemplatesRepository')
+    private findBoardTemplatesRepository: IFindBoardTemplatesRepository,
     @inject('FindBoardResponsiblesRepository')
     private findBoardResponsibles: IFindBoardResponsiblesRepository,
     @inject('FindBoardsByUsuaSistCodiRepository')
@@ -44,6 +52,29 @@ export default class LeadloversCRMProvider implements ICRMProvider {
         };
       })
     );
+  }
+
+  public async findCRMTemplates(): Promise<CRMTemplate[]> {
+    const boardTemplates = await this.findBoardTemplatesRepository.find();
+    const crmTemplates: CRMTemplate[] = [];
+    boardTemplates.forEach(boardTemplate => {
+      crmTemplates.push({
+        id: boardTemplate.boardId,
+        title: boardTemplate.boardTitle,
+        steps: boardTemplates.reduce((accumulator, column) => {
+          if (column.boardId === boardTemplate.boardId) {
+            accumulator.push({
+              id: column.columnId,
+              title: column.columnTitle,
+              color: column.columnColor,
+              order: column.columnOrder
+            });
+          }
+          return accumulator;
+        }, [] as CRMTemplateSteps[])
+      });
+    });
+    return crmTemplates;
   }
 
   private getRoleName(roleId: number): string {

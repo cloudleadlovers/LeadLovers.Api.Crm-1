@@ -1,0 +1,16 @@
+import { z } from 'zod';
+
+export const FindCRMTemplatesOutput = z.array(
+  z.object({
+    id: z.number().int(),
+    title: z.string(),
+    steps: z.array(
+      z.object({
+        id: z.number().int(),
+        title: z.string(),
+        color: z.string(),
+        order: z.number().int()
+      })
+    )
+  })
+);

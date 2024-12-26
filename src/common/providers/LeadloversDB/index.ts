@@ -2,6 +2,7 @@ import { container } from 'tsyringe';
 
 import { IFindBoardResponsiblesRepository } from './models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoardsByUsuaSistCodiRepository';
+import { IFindBoardTemplatesRepository } from './models/boards/IFindBoardTemplatesRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import { IAverageValueOfOpportunitiesWonRepository } from './models/insights/IAverageValueOfOpportunitiesWonRepository';
 import { ICountLostOpportunitiesRepository } from './models/insights/ICountLostOpportunitiesRepository';
@@ -13,6 +14,7 @@ import { ISumWonOpportunitiesGroupedByCreationDateRepository } from './models/in
 
 import { FindBoardResponsiblesRepository } from './implementations/boards/FindBoardResponsiblesRepository';
 import { FindBoardsByUsuaSistCodiRepository } from './implementations/boards/FindBoardsByUsuaSistCodiRepository';
+import { FindBoardTemplatesRepository } from './implementations/boards/FindTemplateBoardsRepository';
 import { AverageDaysAnOpportunitySpendsInAStageRepository } from './implementations/insights/AverageDaysAnOpportunitySpendsInAStageRepository';
 import { AverageValueOfOpportunitiesWonRepository } from './implementations/insights/AverageValueOfOpportunitiesWonRepository';
 import { CountLostOpportunitiesRepository } from './implementations/insights/CountLostOpportunitiesRepository';
@@ -60,6 +62,11 @@ container.registerSingleton<IFindGainConversionRateGraphDataRepository>(
 container.registerSingleton<IFindOpportunityStatisticsByResponsibleRepository>(
   'FindOpportunityStatisticsByResponsibleRepository',
   FindOpportunityStatisticsByResponsibleRepository
+);
+
+container.registerSingleton<IFindBoardTemplatesRepository>(
+  'FindBoardTemplatesRepository',
+  FindBoardTemplatesRepository
 );
 
 container.registerSingleton<ISumValueOfColumnsRepository>(
