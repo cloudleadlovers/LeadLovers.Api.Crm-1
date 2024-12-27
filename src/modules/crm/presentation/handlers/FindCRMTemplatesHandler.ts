@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import GetCRMTemplatesService from '@modules/crm/application/leadlovers/GetCRMTemplatesService';
-import { FindCRMTemplatesOutput } from '../dtos/FindCRMTemplatesDTO';
+import FindCRMTemplatesService from '@modules/crm/application/leadlovers/FindCRMTemplatesService';
+import { findCRMTemplatesOutput } from '../dtos/FindCRMTemplatesDTO';
 
 export class FindCRMTemplatesHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const getCRMTemplatesService = container.resolve(GetCRMTemplatesService);
+    const findCRMTemplatesService = container.resolve(FindCRMTemplatesService);
 
-    const templates = await getCRMTemplatesService.execute();
-    const output = FindCRMTemplatesOutput.safeParse(templates);
+    const templates = await findCRMTemplatesService.execute();
+    const output = findCRMTemplatesOutput.safeParse(templates);
     if (!output.success) {
       return response
         .status(400)

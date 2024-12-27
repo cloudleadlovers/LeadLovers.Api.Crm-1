@@ -25,10 +25,12 @@ export class FindBoardsByUsuaSistCodiRepository
   private makeQuery(filter?: FindBoardsFilters): string {
     let query = `
         SELECT 
-            PB.[Id] AS id, 
+            PB.[Id] AS id,
+            PB.[UsuaSistCodi] as userId,
             ISNULL(PB.[Logo], '') AS logo,
             PB.[Title] AS title,
             ISNULL(PB.[Goal], 0) AS goal,
+            ISNULL(PB.[Rule], 'all-crm') AS rule,
             COUNT(PC.[Id]) AS cardQuantity,
             SUM(CASE
                 WHEN PC.[Status] NOT IN (0, 2) AND PC.[DealStatus] = 1 THEN PC.[CardValue] 

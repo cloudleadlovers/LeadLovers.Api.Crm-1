@@ -3,10 +3,15 @@ import { inject, injectable } from 'tsyringe';
 import { IFindBoardResponsiblesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardsByUsuaSistCodiRepository';
 import { IFindBoardTemplatesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardTemplatesRepository';
+import { IInsertBoardAccessRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardAccessRepository';
+import { IInsertBoardRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardRepository';
+import { IInsertColumnRepository } from '@common/providers/LeadloversDB/models/columns/IInsertColumnRepository';
+import { IFindUsersByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/users/IFindUsersByUsuaSistCodiRepository';
 import ICRMProvider, {
   CRM,
+  CRMOwner,
+  CRMStage,
   CRMTemplate,
-  CRMTemplateSteps,
   FindCRMsFilters
 } from '../../models/ICRMProvider';
 
@@ -18,8 +23,41 @@ export default class LeadloversCRMProvider implements ICRMProvider {
     @inject('FindBoardResponsiblesRepository')
     private findBoardResponsibles: IFindBoardResponsiblesRepository,
     @inject('FindBoardsByUsuaSistCodiRepository')
-    private findBoardsByUsuaSistCodi: IFindBoardsByUsuaSistCodiRepository
+    private findBoardsByUsuaSistCodi: IFindBoardsByUsuaSistCodiRepository,
+    @inject('FindUsersByUsuaSistCodiRepository')
+    private findUsersByUsuaSistCodiRepository: IFindUsersByUsuaSistCodiRepository,
+    @inject('InsertBoardAccessRepository')
+    private insertBoardAccessRepository: IInsertBoardAccessRepository,
+    @inject('InsertBoardRepository')
+    private insertBoardRepository: IInsertBoardRepository,
+    @inject('InsertColumnRepository')
+    private insertColumnRepository: IInsertColumnRepository
   ) {}
+
+  public async assignOwnerToCRM(
+    crmId: number,
+    ownerId: number,
+    roleId: number
+  ): Promise<void> {
+    await this.insertBoardAccessRepository.insert(crmId, ownerId, roleId);
+  }
+
+  public async createCRM(
+    params: Pick<CRM, 'userId' | 'title' | 'goal' | 'rule' | 'logo'>
+  ): Promise<Pick<CRM, 'id'>> {
+    const boardId = await this.insertBoardRepository.insert(params);
+    return { id: boardId };
+  }
+
+  public async createCRMStage(
+    params: Pick<CRMStage, 'crmId' | 'title' | 'order'>
+  ): Promise<void> {
+    await this.insertColumnRepository.insert(
+      params.crmId,
+      params.title,
+      params.order
+    );
+  }
 
   public async findCRMsByUserId(
     userId: number,
@@ -34,15 +72,17 @@ export default class LeadloversCRMProvider implements ICRMProvider {
         );
         return {
           id: board.id,
+          userId: board.userId,
           logo: board.logo,
           title: board.title,
           goal: board.goal,
+          rule: board.rule,
           createdAt: board.createdAt,
           opportunity: {
             overallQuantity: board.cardQuantity,
             amountWonValue: board.totalCardValue
           },
-          responsible: responsibles.map(responsible => ({
+          owners: responsibles.map(responsible => ({
             id: responsible.id,
             name: responsible.name,
             photo: responsible.photo,
@@ -61,20 +101,27 @@ export default class LeadloversCRMProvider implements ICRMProvider {
       crmTemplates.push({
         id: boardTemplate.boardId,
         title: boardTemplate.boardTitle,
-        steps: boardTemplates.reduce((accumulator, column) => {
+        stage: boardTemplates.reduce((accumulator, column) => {
           if (column.boardId === boardTemplate.boardId) {
             accumulator.push({
               id: column.columnId,
+              crmId: column.boardId,
               title: column.columnTitle,
               color: column.columnColor,
               order: column.columnOrder
             });
           }
           return accumulator;
-        }, [] as CRMTemplateSteps[])
+        }, [] as CRMStage[])
       });
     });
     return crmTemplates;
+  }
+
+  public async findPotentialOwnersByUserId(
+    userId: number
+  ): Promise<Pick<CRMOwner, 'id' | 'name' | 'photo'>[]> {
+    return await this.findUsersByUsuaSistCodiRepository.find(userId);
   }
 
   private getRoleName(roleId: number): string {

@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-export const FindCRMTemplatesOutput = z.array(
+export const findCRMTemplatesOutput = z.array(
   z.object({
     id: z.number().int(),
     title: z.string(),
-    steps: z.array(
+    stages: z.array(
       z.object({
         id: z.number().int(),
         title: z.string(),

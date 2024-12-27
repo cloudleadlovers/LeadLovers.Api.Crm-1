@@ -23,7 +23,7 @@ export const findCRMsOutput = z.array(
       overallQuantity: z.number().int(),
       amountWonValue: z.number().int()
     }),
-    responsible: z.array(
+    owners: z.array(
       z.object({
         id: z.number().int(),
         name: z.string(),

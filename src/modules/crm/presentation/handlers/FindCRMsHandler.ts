@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import GetCRMsByUserIdService from '../../application/leadlovers/GetCRMsByUserIdService';
+import FindCRMsByUserIdService from '../../application/leadlovers/FindCRMsByUserIdService';
 import { findCRMsIntput, findCRMsOutput } from '../dtos/FindCRMsDTO';
 
 export class FindCRMsHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const getCRMsByUserIdService = container.resolve(GetCRMsByUserIdService);
+    const findCRMsByUserIdService = container.resolve(FindCRMsByUserIdService);
 
     const input = findCRMsIntput.safeParse({
       userId: Number(request.user.key),
@@ -17,7 +17,7 @@ export class FindCRMsHandler {
         .status(400)
         .json({ status: 'error', result: input.error });
     }
-    const crms = await getCRMsByUserIdService.execute(
+    const crms = await findCRMsByUserIdService.execute(
       input.data.userId,
       input.data.filters
     );
