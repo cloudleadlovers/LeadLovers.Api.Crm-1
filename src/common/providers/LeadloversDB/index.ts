@@ -12,10 +12,14 @@ import { CountLostOpportunitiesRepository } from './implementations/insights/Cou
 import { FindConversionRateGraphDataRepository } from './implementations/insights/FindConversionRateGraphDataRepository';
 import { FindGainConversionRateGraphDataRepository } from './implementations/insights/FindGainConversionRateGraphDataRepository';
 import { FindOpportunityStatisticsByResponsibleRepository } from './implementations/insights/FindOpportunityStatisticsByResponsibleRepository';
+import { InsertReportFilterRepository } from './implementations/insights/InsertReportFilterRepository';
+import { RemoveReportFilterRepository } from './implementations/insights/RemoveReportFilterRepository';
 import { SumValueOfColumnsRepository } from './implementations/insights/SumValueOfColumnsRepository';
 import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementations/insights/SumWonOpportunitiesGroupedByCreationDateRepository';
+import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
 
+import { FindReportFiltersByUsuaSistCodiRepository } from './implementations/insights/FindReportFiltersByUsuaSistCodiRepository';
 import { IFindBoardResponsiblesRepository } from './models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoardsByUsuaSistCodiRepository';
 import { IFindBoardTemplatesRepository } from './models/boards/IFindBoardTemplatesRepository';
@@ -28,8 +32,12 @@ import { ICountLostOpportunitiesRepository } from './models/insights/ICountLostO
 import { IFindConversionRateGraphDataRepository } from './models/insights/IFindConversionRateGraphDataRepository';
 import { IFindGainConversionRateGraphDataRepository } from './models/insights/IFindGainConversionRateGraphDataRepository';
 import { IFindOpportunityStatisticsByResponsibleRepository } from './models/insights/IFindOpportunityStatisticsByResponsibleRepository';
+import { IFindReportFiltersByUsuaSistCodiRepository } from './models/insights/IFindReportFiltersByUsuaSistCodiRepository';
+import { IInsertReportFilterRepository } from './models/insights/IInsertReportFilterRepository';
+import { IRemoveReportFilterRepository } from './models/insights/IRemoveReportFilterRepository';
 import { ISumValueOfColumnsRepository } from './models/insights/ISumValueOfColumnsRepository';
 import { ISumWonOpportunitiesGroupedByCreationDateRepository } from './models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
+import { IUpdateReportFilterRepository } from './models/insights/IUpdateReportFilterRepository';
 import { IFindUsersByUsuaSistCodiRepository } from './models/users/IFindUsersByUsuaSistCodiRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
@@ -77,6 +85,11 @@ container.registerSingleton<IFindOpportunityStatisticsByResponsibleRepository>(
   FindOpportunityStatisticsByResponsibleRepository
 );
 
+container.registerSingleton<IFindReportFiltersByUsuaSistCodiRepository>(
+  'FindReportFiltersByUsuaSistCodiRepository',
+  FindReportFiltersByUsuaSistCodiRepository
+);
+
 container.registerSingleton<IFindUsersByUsuaSistCodiRepository>(
   'FindUsersByUsuaSistCodiRepository',
   FindUsersByUsuaSistCodiRepository
@@ -97,6 +110,16 @@ container.registerSingleton<IInsertColumnRepository>(
   InsertColumnRepository
 );
 
+container.registerSingleton<IInsertReportFilterRepository>(
+  'InsertReportFilterRepository',
+  InsertReportFilterRepository
+);
+
+container.registerSingleton<IRemoveReportFilterRepository>(
+  'RemoveReportFilterRepository',
+  RemoveReportFilterRepository
+);
+
 container.registerSingleton<ISumValueOfColumnsRepository>(
   'SumValueOfColumnsRepository',
   SumValueOfColumnsRepository
@@ -105,4 +128,9 @@ container.registerSingleton<ISumValueOfColumnsRepository>(
 container.registerSingleton<ISumWonOpportunitiesGroupedByCreationDateRepository>(
   'SumWonOpportunitiesGroupedByCreationDateRepository',
   SumWonOpportunitiesGroupedByCreationDateRepository
+);
+
+container.registerSingleton<IUpdateReportFilterRepository>(
+  'UpdateReportFilterRepository',
+  UpdateReportFilterRepository
 );
