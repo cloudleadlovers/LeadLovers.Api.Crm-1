@@ -1,15 +1,12 @@
-export type DealStatus = 'OPENED' | 'LOSED' | 'GAINED';
+import { InsightFiltersJSON } from '@modules/dashboard/shared/types/InsightFilter';
 
-export type ConversionRateFilters = {
-  stateCards?: DealStatus[];
-  createInitialDate?: string;
-  createEndDate?: string;
-  closedInitialDate?: string;
-  closedEndDate?: string;
-  responsibles?: { in: number[]; notIn: number[] };
+export type ConversionRateFilters = InsightFiltersJSON;
+
+export type AverageDaysToCloseOpportunity = {
+  days: number;
 };
 
-export type AverageDealDuration = {
+export type AverageDealDurationPerStage = {
   stageTitle: string;
   averageDealDuration: number;
   stageOrderNumber: number;
@@ -38,11 +35,14 @@ export type LossReasons = {
 };
 
 export default interface IConversionRateProvider {
-  averageDealDuration(
+  averageDaysToCloseOpportunity(
     boardId: number,
-    days: number,
     filters?: ConversionRateFilters
-  ): Promise<AverageDealDuration[]>;
+  ): Promise<AverageDaysToCloseOpportunity>;
+  averageDealDurationPerStage(
+    boardId: number,
+    filters?: ConversionRateFilters
+  ): Promise<AverageDealDurationPerStage[]>;
   averageValueOfWonOpportunities(
     boardId: number,
     filters?: ConversionRateFilters

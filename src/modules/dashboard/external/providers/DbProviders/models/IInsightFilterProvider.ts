@@ -1,20 +1,11 @@
+import { InsightFiltersJSON } from '@modules/dashboard/shared/types/InsightFilter';
+
 export type InsightFilter = {
   id: number;
   name: string;
-  filters: FiltersJSON;
+  filters: InsightFiltersJSON;
   userId: number;
   createdAt: Date;
-};
-
-export type DealStatus = 'OPENED' | 'LOSED' | 'GAINED';
-
-export type FiltersJSON = {
-  stateCards?: DealStatus[];
-  createInitialDate?: string;
-  createEndDate?: string;
-  closedInitialDate?: string;
-  closedEndDate?: string;
-  responsibles?: { in: number[]; notIn: number[] };
 };
 
 export type CreateFilterParams = Pick<

@@ -1,14 +1,14 @@
 import { inject, injectable } from 'tsyringe';
 
 import IConversionRateProvider, {
-  AverageDealDuration,
+  AverageDealDurationPerStage,
   ConversionRate,
   ConversionRateFilters,
   LossReasons
 } from '@modules/dashboard/external/providers/DBProviders/models/IConversionRateProvider';
 
 type ConversionRateInsights = {
-  averageDealDuration: AverageDealDuration[];
+  averageDealDuration: AverageDealDurationPerStage[];
   averageValueOfWonOpportunities: number;
   conversionRate: ConversionRate[];
   lossReasons: LossReasons[];
@@ -29,13 +29,11 @@ export default class GetConversionRateInsightsService {
 
   public async execute({
     boardId,
-    days,
     filters
   }: Params): Promise<ConversionRateInsights> {
     const averageDealDuration =
-      await this.conversionRateProvider.averageDealDuration(
+      await this.conversionRateProvider.averageDealDurationPerStage(
         boardId,
-        days,
         filters
       );
     const averageValueOfWonOpportunities =

@@ -1,13 +1,6 @@
-export type DealStatus = 'OPENED' | 'LOSED' | 'GAINED';
+import { InsightFiltersJSON } from '@modules/dashboard/shared/types/InsightFilter';
 
-export type RevenueReportFilters = {
-  stateCards?: DealStatus[];
-  createInitialDate?: string;
-  createEndDate?: string;
-  closedInitialDate?: string;
-  closedEndDate?: string;
-  responsibles?: { in: number[]; notIn: number[] };
-};
+export type RevenueReportFilters = InsightFiltersJSON;
 
 export type EarnedRevenue = {
   creationDate: Date;

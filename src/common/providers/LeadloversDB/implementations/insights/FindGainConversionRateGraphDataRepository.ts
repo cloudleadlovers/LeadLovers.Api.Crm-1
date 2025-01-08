@@ -116,6 +116,10 @@ export class FindGainConversionRateGraphDataRepository
       where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
+    if (filters.responsibles?.isNull) {
+      where.user += `AND PC.AcesCodi IS NULL `;
+    }
+
     return where;
   }
 }

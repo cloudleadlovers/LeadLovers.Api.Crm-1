@@ -1,18 +1,10 @@
 import { z } from 'zod';
+import { filterDefault } from '../../shared/types/InsightFilter';
 
 export const createTeamReportDashboardIntput = z.object({
   boardId: z.number().int(),
-  filters: z
-    .object({
-      createInitialDate: z.string().optional(),
-      createEndDate: z.string().optional(),
-      responsibles: z
-        .object({
-          in: z.array(z.number().int()),
-          notIn: z.array(z.number().int())
-        })
-        .optional()
-    })
+  filters: filterDefault
+    .pick({ createInitialDate: true, createEndDate: true, responsibles: true })
     .optional()
 });
 

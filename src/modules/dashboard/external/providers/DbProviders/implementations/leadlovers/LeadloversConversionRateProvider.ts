@@ -1,12 +1,14 @@
 import { inject, injectable } from 'tsyringe';
 
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from '@common/providers/LeadloversDB/models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
+import { IAverageDaysToCloseAnOpportunityRepository } from '@common/providers/LeadloversDB/models/insights/IAverageDaysToCloseAnOpportunityRepository';
 import { IAverageValueOfOpportunitiesWonRepository } from '@common/providers/LeadloversDB/models/insights/IAverageValueOfOpportunitiesWonRepository';
 import { ICountLostOpportunitiesRepository } from '@common/providers/LeadloversDB/models/insights/ICountLostOpportunitiesRepository';
 import { IFindConversionRateGraphDataRepository } from '@common/providers/LeadloversDB/models/insights/IFindConversionRateGraphDataRepository';
 import { IFindGainConversionRateGraphDataRepository } from '@common/providers/LeadloversDB/models/insights/IFindGainConversionRateGraphDataRepository';
 import IConversionRateProvider, {
-  AverageDealDuration,
+  AverageDaysToCloseOpportunity,
+  AverageDealDurationPerStage,
   ConversionRate,
   ConversionRateFilters,
   GainConversionRate,
@@ -20,6 +22,8 @@ export default class LeadloversConversionRateProvider
   constructor(
     @inject('AverageDaysAnOpportunitySpendsInAStageRepository')
     private averageDaysAnOpportunitySpendsInAStageRepository: IAverageDaysAnOpportunitySpendsInAStageRepository,
+    @inject('AverageDaysToCloseAnOpportunityRepository')
+    private averageDaysToCloseAnOpportunityRepository: IAverageDaysToCloseAnOpportunityRepository,
     @inject('AverageValueOfOpportunitiesWonRepository')
     private averageValueOfOpportunitiesWonRepository: IAverageValueOfOpportunitiesWonRepository,
     @inject('CountLostOpportunitiesRepository')
@@ -30,15 +34,24 @@ export default class LeadloversConversionRateProvider
     private findGainConversionRateGraphDataRepository: IFindGainConversionRateGraphDataRepository
   ) {}
 
-  public async averageDealDuration(
+  public async averageDaysToCloseOpportunity(
     boardId: number,
-    days: number,
     filters?: ConversionRateFilters
-  ): Promise<AverageDealDuration[]> {
+  ): Promise<AverageDaysToCloseOpportunity> {
+    const result = await this.averageDaysToCloseAnOpportunityRepository.average(
+      boardId,
+      filters
+    );
+    return { days: result };
+  }
+
+  public async averageDealDurationPerStage(
+    boardId: number,
+    filters?: ConversionRateFilters
+  ): Promise<AverageDealDurationPerStage[]> {
     const result =
       await this.averageDaysAnOpportunitySpendsInAStageRepository.average(
         boardId,
-        days,
         filters
       );
     return result.map(item => {

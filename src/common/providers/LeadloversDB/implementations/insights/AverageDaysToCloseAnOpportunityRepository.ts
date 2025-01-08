@@ -1,55 +1,65 @@
 import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
-import {
-  ICountLostOpportunitiesRepository,
-  LostOpportunitie
-} from '../../models/insights/ICountLostOpportunitiesRepository';
+import { IAverageDaysToCloseAnOpportunityRepository } from '../../models/insights/IAverageDaysToCloseAnOpportunityRepository';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
 } from '../../models/insights/IFindConversionRateGraphDataRepository';
 
-export class CountLostOpportunitiesRepository
-  implements ICountLostOpportunitiesRepository
+export class AverageDaysToCloseAnOpportunityRepository
+  implements IAverageDaysToCloseAnOpportunityRepository
 {
-  async count(
+  async average(
     boardId: number,
     pipelineFilters?: PipelineReportsFilters
-  ): Promise<LostOpportunitie[]> {
+  ): Promise<number> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
-      .input('BoardId', mssql.Int, boardId)
-      .query<LostOpportunitie>(this.makeQuery(pipelineFilters));
-    return recordset;
+      .input('BoardId', mssql.Int, boardId).query<{ days: number }>(`
+            WITH CTE_DealDurations AS (
+                ${this.makeQuery(pipelineFilters)}
+            ),
+            CTE_DealTimes AS (
+                SELECT
+                    dealId,
+                    DATEDIFF(DAY, CreationDate, CloseDate) AS DurationDays
+                FROM
+                    CTE_DealDurations
+                WHERE
+                    CreationDate IS NOT NULL AND CloseDate IS NOT NULL
+            )
+            SELECT
+                AVG(DurationDays) AS days
+            FROM
+                CTE_DealTimes;
+        `);
+    return recordset.length ? recordset[0].days : 0;
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-      SELECT 
-        PC.DealStatusMotive AS reason,
-        COUNT(*) AS count
-      FROM 
-        Pipeline_Card PC WITH(NOLOCK)
-      INNER JOIN 
-        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
-      INNER JOIN 
-        Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
+        SELECT
+            PDH.dealId,
+            MIN(CASE WHEN PDH.historyTypeId = 1 THEN PDH.createdAt END) AS CreationDate,
+            MAX(CASE WHEN PDH.historyTypeId = 7 THEN PDH.createdAt END) AS CloseDate
+        FROM
+            PipelineDealHistory PDH
+        INNER JOIN
+            Pipeline_Card PC ON PDH.dealId = PC.Id
+        INNER JOIN
+            Pipeline_Column PCL ON PC.ColumnId = PCL.Id
+        INNER JOIN
+            Pipeline_Board PBD ON PCL.BoardId = PBD.Id
     `;
 
-    if (filters.closedDate) {
-      query +=
-        ' LEFT JOIN [PipelineDealHistory] PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
-    }
-
     query += `
-      WHERE
-        PBD.Id = @BoardId
-        AND PC.Status = 1
-        AND PC.DealStatus = 0
-        AND PC.DealStatusMotive IN ('Preço muito alto', 'Não interessado', 'Optou por concorrente', 'Problemas no atendimento')
+        WHERE
+            AND PBD.Id = @BoardId
+            AND PC.Status = 1
+            AND PCL.Status = 1
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
@@ -59,8 +69,8 @@ export class CountLostOpportunitiesRepository
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
-      GROUP BY 
-        PC.DealStatusMotive;
+        GROUP BY
+                PDH.dealId
     `;
 
     return query;

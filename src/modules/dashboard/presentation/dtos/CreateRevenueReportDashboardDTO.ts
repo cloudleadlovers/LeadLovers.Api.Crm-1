@@ -1,19 +1,11 @@
 import { z } from 'zod';
+import { filterDefault } from '../../shared/types/InsightFilter';
 
 export const createRevenueReportDashboardIntput = z.object({
   boardId: z.number().int(),
   initialDate: z.string().datetime(),
   endDate: z.string().datetime(),
-  filters: z
-    .object({
-      responsibles: z
-        .object({
-          in: z.array(z.number().int()),
-          notIn: z.array(z.number().int())
-        })
-        .optional()
-    })
-    .optional()
+  filters: filterDefault.pick({ responsibles: true }).optional()
 });
 
 export const createRevenueReportDashboardOutput = z.object({

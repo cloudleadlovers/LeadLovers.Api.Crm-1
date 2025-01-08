@@ -1,13 +1,8 @@
+import { InsightFiltersJSON } from '@modules/dashboard/shared/types/InsightFilter';
+
 export type DealStatus = 'OPENED' | 'LOSED' | 'GAINED';
 
-export type PipelineReportsFilters = {
-  stateCards?: DealStatus[];
-  createInitialDate?: string;
-  createEndDate?: string;
-  closedInitialDate?: string;
-  closedEndDate?: string;
-  responsibles?: { in: number[]; notIn: number[] };
-};
+export type PipelineReportsFilters = InsightFiltersJSON;
 
 export type PipelineReportsQueryFilters = {
   status?: string;

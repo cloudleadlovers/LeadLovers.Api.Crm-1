@@ -1,6 +1,6 @@
 import { PipelineReportsFilters } from './IFindConversionRateGraphDataRepository';
 
-export type AverageDays = {
+export type AverageDaysPerStage = {
   stageTitle: string;
   averageDealDuration: number;
   stageOrderNumber: number;
@@ -9,7 +9,6 @@ export type AverageDays = {
 export interface IAverageDaysAnOpportunitySpendsInAStageRepository {
   average(
     boardId: number,
-    days: number,
     pipelineFilters?: PipelineReportsFilters
-  ): Promise<AverageDays[]>;
+  ): Promise<AverageDaysPerStage[]>;
 }
