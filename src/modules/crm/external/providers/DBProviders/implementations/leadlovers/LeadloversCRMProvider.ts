@@ -50,12 +50,13 @@ export default class LeadloversCRMProvider implements ICRMProvider {
   }
 
   public async createCRMStage(
-    params: Pick<CRMStage, 'crmId' | 'title' | 'order'>
+    params: Pick<CRMStage, 'crmId' | 'title' | 'order' | 'color'>
   ): Promise<void> {
     await this.insertColumnRepository.insert(
       params.crmId,
       params.title,
-      params.order
+      params.order,
+      params.color
     );
   }
 

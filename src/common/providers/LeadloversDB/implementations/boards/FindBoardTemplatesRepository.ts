@@ -11,12 +11,12 @@ export class FindBoardTemplatesRepository
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool.request().query<BoardTemplate>(`
         SELECT 
-          B.BoardId AS boardId,
-          B.BoardTitle AS boardTitle,
-          C.ColumnId AS columnId,
-          C.ColumnTitle AS columnTitle,
-          C.ColumnColor AS columnColor,
-          C.ColumnOrder AS columnOrder
+          B.Id AS boardId,
+          B.Title AS boardTitle,
+          C.Id AS columnId,
+          C.Title AS columnTitle,
+          C.Color AS columnColor,
+          C.Order AS columnOrder
         FROM
             Pipeline_Board B WITH (NOLOCK)
         INNER JOIN

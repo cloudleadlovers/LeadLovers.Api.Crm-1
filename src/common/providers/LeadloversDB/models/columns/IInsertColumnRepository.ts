@@ -1,3 +1,8 @@
 export interface IInsertColumnRepository {
-  insert(boardId: number, title: string, order: number): Promise<void>;
+  insert(
+    boardId: number,
+    title: string,
+    order: number,
+    color: string
+  ): Promise<void>;
 }
