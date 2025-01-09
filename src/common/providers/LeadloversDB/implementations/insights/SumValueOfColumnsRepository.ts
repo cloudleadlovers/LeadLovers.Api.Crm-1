@@ -90,11 +90,11 @@ export class SumValueOfColumnsRepository
       where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
-    if (filters.responsibles?.notIn.length) {
+    if (filters.responsibles?.notIn?.length) {
       where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
     }
 
-    if (filters.responsibles?.in.length) {
+    if (filters.responsibles?.in?.length) {
       where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 

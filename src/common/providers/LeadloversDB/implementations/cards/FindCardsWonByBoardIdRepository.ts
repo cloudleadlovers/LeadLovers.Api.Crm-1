@@ -2,90 +2,67 @@ import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
+  Card,
+  IFindCardsWonByBoardIdRepository
+} from '../../models/cards/FindCardsWonByBoardIdRepository';
+import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
 } from '../../models/insights/IFindConversionRateGraphDataRepository';
-import {
-  ISumWonOpportunitiesGroupedByCreationDateRepository,
-  SumWonOpportunities
-} from '../../models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 
-export class SumWonOpportunitiesGroupedByCreationDateRepository
-  implements ISumWonOpportunitiesGroupedByCreationDateRepository
+export class FindCardsWonByBoardIdRepository
+  implements IFindCardsWonByBoardIdRepository
 {
-  async sum(
+  public async find(
     boardId: number,
-    initialDate: Date,
-    endDate: Date,
-    pipelineFilters?: PipelineReportsFilters
-  ): Promise<SumWonOpportunities[]> {
+    filters?: PipelineReportsFilters
+  ): Promise<Card[]> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
-      .input('InitialDate', mssql.DateTime, initialDate)
-      .input('EndDate', mssql.DateTime, endDate).query<SumWonOpportunities>(`
-            WITH opportunities AS (
-                ${this.makeQuery(pipelineFilters)}
-            )
-            SELECT
-                creationDate,
-                SUM(opportunityValue) AS opportunitiesValue,
-                COUNT(opportunityId) AS opportunitiesNumber
-            FROM 
-                opportunities
-            WHERE
-                rowNumber = 1
-            GROUP BY
-                creationDate
-            ORDER BY
-                creationDate;
-        `);
+      .query<Card>(this.makeQuery(filters));
     return recordset;
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
+
     let query = `
         SELECT
-            PDH.dealId AS opportunityId,
-            PC.CardValue AS opportunityValue,
-            CONVERT(DATE, PDH.CreatedAt) AS creationDate,
-            ROW_NUMBER() OVER (PARTITION BY PDH.dealId ORDER BY PDH.CreatedAt DESC) AS rowNumber
+            PC.Id AS id,
+            PC.ColumnId As columnId,
+            ISNULL(PC.LeadName, '') As name,
+            ISNULL(PC.LeadEmail, '') As email,
+            ISNULL(PC.LeadPhone, '') As phone,
+            PC.CardValue As value,
+            ISNULL(PC.AcesCodi, 0) As responsibleId,
+            ISNULL(UA.AcesUsuaNome, '') AS responsibleName,
+            PC.CreateDate As createdAt,
+            PDH.CreatedAt As gainedAt
         FROM
-            pipelineDealHistory PDH WITH(NOLOCK)
-        INNER JOIN 
             Pipeline_Card PC WITH(NOLOCK)
-        ON
-            PC.Id = PDH.dealId
-        INNER JOIN 
-            Pipeline_Column PCL WITH(NOLOCK) 
-        ON 
-            PCL.Id = PC.ColumnId
-        INNER JOIN 
-            Pipeline_Board PBD WITH(NOLOCK) 
-        ON 
-            PBD.Id = PCL.BoardId
-    `;
-
-    query += `
+        INNET JOIN
+            Pipeline_Column PCL WITH(NOLOCK) ON PC.ColumnId = PCL.Id 
+        INNET JOIN
+            Pipeline_Board PB WITH(NOLOCK) ON PCL.BoardId = PB.Id 
+        INNER JOIN
+            pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId
+        LEFT JOIN
+            UsuaSistAces UA WITH(NOLOCK) ON PC.AcesCodi = UA.AcesCodi
         WHERE
-            PBD.Id = @BoardId
+            PB.Id = @BoardId 
+            AND PCL.Status = 1
+            AND PC.Status = 1
             AND PC.DealStatus = 1
             AND PDH.HistoryTypeId = 7
-            AND PDH.CreatedAt BETWEEN @InitialDate AND @EndDate
     `;
+
+    if (filters.closedDate) query += ` ${filters.closedDate}`;
 
     if (filters.status) query += ` ${filters.status}`;
 
     if (filters.user) query += ` ${filters.user}`;
-
-    query += `
-        GROUP BY
-            PDH.dealId,
-            PC.CardValue,
-            PDH.CreatedAt
-    `;
 
     return query;
   }
@@ -110,6 +87,17 @@ export class SumWonOpportunitiesGroupedByCreationDateRepository
         .slice(0, -1);
 
       where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+    }
+
+    if (filters.closedInitialDate && filters.closedEndDate) {
+      const closedEndDate = new Date(filters.closedEndDate);
+      closedEndDate.setDate(closedEndDate.getDate() + 1);
+      const formattedClosedEndDate = closedEndDate
+        .toISOString()
+        .replace('T', ' ')
+        .slice(0, -1);
+
+      where.closedDate += `AND PDH.CreatedAt BETWEEN '${filters.closedInitialDate}' AND '${formattedClosedEndDate}' `;
     }
 
     if (filters.responsibles?.notIn?.length) {

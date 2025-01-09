@@ -5,6 +5,7 @@ import { FindBoardsByUsuaSistCodiRepository } from './implementations/boards/Fin
 import { FindBoardTemplatesRepository } from './implementations/boards/FindBoardTemplatesRepository';
 import { InsertBoardAccessRepository } from './implementations/boards/InsertBoardAccessRepository';
 import { InsertBoardRepository } from './implementations/boards/InsertBoardRepository';
+import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
 import { InsertColumnRepository } from './implementations/columns/InsertColumnRepository';
 import { AverageDaysAnOpportunitySpendsInAStageRepository } from './implementations/insights/AverageDaysAnOpportunitySpendsInAStageRepository';
 import { AverageDaysToCloseAnOpportunityRepository } from './implementations/insights/AverageDaysToCloseAnOpportunityRepository';
@@ -26,6 +27,7 @@ import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoards
 import { IFindBoardTemplatesRepository } from './models/boards/IFindBoardTemplatesRepository';
 import { IInsertBoardAccessRepository } from './models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
+import { IFindCardsWonByBoardIdRepository } from './models/cards/FindCardsWonByBoardIdRepository';
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import { IAverageDaysToCloseAnOpportunityRepository } from './models/insights/IAverageDaysToCloseAnOpportunityRepository';
@@ -75,6 +77,11 @@ container.registerSingleton<IFindBoardTemplatesRepository>(
 container.registerSingleton<IFindBoardsByUsuaSistCodiRepository>(
   'FindBoardsByUsuaSistCodiRepository',
   FindBoardsByUsuaSistCodiRepository
+);
+
+container.registerSingleton<IFindCardsWonByBoardIdRepository>(
+  'FindCardsWonByBoardIdRepository',
+  FindCardsWonByBoardIdRepository
 );
 
 container.registerSingleton<IFindConversionRateGraphDataRepository>(

@@ -8,7 +8,10 @@ export const createConversionRateDashboardIntput = z.object({
 });
 
 export const createConversionRateDashboardOutput = z.object({
-  averageDealDuration: z.array(
+  averageDaysToCloseOpportunity: z.object({
+    days: z.number().int()
+  }),
+  averageDealDurationPerStage: z.array(
     z.object({
       stageTitle: z.string(),
       averageDealDuration: z.number().int(),

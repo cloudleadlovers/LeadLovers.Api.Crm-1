@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import IConversionRateProvider, {
+  AverageDaysToCloseOpportunity,
   AverageDealDurationPerStage,
   ConversionRate,
   ConversionRateFilters,
@@ -8,7 +9,8 @@ import IConversionRateProvider, {
 } from '@modules/dashboard/external/providers/DBProviders/models/IConversionRateProvider';
 
 type ConversionRateInsights = {
-  averageDealDuration: AverageDealDurationPerStage[];
+  averageDaysToCloseOpportunity: AverageDaysToCloseOpportunity;
+  averageDealDurationPerStage: AverageDealDurationPerStage[];
   averageValueOfWonOpportunities: number;
   conversionRate: ConversionRate[];
   lossReasons: LossReasons[];
@@ -31,7 +33,12 @@ export default class GetConversionRateInsightsService {
     boardId,
     filters
   }: Params): Promise<ConversionRateInsights> {
-    const averageDealDuration =
+    const averageDaysToCloseOpportunity =
+      await this.conversionRateProvider.averageDaysToCloseOpportunity(
+        boardId,
+        filters
+      );
+    const averageDealDurationPerStage =
       await this.conversionRateProvider.averageDealDurationPerStage(
         boardId,
         filters
@@ -47,7 +54,8 @@ export default class GetConversionRateInsightsService {
       filters
     );
     return {
-      averageDealDuration,
+      averageDaysToCloseOpportunity,
+      averageDealDurationPerStage,
       averageValueOfWonOpportunities,
       conversionRate,
       lossReasons

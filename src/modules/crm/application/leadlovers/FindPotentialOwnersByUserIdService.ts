@@ -5,7 +5,7 @@ import ICRMProvider, {
 } from '../../external/providers/DBProviders/models/ICRMProvider';
 
 @injectable()
-export default class FindPotentialOwnersByUserId {
+export default class FindPotentialOwnersByUserIdService {
   constructor(
     @inject('LeadloversCRMProvider')
     private crmProvider: ICRMProvider

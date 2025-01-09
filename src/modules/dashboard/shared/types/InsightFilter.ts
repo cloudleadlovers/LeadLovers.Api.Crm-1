@@ -10,8 +10,8 @@ export const filterDefault = z.object({
   closedEndDate: z.string().optional(),
   responsibles: z
     .object({
-      in: z.array(z.number().int()),
-      notIn: z.array(z.number().int()),
+      in: z.array(z.number().int()).optional(),
+      notIn: z.array(z.number().int()).optional(),
       isNull: z.boolean().optional()
     })
     .optional()

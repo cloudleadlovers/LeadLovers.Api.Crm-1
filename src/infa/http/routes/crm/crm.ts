@@ -16,6 +16,7 @@ const crmRouter = Router();
 crmRouter.use(authenticate);
 crmRouter.post('/', createCRM.handle);
 crmRouter.get('/', findCRMs.handle);
+
 crmRouter.get('/templates', findCRMTemplates.handle);
 crmRouter.get('/owners', findPotentialOwners.handle);
 
