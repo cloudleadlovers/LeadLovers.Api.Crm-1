@@ -24,6 +24,7 @@ export class FindOpportunitiesWonHandler {
     }
     const opportunities = await findOpportunitiesWonByCRMIdService.execute(
       input.data.crmId,
+      input.data.pagination,
       input.data.filters
     );
     const output = findOpportunitiesWonOutput.safeParse(opportunities);

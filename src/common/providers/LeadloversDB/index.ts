@@ -27,7 +27,7 @@ import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoards
 import { IFindBoardTemplatesRepository } from './models/boards/IFindBoardTemplatesRepository';
 import { IInsertBoardAccessRepository } from './models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
-import { IFindCardsWonByBoardIdRepository } from './models/cards/FindCardsWonByBoardIdRepository';
+import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import { IAverageDaysToCloseAnOpportunityRepository } from './models/insights/IAverageDaysToCloseAnOpportunityRepository';

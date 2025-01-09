@@ -14,10 +14,9 @@ type Opportunity = {
   losedAt?: Date;
 };
 
-export type FindOpportunitiesWon = {
-  totalWonValue: number;
-  totalOpportunities: number;
-  opportunities: Opportunity[];
+export type FindOpportunityPagination = {
+  limit: number;
+  lastId?: number;
 };
 
 export type FindOpportunityFilters = {
@@ -33,9 +32,17 @@ export type FindOpportunityFilters = {
   };
 };
 
+export type FindOpportunitiesWon = {
+  totalWonValue: number;
+  totalOpportunities: number;
+  opportunities: Opportunity[];
+  nextCursor?: number;
+};
+
 export interface OpportunityApi {
   findOpportunitiesWonByCRMId(
     crmId: number,
+    pagination: FindOpportunityPagination,
     filters?: FindOpportunityFilters
   ): Promise<FindOpportunitiesWon>;
 }

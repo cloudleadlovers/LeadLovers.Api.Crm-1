@@ -2,7 +2,8 @@ import { inject, injectable } from 'tsyringe';
 
 import {
   FindOpportunitiesWon,
-  FindOpportunityFilters
+  FindOpportunityFilters,
+  FindOpportunityPagination
 } from '@common/shared/integration/interfaces/OpportunityIntegration';
 import IOpportunityApiProvider from '@modules/crm/integration/providers/APIProviders/models/IOpportunityApiProvider';
 
@@ -15,10 +16,12 @@ export default class FindOpportunitiesWonByCRMIdService {
 
   public async execute(
     crmId: number,
+    pagination: FindOpportunityPagination,
     filters?: FindOpportunityFilters
   ): Promise<FindOpportunitiesWon> {
     return await this.opportunityApiProvider.findOpportunitiesWonByCRMId(
       crmId,
+      pagination,
       filters
     );
   }

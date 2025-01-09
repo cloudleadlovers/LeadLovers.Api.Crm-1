@@ -3,9 +3,11 @@ import mssql from 'mssql';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   Card,
+  FindCardsWonPaginatedResult,
   IFindCardsWonByBoardIdRepository
-} from '../../models/cards/FindCardsWonByBoardIdRepository';
+} from '../../models/cards/IFindCardsWonByBoardIdRepository';
 import {
+  Pagination,
   PipelineReportsFilters,
   PipelineReportsQueryFilters
 } from '../../models/insights/IFindConversionRateGraphDataRepository';
@@ -15,21 +17,29 @@ export class FindCardsWonByBoardIdRepository
 {
   public async find(
     boardId: number,
+    pagination: Pagination,
     filters?: PipelineReportsFilters
-  ): Promise<Card[]> {
+  ): Promise<FindCardsWonPaginatedResult> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
+      .input('Limit', mssql.Int, pagination.limit)
+      .input('LastId', mssql.Int, pagination.lastId ?? null)
       .query<Card>(this.makeQuery(filters));
-    return recordset;
+    return {
+      cards: recordset,
+      nextCursor: recordset.length
+        ? recordset[recordset.length - 1].id
+        : undefined
+    };
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
 
     let query = `
-        SELECT
+        SELECT TOP (@Limit)
             PC.Id AS id,
             PC.ColumnId As columnId,
             ISNULL(PC.LeadName, '') As name,
@@ -51,7 +61,8 @@ export class FindCardsWonByBoardIdRepository
         LEFT JOIN
             UsuaSistAces UA WITH(NOLOCK) ON PC.AcesCodi = UA.AcesCodi
         WHERE
-            PB.Id = @BoardId 
+            (@LastId IS NULL OR PC.Id < @LastId)
+            AND PB.Id = @BoardId
             AND PCL.Status = 1
             AND PC.Status = 1
             AND PC.DealStatus = 1
@@ -63,6 +74,10 @@ export class FindCardsWonByBoardIdRepository
     if (filters.status) query += ` ${filters.status}`;
 
     if (filters.user) query += ` ${filters.user}`;
+
+    query += `
+      ORDER BY PC.Id DESC;
+    `;
 
     return query;
   }

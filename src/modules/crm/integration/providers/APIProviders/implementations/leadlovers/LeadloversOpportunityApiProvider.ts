@@ -1,9 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 
-import { IFindCardsWonByBoardIdRepository } from '@common/providers/LeadloversDB/models/cards/FindCardsWonByBoardIdRepository';
+import { IFindCardsWonByBoardIdRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardsWonByBoardIdRepository';
 import {
   FindOpportunitiesWon,
-  FindOpportunityFilters
+  FindOpportunityFilters,
+  FindOpportunityPagination
 } from '@common/shared/integration/interfaces/OpportunityIntegration';
 import IOpportunityApiProvider from '../../models/IOpportunityApiProvider';
 
@@ -18,19 +19,21 @@ export default class LeadloversOpportunityApiProvider
 
   public async findOpportunitiesWonByCRMId(
     crmId: number,
+    pagination: FindOpportunityPagination,
     filters?: FindOpportunityFilters
   ): Promise<FindOpportunitiesWon> {
-    const opportunities = await this.FindCardsWonByBoardIdRepository.find(
+    const result = await this.FindCardsWonByBoardIdRepository.find(
       crmId,
+      pagination,
       filters
     );
     return {
-      totalOpportunities: opportunities.length,
-      totalWonValue: opportunities.reduce((totalValue, opportunity) => {
+      totalOpportunities: result.cards.length,
+      totalWonValue: result.cards.reduce((totalValue, opportunity) => {
         totalValue = totalValue + opportunity.value;
         return totalValue;
       }, 0),
-      opportunities: opportunities.map(opportunity => {
+      opportunities: result.cards.map(opportunity => {
         return {
           id: opportunity.id,
           columnId: opportunity.columnId,
@@ -45,7 +48,8 @@ export default class LeadloversOpportunityApiProvider
           createdAt: opportunity.createdAt,
           gainedAt: opportunity.gainedAt
         };
-      })
+      }),
+      nextCursor: result.nextCursor
     };
   }
 }

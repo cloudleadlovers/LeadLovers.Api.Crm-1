@@ -1,13 +1,10 @@
 import { z } from 'zod';
 
-import { opportunityStatus } from '@modules/dashboard/shared/types/InsightFilter';
-
 export const findOpportunitiesWonIntput = z
   .object({
     crmId: z.number().int(),
-    page: z.number().int(),
-    items: z.number().int(),
-    stateCards: z.array(opportunityStatus).optional(),
+    limit: z.number().int(),
+    lastId: z.number().int().optional(),
     createInitialDate: z.string().optional(),
     createEndDate: z.string().optional(),
     closedInitialDate: z.string().optional(),
@@ -24,11 +21,10 @@ export const findOpportunitiesWonIntput = z
     return {
       ...val,
       pagination: {
-        page: val.page,
-        items: val.items
+        limit: val.limit,
+        lastId: val.lastId
       },
       filters: {
-        stateCards: val.stateCards,
         createInitialDate: val.closedInitialDate,
         createEndDate: val.closedEndDate,
         closedInitialDate: val.closedInitialDate,
@@ -58,5 +54,6 @@ export const findOpportunitiesWonOutput = z.object({
       createdAt: z.date(),
       gainedAt: z.date()
     })
-  )
+  ),
+  nextCursor: z.number().int().optional()
 });
