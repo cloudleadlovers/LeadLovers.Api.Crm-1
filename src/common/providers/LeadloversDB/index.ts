@@ -22,12 +22,16 @@ import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementa
 import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
 
+import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
+import { FindColumnsByBoardIdRepository } from './implementations/columns/FindColumnsByBoardIdRepository';
 import { IFindBoardResponsiblesRepository } from './models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoardsByUsuaSistCodiRepository';
 import { IFindBoardTemplatesRepository } from './models/boards/IFindBoardTemplatesRepository';
 import { IInsertBoardAccessRepository } from './models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
+import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
 import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
+import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsByBoardIdRepository';
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import { IAverageDaysToCloseAnOpportunityRepository } from './models/insights/IAverageDaysToCloseAnOpportunityRepository';
@@ -79,9 +83,19 @@ container.registerSingleton<IFindBoardsByUsuaSistCodiRepository>(
   FindBoardsByUsuaSistCodiRepository
 );
 
+container.registerSingleton<IFindCardsByColumnIdRepository>(
+  'FindCardsByColumnIdRepository',
+  FindCardsByColumnIdRepository
+);
+
 container.registerSingleton<IFindCardsWonByBoardIdRepository>(
   'FindCardsWonByBoardIdRepository',
   FindCardsWonByBoardIdRepository
+);
+
+container.registerSingleton<IFindColumnsByBoardIdRepository>(
+  'FindColumnsByBoardIdRepository',
+  FindColumnsByBoardIdRepository
 );
 
 container.registerSingleton<IFindConversionRateGraphDataRepository>(

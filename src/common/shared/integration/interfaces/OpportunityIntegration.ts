@@ -1,3 +1,5 @@
+import { Pagination } from '@common/shared/types/Pagination';
+
 type Opportunity = {
   id: number;
   columnId: number;
@@ -10,13 +12,8 @@ type Opportunity = {
     name: string | null;
   };
   createdAt: Date;
-  gainedAt?: Date;
-  losedAt?: Date;
-};
-
-export type FindOpportunityPagination = {
-  limit: number;
-  lastId?: number;
+  gainedAt?: Date | null;
+  losedAt?: Date | null;
 };
 
 export type FindOpportunityFilters = {
@@ -42,7 +39,7 @@ export type FindOpportunitiesWon = {
 export interface OpportunityApi {
   findOpportunitiesWonByCRMId(
     crmId: number,
-    pagination: FindOpportunityPagination,
+    pagination: Pagination,
     filters?: FindOpportunityFilters
   ): Promise<FindOpportunitiesWon>;
 }
