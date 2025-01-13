@@ -25,55 +25,49 @@ export class SumWonOpportunitiesGroupedByCreationDateRepository
       .input('BoardId', mssql.Int, boardId)
       .input('InitialDate', mssql.DateTime, initialDate)
       .input('EndDate', mssql.DateTime, endDate).query<SumWonOpportunities>(`
-            WITH opportunities AS (
-                ${this.makeQuery(pipelineFilters)}
-            )
-            SELECT
-                creationDate,
-                SUM(opportunityValue) AS opportunitiesValue,
-                COUNT(opportunityId) AS opportunitiesNumber
-            FROM 
-                opportunities
-            WHERE
-                rowNumber = 1
-            GROUP BY
-                creationDate
-            ORDER BY
-                creationDate;
-        `);
+        WITH cards AS (
+          ${this.makeQuery(pipelineFilters)}
+        )
+        SELECT
+          createdAt,
+          SUM(cardValue) AS totalValueCards,
+          COUNT(cardId) AS totalCards
+        FROM 
+          cards
+        WHERE
+          rowNumber = 1
+        GROUP BY
+          createdAt
+        ORDER BY
+          createdAt;
+      `);
     return recordset;
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-        SELECT
-            PDH.dealId AS opportunityId,
-            PC.CardValue AS opportunityValue,
-            CONVERT(DATE, PDH.CreatedAt) AS creationDate,
-            ROW_NUMBER() OVER (PARTITION BY PDH.dealId ORDER BY PDH.CreatedAt DESC) AS rowNumber
-        FROM
-            pipelineDealHistory PDH WITH(NOLOCK)
-        INNER JOIN 
-            Pipeline_Card PC WITH(NOLOCK)
-        ON
-            PC.Id = PDH.dealId
-        INNER JOIN 
-            Pipeline_Column PCL WITH(NOLOCK) 
-        ON 
-            PCL.Id = PC.ColumnId
-        INNER JOIN 
-            Pipeline_Board PBD WITH(NOLOCK) 
-        ON 
-            PBD.Id = PCL.BoardId
+      SELECT
+        PDH.dealId AS cardId,
+        PC.CardValue AS cardValue,
+        CONVERT(DATE, PDH.CreatedAt) AS createdAt,
+        ROW_NUMBER() OVER (PARTITION BY PDH.dealId ORDER BY PDH.CreatedAt DESC) AS rowNumber
+      FROM
+        pipelineDealHistory PDH WITH(NOLOCK)
+      INNER JOIN 
+        Pipeline_Card PC WITH(NOLOCK) ON PC.Id = PDH.dealId
+      INNER JOIN 
+        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
+      INNER JOIN 
+        Pipeline_Board PB WITH(NOLOCK) ON PB.Id = PCL.BoardId
     `;
 
     query += `
-        WHERE
-            PBD.Id = @BoardId
-            AND PC.DealStatus = 1
-            AND PDH.HistoryTypeId = 7
-            AND PDH.CreatedAt BETWEEN @InitialDate AND @EndDate
+      WHERE
+        PB.Id = @BoardId
+        AND PC.DealStatus = 1
+        AND PDH.HistoryTypeId = 7
+        AND PDH.CreatedAt BETWEEN @InitialDate AND @EndDate
     `;
 
     if (filters.status) query += ` ${filters.status}`;
@@ -81,10 +75,10 @@ export class SumWonOpportunitiesGroupedByCreationDateRepository
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
-        GROUP BY
-            PDH.dealId,
-            PC.CardValue,
-            PDH.CreatedAt
+      GROUP BY
+        PDH.dealId,
+        PC.CardValue,
+        PDH.CreatedAt
     `;
 
     return query;
@@ -109,19 +103,19 @@ export class SumWonOpportunitiesGroupedByCreationDateRepository
         .replace('T', ' ')
         .slice(0, -1);
 
-      where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+      where.status += ` AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
     if (filters.responsibles?.notIn?.length) {
-      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+      where.user += ` AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
     }
 
     if (filters.responsibles?.in?.length) {
-      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
+      where.user += ` AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     if (filters.responsibles?.isNull) {
-      where.user += `AND PC.AcesCodi IS NULL `;
+      where.user += ` AND PC.AcesCodi IS NULL `;
     }
 
     return where;

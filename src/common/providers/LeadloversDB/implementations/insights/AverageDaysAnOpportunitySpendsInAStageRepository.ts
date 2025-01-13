@@ -21,54 +21,56 @@ export class AverageDaysAnOpportunitySpendsInAStageRepository
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId).query<AverageDaysPerStage>(`
-            SELECT
-                PCL.Title AS stageTitle,
-                AVG(
-                    DATEDIFF(
-                        DAY,
-                        Movements.actionDate,
-                        ISNULL(Movements.nextDate, GETDATE())
-                    )
-                ) AS averageDealDuration,
-                ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS stageOrderNumber
-            FROM (${this.makeQuery(pipelineFilters)}) AS Movements
-            INNER JOIN 
-                Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movements.ColumnFromId
-            GROUP BY 
-                PCL.Title,
-                PCL.[Order],
-                PCL.[CreateDate];
-        `);
+        SELECT
+          PCL.Title AS columnTitle,
+          AVG(
+            DATEDIFF(
+              DAY,
+              Movements.actionDate,
+              ISNULL(Movements.nextDate, GETDATE())
+            )
+          ) AS averageDealDuration,
+          ROW_NUMBER() OVER(ORDER BY PCL.[Order], PCL.[CreateDate]  ASC) AS columnOrderNumber
+        FROM (
+          ${this.makeQuery(pipelineFilters)}
+        ) AS Movements
+        INNER JOIN 
+          Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = Movements.columnFromId
+        GROUP BY 
+          PCL.Title,
+          PCL.[Order],
+          PCL.[CreateDate];
+      `);
     return recordset;
   }
 
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-        SELECT
-            PDH.id,
-            PDH.dealId AS cardId,
-            PDH.columnSourceId AS ColumnFromId,
-            PDH.columnDestinationId AS ColumnToId,
-            PDH.createdAt AS actionDate,
-            LEAD(PDH.createdAt) OVER (
-                PARTITION BY PDH.dealId
-                ORDER BY PDH.createdAt
-            ) AS nextDate
-        FROM 
-            pipelineDealHistory PDH WITH(NOLOCK)
-        INNER JOIN 
-            Pipeline_Card PC WITH(NOLOCK) ON PC.Id = PDH.dealId
-        INNER JOIN 
-            Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
-        INNER JOIN 
-            Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
+      SELECT
+        PDH.id,
+        PDH.dealId AS cardId,
+        PDH.columnSourceId AS columnFromId,
+        PDH.columnDestinationId AS columnToId,
+        PDH.createdAt AS actionDate,
+        LEAD(PDH.createdAt) OVER (
+            PARTITION BY PDH.dealId
+            ORDER BY PDH.createdAt
+        ) AS nextDate
+      FROM 
+        pipelineDealHistory PDH WITH(NOLOCK)
+      INNER JOIN 
+        Pipeline_Card PC WITH(NOLOCK) ON PC.Id = PDH.dealId
+      INNER JOIN 
+        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
+      INNER JOIN 
+        Pipeline_Board PB WITH(NOLOCK) ON PB.Id = PCL.BoardId
     `;
 
     query += `
       WHERE
         (PDH.historyTypeId = 1 OR PDH.historyTypeId = 2)
-        AND PBD.Id = @BoardId
+        AND PB.Id = @BoardId
         AND PC.Status = 1
         AND PCL.Status = 1
     `;
@@ -99,19 +101,19 @@ export class AverageDaysAnOpportunitySpendsInAStageRepository
         .replace('T', ' ')
         .slice(0, -1);
 
-      where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+      where.status += ` AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
     if (filters.responsibles?.notIn?.length) {
-      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+      where.user += ` AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
     }
 
     if (filters.responsibles?.in?.length) {
-      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
+      where.user += ` AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     if (filters.responsibles?.isNull) {
-      where.user += `AND PC.AcesCodi IS NULL `;
+      where.user += ` AND PC.AcesCodi IS NULL `;
     }
 
     return where;

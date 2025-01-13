@@ -24,32 +24,34 @@ export class FindBoardsByUsuaSistCodiRepository
 
   private makeQuery(filter?: FindBoardsFilters): string {
     let query = `
-        SELECT 
-            PB.[Id] AS id,
-            PB.[UsuaSistCodi] as userId,
-            ISNULL(PB.[Logo], '') AS logo,
-            PB.[Title] AS title,
-            ISNULL(PB.[Goal], 0) AS goal,
-            ISNULL(PB.[Rule], 'all-crm') AS rule,
-            COUNT(PC.[Id]) AS cardQuantity,
-            SUM(CASE
-                WHEN PC.[Status] NOT IN (0, 2) AND PC.[DealStatus] = 1 THEN PC.[CardValue] 
-                ELSE 0 
-            END) AS totalCardValue,
-            PB.[CreateDate] AS createdAt
-        FROM 
-            [Pipeline_Board] PB WITH (NOLOCK)
-        LEFT JOIN 
-            [Pipeline_Column] PCL WITH (NOLOCK)
-            ON PCL.[BoardId] = PB.[Id] AND PCL.[Status] = 1
-        LEFT JOIN 
-            [Pipeline_Card] PC WITH (NOLOCK)
-            ON PC.[ColumnId] = PCL.[Id]
-            AND PC.[Status] NOT IN (0, 2)
-        WHERE 
-            PB.[UsuaSistCodi] = @UsuaSistCodi 
-            AND PB.[AcesCodi] IS NULL 
-            AND PB.[Status] = 1
+      SELECT 
+        PB.[Id] AS id,
+        PB.[UsuaSistCodi] AS userId,
+        ISNULL(PB.[Logo], '') AS logo,
+        PB.[Title] AS title,
+        ISNULL(PB.[Goal], 0) AS goal,
+        ISNULL(PB.[Rule], 'all-crm') AS rule,
+        COUNT(PC.[Id]) AS cardQuantity,
+        SUM(CASE
+          WHEN PC.[Status] NOT IN (0, 2) AND PC.[DealStatus] = 1 THEN PC.[CardValue] 
+          ELSE 0 
+        END) AS totalCardValue,
+        PB.[CreateDate] AS createdAt
+      FROM 
+        [Pipeline_Board] PB WITH(NOLOCK)
+      LEFT JOIN 
+        [Pipeline_Column] PCL WITH(NOLOCK)
+      ON 
+        PCL.[BoardId] = PB.[Id] AND PCL.[Status] = 1
+      LEFT JOIN 
+        [Pipeline_Card] PC WITH(NOLOCK)
+      ON 
+        PC.[ColumnId] = PCL.[Id]
+        AND PC.[Status] NOT IN (0, 2)
+      WHERE 
+        PB.[UsuaSistCodi] = @UsuaSistCodi 
+        AND PB.[AcesCodi] IS NULL 
+        AND PB.[Status] = 1
     `;
 
     if (filter?.createInitialDate && filter?.createEndDate) {
@@ -63,14 +65,17 @@ export class FindBoardsByUsuaSistCodiRepository
     }
 
     query += `
-        GROUP BY 
-            PB.[Id],
-            PB.[Logo],
-            PB.[Title],
-            PB.[Goal],
-            PB.[CreateDate]
-        ORDER BY 
-            PB.[CreateDate] ASC;
+      GROUP BY 
+        PB.[Id],
+        PB.[Logo],
+        PB.[Title],
+        PB.[Goal],
+        PB.[CreateDate]
+    `;
+
+    query += `
+      ORDER BY 
+        PB.[CreateDate] ASC;
     `;
 
     return query;

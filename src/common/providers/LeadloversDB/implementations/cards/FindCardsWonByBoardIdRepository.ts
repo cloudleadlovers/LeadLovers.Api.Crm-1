@@ -39,34 +39,34 @@ export class FindCardsWonByBoardIdRepository
     const filters = this.makeFilters(pipelineFilters);
 
     let query = `
-        SELECT TOP (@Limit)
-            PC.Id AS id,
-            PC.ColumnId As columnId,
-            ISNULL(PC.LeadName, '') As name,
-            ISNULL(PC.LeadEmail, '') As email,
-            ISNULL(PC.LeadPhone, '') As phone,
-            PC.CardValue As value,
-            ISNULL(PC.AcesCodi, 0) As responsibleId,
-            ISNULL(UA.AcesUsuaNome, '') AS responsibleName,
-            PC.CreateDate As createdAt,
-            PDH.CreatedAt As gainedAt
-        FROM
-            Pipeline_Card PC WITH(NOLOCK)
-        INNET JOIN
-            Pipeline_Column PCL WITH(NOLOCK) ON PC.ColumnId = PCL.Id 
-        INNET JOIN
-            Pipeline_Board PB WITH(NOLOCK) ON PCL.BoardId = PB.Id 
-        INNER JOIN
-            pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId
-        LEFT JOIN
-            UsuaSistAces UA WITH(NOLOCK) ON PC.AcesCodi = UA.AcesCodi
-        WHERE
-            (@LastId IS NULL OR PC.Id < @LastId)
-            AND PB.Id = @BoardId
-            AND PCL.Status = 1
-            AND PC.Status = 1
-            AND PC.DealStatus = 1
-            AND PDH.HistoryTypeId = 7
+      SELECT TOP (@Limit)
+        PC.Id AS id,
+        PC.ColumnId AS columnId,
+        ISNULL(PC.LeadName, '') AS name,
+        ISNULL(PC.LeadEmail, '') AS email,
+        ISNULL(PC.LeadPhone, '') AS phone,
+        PC.CardValue AS value,
+        ISNULL(PC.AcesCodi, 0) AS responsibleId,
+        ISNULL(USA.AcesUsuaNome, '') AS responsibleName,
+        PC.CreateDate AS createdAt,
+        PDH.CreatedAt AS gainedAt
+      FROM
+        Pipeline_Card PC WITH(NOLOCK)
+      INNET JOIN
+        Pipeline_Column PCL WITH(NOLOCK) ON PC.ColumnId = PCL.Id 
+      INNET JOIN
+        Pipeline_Board PB WITH(NOLOCK) ON PCL.BoardId = PB.Id 
+      INNER JOIN
+        pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId
+      LEFT JOIN
+        UsuaSistAces USA WITH(NOLOCK) ON PC.AcesCodi = USA.AcesCodi
+      WHERE
+        (@LastId IS NULL OR PC.Id < @LastId)
+        AND PB.Id = @BoardId
+        AND PCL.Status = 1
+        AND PC.Status = 1
+        AND PC.DealStatus = 1
+        AND PDH.HistoryTypeId = 7
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
@@ -76,7 +76,8 @@ export class FindCardsWonByBoardIdRepository
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
-      ORDER BY PC.Id DESC;
+      ORDER BY 
+        PC.Id DESC;
     `;
 
     return query;

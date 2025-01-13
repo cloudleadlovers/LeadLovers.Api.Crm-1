@@ -34,9 +34,9 @@ export default class LeadloversRevenueReportProvider
       );
     return result.map(item => {
       return {
-        creationDate: item.creationDate,
-        opportunitiesNumber: item.opportunitiesNumber,
-        opportunitiesValue: item.opportunitiesValue
+        creationDate: item.createdAt,
+        opportunitiesNumber: item.totalCards,
+        opportunitiesValue: item.totalValueCards
       };
     });
   }
@@ -50,7 +50,7 @@ export default class LeadloversRevenueReportProvider
       return {
         columName: item.columName,
         estimatedGoal: item.estimatedGoal,
-        opportunitiesValue: item.opportunitiesValue,
+        opportunitiesValue: item.totalValueCards,
         orderNumber: item.orderNumber
       };
     });

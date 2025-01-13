@@ -44,38 +44,38 @@ export class FindCardsByColumnIdRepository
     const filters = this.makeFilters(cardFilters);
 
     let query = `
-        SELECT TOP (@Limit)
-            PC.Id AS id,
-            PC.ColumnId AS columnId,
-            ISNULL(PC.LeadName, '') AS name,
-            ISNULL(PC.LeadEmail, '') AS email,
-            ISNULL(PC.LeadPhone, '') AS phone,
-            PC.CardValue AS value,
-            PC.CreateDate AS createdAt,
-            ISNULL(PC.AcesCodi, 0) AS responsibleId,
-            ISNULL(UA.AcesUsuaNome, '') AS responsibleName,
-            ISNULL(UA.AcesUsuaFoto, '/content/images/avatar-default.png') AS responsibleIcon ,
-            CASE 
-                WHEN PC.DealStatus = 1 THEN PDH.CreatedAt
-                ELSE NULL
-            END AS gainedAt,
-            CASE 
-                WHEN PC.DealStatus = 0 THEN PDH.CreatedAt
-                ELSE NULL
-            END AS losedAt
-        FROM
-            Pipeline_Card PC WITH(NOLOCK)
-        INNER JOIN
-            pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId
-        LEFT JOIN
-            UsuaSistAces UA WITH(NOLOCK) ON PC.AcesCodi = UA.AcesCodi
+      SELECT TOP (@Limit)
+        PC.Id AS id,
+        PC.ColumnId AS columnId,
+        ISNULL(PC.LeadName, '') AS name,
+        ISNULL(PC.LeadEmail, '') AS email,
+        ISNULL(PC.LeadPhone, '') AS phone,
+        PC.CardValue AS value,
+        PC.CreateDate AS createdAt,
+        ISNULL(PC.AcesCodi, 0) AS responsibleId,
+        ISNULL(USA.AcesUsuaNome, '') AS responsibleName,
+        ISNULL(USA.AcesUsuaFoto, '/content/images/avatar-default.png') AS responsibleIcon ,
+        CASE 
+            WHEN PC.DealStatus = 1 THEN PDH.CreatedAt
+            ELSE NULL
+        END AS gainedAt,
+        CASE 
+            WHEN PC.DealStatus = 0 THEN PDH.CreatedAt
+            ELSE NULL
+        END AS losedAt
+      FROM
+        Pipeline_Card PC WITH(NOLOCK)
+      INNER JOIN
+        pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId
+      LEFT JOIN
+        UsuaSistAces USA WITH(NOLOCK) ON PC.AcesCodi = USA.AcesCodi
     `;
 
     query += `
-        WHERE
-            (@LastId IS NULL OR PC.Id < @LastId)
-            AND PC.ColumnId = @ColumnId
-            AND PC.Status = 1
+      WHERE
+        (@LastId IS NULL OR PC.Id < @LastId)
+        AND PC.ColumnId = @ColumnId
+        AND PC.Status = 1
     `;
 
     if (filters.name) query += ` ${filters.name}`;

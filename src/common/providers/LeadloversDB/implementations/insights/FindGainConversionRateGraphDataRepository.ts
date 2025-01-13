@@ -29,33 +29,31 @@ export class FindGainConversionRateGraphDataRepository
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-        SELECT
-          'WIN' AS stageType,
-          COUNT(DISTINCT PC.ID) AS quantityOpportunities,
-          ISNULL(SUM(PC.CardValue), 0) AS totalValueOpportunities
-        FROM
-            [Pipeline_Column] PCL WITH(NOLOCK)
-        LEFT JOIN 
-            [Pipeline_Card] PC WITH(NOLOCK) 
-        ON 
-            PCL.Id = PC.ColumnId 
-            AND PC.[Status] = 1 
-            AND PC.DealStatus = 1
-        LEFT JOIN 
-            [UsuaSistAces] UA WITH(NOLOCK) 
-        ON 
-            UA.AcesCodi = PC.AcesCodi 
+      SELECT
+        'WIN' AS columnType,
+        COUNT(DISTINCT PC.ID) AS quantityCards,
+        ISNULL(SUM(PC.CardValue), 0) AS totalValueCards
+      FROM
+        [Pipeline_Column] PCL WITH(NOLOCK)
+      LEFT JOIN 
+        [Pipeline_Card] PC WITH(NOLOCK) 
+      ON 
+        PCL.Id = PC.ColumnId 
+        AND PC.[Status] = 1 
+        AND PC.DealStatus = 1
+      LEFT JOIN 
+        [UsuaSistAces] USA WITH(NOLOCK) ON USA.AcesCodi = PC.AcesCodi 
     `;
 
     if (filters.closedDate) {
       query +=
-        ' LEFT JOIN [PipelineDealHistory] PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
+        ' LEFT JOIN pipelineDealHistory PDH WITH(NOLOCK) ON PDH.dealId = PC.Id ';
     }
 
     query += `
-        WHERE 
-            PCL.BoardId = @BoardId
-            AND PCL.[Status] = 1 
+      WHERE 
+        PCL.BoardId = @BoardId
+        AND PCL.[Status] = 1 
     `;
 
     if (filters.closedDate) query += ` ${filters.closedDate}`;
@@ -65,10 +63,15 @@ export class FindGainConversionRateGraphDataRepository
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
-        GROUP BY 
-            PCL.Id, PCL.Title, PCL.[Order]
-        ORDER BY 
-            PCL.[Order]
+      GROUP BY 
+        PCL.Id, 
+        PCL.Title, 
+        PCL.[Order]
+    `;
+
+    query += `
+      ORDER BY 
+        PCL.[Order];
     `;
 
     return query;

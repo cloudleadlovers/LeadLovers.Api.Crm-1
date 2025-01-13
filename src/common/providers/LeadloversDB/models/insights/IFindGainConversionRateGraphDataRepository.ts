@@ -1,9 +1,9 @@
 import { PipelineReportsFilters } from './IFindConversionRateGraphDataRepository';
 
 export type GainConversionRateGraphData = {
-  stageType: string;
-  quantityOpportunities: number;
-  totalValueOpportunities: number;
+  columnType: string;
+  quantityCards: number;
+  totalValueCards: number;
 };
 
 export interface IFindGainConversionRateGraphDataRepository {

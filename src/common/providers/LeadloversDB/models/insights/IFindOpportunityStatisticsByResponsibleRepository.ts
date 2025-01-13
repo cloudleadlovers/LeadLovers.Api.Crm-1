@@ -2,11 +2,11 @@ import { PipelineReportsFilters } from './IFindConversionRateGraphDataRepository
 
 export type OpportunityStatisticsByResponsible = {
   responsibleName: string;
-  valueOportunities: number;
-  countWinOpportunities: number;
+  valueCards: number;
+  countWinCards: number;
   winAmount: number;
   averageTimeToWinDays: number;
-  totalOpportunities: number;
+  totalCards: number;
 };
 
 export interface IFindOpportunityStatisticsByResponsibleRepository {

@@ -1,5 +1,5 @@
 export type InsertBoardParams = {
-  userId: number;
+  usuaSistCodi: number;
   logo: string;
   title: string;
   goal: number;

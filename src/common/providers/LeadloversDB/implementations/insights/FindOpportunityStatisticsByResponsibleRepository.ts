@@ -30,43 +30,42 @@ export class FindOpportunityStatisticsByResponsibleRepository
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-        SELECT
-            USA.AcesUsuaNome AS responsibleName,
-            AVG(PC.CardValue) AS valueOportunities,
-            ISNULL(COUNT(DISTINCT CASE WHEN PC.DealStatus = 1 THEN PDH.dealId END), 0) AS countWinOpportunities,
-            ISNULL(SUM(CASE WHEN PC.DealStatus = 1 THEN PC.CardValue END), 0) AS winAmount,
-            AVG(CASE 
-                    WHEN PC.DealStatus = 1 THEN DATEDIFF(SECOND, PDH.createdAt, PDHW.latestCreatedAt) 
-                END) / 86400.0 AS averageTimeToWinDays,
-            ISNULL(COUNT(DISTINCT PDH.dealId), 0) AS totalOpportunities
-        FROM
-            Pipeline_Card PC WITH(NOLOCK)
-        INNER JOIN 
-            [UsuaSistAces] USA WITH(NOLOCK) ON USA.AcesCodi = PC.AcesCodi
-        INNER JOIN 
-            Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
-        INNER JOIN 
-            Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
-        LEFT JOIN
-            pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId AND PDH.historyTypeId = 1
-        LEFT JOIN 
-            (
-                SELECT 
-                    PDH.dealId,
-                    MAX(PDH.createdAt) AS latestCreatedAt
-                FROM 
-                    pipelineDealHistory PDH WITH(NOLOCK)
-                WHERE 
-                    PDH.historyTypeId = 7
-                GROUP BY 
-                    PDH.dealId
-            ) PDHW ON PDH.dealId = PDHW.dealId
+      SELECT
+        USA.AcesUsuaNome AS responsibleName,
+        AVG(PC.CardValue) AS valueCards,
+        ISNULL(COUNT(DISTINCT CASE WHEN PC.DealStatus = 1 THEN PDH.dealId END), 0) AS countWinCards,
+        ISNULL(SUM(CASE WHEN PC.DealStatus = 1 THEN PC.CardValue END), 0) AS winAmount,
+        AVG(CASE 
+          WHEN PC.DealStatus = 1 THEN DATEDIFF(SECOND, PDH.createdAt, PDHW.latestCreatedAt) 
+        END) / 86400.0 AS averageTimeToWinDays,
+        ISNULL(COUNT(DISTINCT PDH.dealId), 0) AS totalCards
+      FROM
+        Pipeline_Card PC WITH(NOLOCK)
+      INNER JOIN 
+        [UsuaSistAces] USA WITH(NOLOCK) ON USA.AcesCodi = PC.AcesCodi
+      INNER JOIN 
+        Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
+      INNER JOIN 
+        Pipeline_Board PB WITH(NOLOCK) ON PB.Id = PCL.BoardId
+      LEFT JOIN
+        pipelineDealHistory PDH WITH(NOLOCK) ON PC.Id = PDH.dealId AND PDH.historyTypeId = 1
+      LEFT JOIN (
+        SELECT 
+          PDH.dealId,
+          MAX(PDH.createdAt) AS latestCreatedAt
+        FROM 
+          pipelineDealHistory PDH WITH(NOLOCK)
+        WHERE 
+          PDH.historyTypeId = 7
+        GROUP BY 
+          PDH.dealId
+      ) PDHW ON PDH.dealId = PDHW.dealId
     `;
 
     query += `
-        WHERE 
-            PBD.Id = @BoardId
-            AND PC.Status = 1
+      WHERE 
+        PB.Id = @BoardId
+        AND PC.Status = 1
     `;
 
     if (filters.status) query += ` ${filters.status}`;
@@ -74,8 +73,8 @@ export class FindOpportunityStatisticsByResponsibleRepository
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
-        GROUP BY 
-            USA.AcesUsuaNome;
+      GROUP BY 
+        USA.AcesUsuaNome;
     `;
 
     return query;
@@ -100,19 +99,19 @@ export class FindOpportunityStatisticsByResponsibleRepository
         .replace('T', ' ')
         .slice(0, -1);
 
-      where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+      where.status += ` AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
     if (filters.responsibles?.notIn?.length) {
-      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+      where.user += ` AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
     }
 
     if (filters.responsibles?.in?.length) {
-      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
+      where.user += ` AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     if (filters.responsibles?.isNull) {
-      where.user += `AND PC.AcesCodi IS NULL `;
+      where.user += ` AND PC.AcesCodi IS NULL `;
     }
 
     return where;

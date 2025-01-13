@@ -18,15 +18,15 @@ export class InsertBoardAccessRepository
       .input('AcesCodi', mssql.Int, responsibleId)
       .input('AccessType', mssql.Int, roleId).query(`
         INSERT INTO Pipeline_Board_Access (
-            BoardId,
-            AcesCodi,
-            AccessType
+          BoardId,
+          AcesCodi,
+          AccessType
         ) 
         VALUES (
-            @BoardId, 
-            @AcesCodi,
-            @AccessType
-        )
+          @BoardId, 
+          @AcesCodi,
+          @AccessType
+        );
     `);
   }
 }

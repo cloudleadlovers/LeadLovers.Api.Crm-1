@@ -3,7 +3,7 @@ import { PipelineReportsFilters } from './IFindConversionRateGraphDataRepository
 export type SumValueOfColumns = {
   columName: string;
   estimatedGoal: number;
-  opportunitiesValue: number;
+  totalValueCards: number;
   orderNumber: number;
 };
 

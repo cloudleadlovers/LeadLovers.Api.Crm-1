@@ -15,32 +15,32 @@ export class InsertBoardRepository implements IInsertBoardRepository {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset: board } = await pool
       .request()
-      .input('UsuaSistCodi', mssql.Int, params.userId)
+      .input('UsuaSistCodi', mssql.Int, params.usuaSistCodi)
       .input('Title', mssql.NVarChar, params.title)
       .input('Goal', mssql.Int, params.goal)
       .input('Rule', mssql.NVarChar, params.rule)
       .input('Logo', mssql.NVarChar, params.logo).query<Board>(`
         INSERT INTO Pipeline_Board (
-            UsuaSistCodi, 
-            Title, 
-            CreateDate, 
-            Status, 
-            Goal, 
-            [Rule],
-            Logo
+          UsuaSistCodi, 
+          Title, 
+          CreateDate, 
+          Status, 
+          Goal, 
+          [Rule],
+          Logo
         ) 
         OUTPUT 
-            INSERTED.[Id] as id
+          INSERTED.[Id] as id
         VALUES (
-            @UsuaSistCodi, 
-            @Title, 
-            GETDATE(), 
-            1, 
-            @Goal, 
-            @Rule,
-            @Logo
+          @UsuaSistCodi, 
+          @Title, 
+          GETDATE(), 
+          1, 
+          @Goal, 
+          @Rule,
+          @Logo
         )
-    `);
+      `);
     return board[0].id;
   }
 }

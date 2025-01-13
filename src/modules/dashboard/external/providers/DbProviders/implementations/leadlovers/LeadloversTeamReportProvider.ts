@@ -28,13 +28,13 @@ export default class LeadloversTeamReportProvider
       return {
         responsibleName: item.responsibleName,
         winRate:
-          item.totalOpportunities > 0
-            ? (item.countWinOpportunities / item.totalOpportunities) * 100
+          item.totalCards > 0
+            ? (item.countWinCards / item.totalCards) * 100
             : 0,
-        valueOportunities: item.valueOportunities,
+        valueOportunities: item.valueCards,
         averageTimeToWinDays: item.averageTimeToWinDays ?? 0,
         winAmount: item.winAmount,
-        countWinOpportunities: item.countWinOpportunities
+        countWinOpportunities: item.countWinCards
       };
     });
   }

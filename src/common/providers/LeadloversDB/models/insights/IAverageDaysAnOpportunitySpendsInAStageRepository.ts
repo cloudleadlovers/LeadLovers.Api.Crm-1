@@ -1,9 +1,9 @@
 import { PipelineReportsFilters } from './IFindConversionRateGraphDataRepository';
 
 export type AverageDaysPerStage = {
-  stageTitle: string;
+  columnTitle: string;
   averageDealDuration: number;
-  stageOrderNumber: number;
+  columnOrderNumber: number;
 };
 
 export interface IAverageDaysAnOpportunitySpendsInAStageRepository {

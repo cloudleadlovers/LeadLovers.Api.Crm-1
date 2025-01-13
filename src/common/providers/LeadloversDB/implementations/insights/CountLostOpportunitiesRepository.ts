@@ -36,17 +36,17 @@ export class CountLostOpportunitiesRepository
       INNER JOIN 
         Pipeline_Column PCL WITH(NOLOCK) ON PCL.Id = PC.ColumnId
       INNER JOIN 
-        Pipeline_Board PBD WITH(NOLOCK) ON PBD.Id = PCL.BoardId
+        Pipeline_Board PB WITH(NOLOCK) ON PB.Id = PCL.BoardId
     `;
 
     if (filters.closedDate) {
       query +=
-        ' LEFT JOIN [PipelineDealHistory] PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
+        ' LEFT JOIN pipelineDealHistory PDH WITH(NOLOCK) ON PDH.DealId = PC.Id ';
     }
 
     query += `
       WHERE
-        PBD.Id = @BoardId
+        PB.Id = @BoardId
         AND PC.Status = 1
         AND PC.DealStatus = 0
         AND PC.DealStatusMotive IN ('Preço muito alto', 'Não interessado', 'Optou por concorrente', 'Problemas no atendimento')
@@ -85,7 +85,7 @@ export class CountLostOpportunitiesRepository
         .replace('T', ' ')
         .slice(0, -1);
 
-      where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+      where.status += ` AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
     if (filters.closedInitialDate && filters.closedEndDate) {
@@ -96,19 +96,19 @@ export class CountLostOpportunitiesRepository
         .replace('T', ' ')
         .slice(0, -1);
 
-      where.closedDate += `AND HistoryTypeId = 7 AND PDH.CreatedAt BETWEEN '${filters.closedInitialDate}' AND '${formattedClosedEndDate}' `;
+      where.closedDate += ` AND HistoryTypeId = 7 AND PDH.CreatedAt BETWEEN '${filters.closedInitialDate}' AND '${formattedClosedEndDate}' `;
     }
 
     if (filters.responsibles?.notIn?.length) {
-      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+      where.user += ` AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
     }
 
     if (filters.responsibles?.in?.length) {
-      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
+      where.user += ` AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     if (filters.responsibles?.isNull) {
-      where.user += `AND PC.AcesCodi IS NULL `;
+      where.user += ` AND PC.AcesCodi IS NULL `;
     }
 
     return where;

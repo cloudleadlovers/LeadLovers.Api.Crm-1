@@ -37,6 +37,6 @@ export class InsertColumnRepository implements IInsertColumnRepository {
           @Order,
           @Color
         )
-    `);
+      `);
   }
 }

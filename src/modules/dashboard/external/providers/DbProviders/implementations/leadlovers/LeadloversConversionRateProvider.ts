@@ -56,9 +56,9 @@ export default class LeadloversConversionRateProvider
       );
     return result.map(item => {
       return {
-        stageTitle: item.stageTitle,
+        stageTitle: item.columnTitle,
         averageDealDuration: item.averageDealDuration,
-        stageOrderNumber: Number(item.stageOrderNumber)
+        stageOrderNumber: Number(item.columnOrderNumber)
       };
     });
   }
@@ -83,13 +83,13 @@ export default class LeadloversConversionRateProvider
     );
     return result.map(item => {
       return {
-        stageId: item.stageId,
-        stageTitle: item.stageTitle,
-        stageType: item.stageType,
-        quantityOpportunities: item.quantityOpportunities,
-        totalValueOpportunities: item.totalValueOpportunities,
-        winCount: item.winCountOpportunitiesInStage ?? 0,
-        winAmountValue: item.winAmountOpportunitiesInStage ?? 0
+        stageId: item.columnId,
+        stageTitle: item.columnTitle,
+        stageType: item.columnType,
+        quantityOpportunities: item.quantityCards,
+        totalValueOpportunities: item.totalValueCards,
+        winCount: item.winCountCardsInStage ?? 0,
+        winAmountValue: item.winAmountCardsInStage ?? 0
       };
     });
   }
@@ -104,12 +104,12 @@ export default class LeadloversConversionRateProvider
     );
     if (!result) return result;
     return {
-      stageType: result.stageType,
+      stageType: result.columnType,
       quantityOpportunities:
         filters?.stateCards && !filters.stateCards.includes('GAINED')
           ? 0
-          : result.quantityOpportunities,
-      totalValueOpportunities: result.totalValueOpportunities
+          : result.quantityCards,
+      totalValueOpportunities: result.totalValueCards
     };
   }
 

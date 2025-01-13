@@ -24,19 +24,17 @@ export class FindBoardResponsiblesRepository
 
   private makeQuery(filters?: FindResponsiblesFilters): string {
     let query = `
-        SELECT 
-            PBA.AcesCodi AS id, 
-            USA.AcesUsuaNome AS name, 
-            USA.AcesUsuaFoto AS photo,
-            ISNULL(PBA.AccessType, 3) AS roleId
-        FROM 
-            Pipeline_Board_Access PBA WITH (NOLOCK) 
-        INNER JOIN 
-            UsuaSistAces USA WITH (NOLOCK) 
-        ON 
-            USA.AcesCodi = PBA.AcesCodi 
-        WHERE 
-            PBA.BoardId = @BoardId
+      SELECT 
+        PBA.AcesCodi AS id, 
+        USA.AcesUsuaNome AS name, 
+        ISNULL(USA.AcesUsuaFoto, '/content/images/avatar-default.png') AS photo,
+        ISNULL(PBA.AccessType, 3) AS roleId
+      FROM 
+        Pipeline_Board_Access PBA WITH(NOLOCK) 
+      INNER JOIN 
+        UsuaSistAces USA WITH(NOLOCK) ON USA.AcesCodi = PBA.AcesCodi 
+      WHERE 
+        PBA.BoardId = @BoardId
     `;
 
     if (filters?.responsibleName) {

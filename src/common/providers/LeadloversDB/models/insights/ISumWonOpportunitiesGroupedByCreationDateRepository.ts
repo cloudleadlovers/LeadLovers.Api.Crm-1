@@ -1,9 +1,9 @@
 import { PipelineReportsFilters } from './IFindConversionRateGraphDataRepository';
 
 export type SumWonOpportunities = {
-  creationDate: Date;
-  opportunitiesValue: number;
-  opportunitiesNumber: number;
+  createdAt: Date;
+  totalValueCards: number;
+  totalCards: number;
 };
 
 export interface ISumWonOpportunitiesGroupedByCreationDateRepository {

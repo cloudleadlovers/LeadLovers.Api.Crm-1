@@ -4,35 +4,40 @@ import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { PipelineReportsFilters } from '../../models/insights/IFindConversionRateGraphDataRepository';
 import { IInsertReportFilterRepository } from '../../models/insights/IInsertReportFilterRepository';
 
+type ReportFilter = {
+  id: number;
+};
+
 export class InsertReportFilterRepository
   implements IInsertReportFilterRepository
 {
   async insert(
-    userId: number,
+    usuaSistCodi: number,
     filterName: string,
     filters: PipelineReportsFilters
   ): Promise<number> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset: filter } = await pool
       .request()
-      .input('UsuaSistCodi', mssql.Int, userId)
+      .input('UsuaSistCodi', mssql.Int, usuaSistCodi)
       .input('ReportName', mssql.NVarChar, filterName)
-      .input('FilterJson', mssql.NVarChar, JSON.stringify(filters)).query(`
+      .input('FilterJson', mssql.NVarChar, JSON.stringify(filters))
+      .query<ReportFilter>(`
         INSERT INTO Pipeline_Reports (
-            ReportDataCada, 
-            ReportName, 
-            FilterJson, 
-            UsuaSistCodi
+          ReportDataCada, 
+          ReportName, 
+          FilterJson, 
+          UsuaSistCodi
         ) 
         OUTPUT 
-            INSERTED.[Id] AS id
+          INSERTED.[Id] AS id
         VALUES (
-            GETDATE(), 
-            @ReportName, 
-            @FilterJson, 
-            @UsuaSistCodi
+          GETDATE(), 
+          @ReportName, 
+          @FilterJson, 
+          @UsuaSistCodi
         )
-    `);
-    return filter[0].id;
+      `);
+    return filter.length ? filter[0].id : 0;
   }
 }

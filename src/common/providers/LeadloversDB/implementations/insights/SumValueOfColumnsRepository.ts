@@ -28,25 +28,23 @@ export class SumValueOfColumnsRepository
   private makeQuery(pipelineFilters?: PipelineReportsFilters): string {
     const filters = this.makeFilters(pipelineFilters);
     let query = `
-        SELECT
-            PCL.Title as columName,
-            ISNULL(PCL.ColumnDefaultValue, 0) as estimatedGoal,
-            SUM(ISNULL(PC.CardValue, 0)) AS opportunitiesValue,
-            PCL.[Order] As orderNumber
-        FROM
-            Pipeline_Column PCL WITH(NOLOCK)
-        INNER JOIN 
-            Pipeline_Card PC WITH(NOLOCK)
-        ON
-            PC.ColumnId = PCL.Id
+      SELECT
+        PCL.Title as columName,
+        ISNULL(PCL.ColumnDefaultValue, 0) as estimatedGoal,
+        SUM(ISNULL(PC.CardValue, 0)) AS totalValueCards,
+        PCL.[Order] As orderNumber
+      FROM
+        Pipeline_Column PCL WITH(NOLOCK)
+      INNER JOIN 
+        Pipeline_Card PC WITH(NOLOCK) ON PC.ColumnId = PCL.Id
     `;
 
     query += `
-        WHERE
-            PCL.BoardId = @BoardId
-            AND PCL.Status = 1
-            AND PC.DealStatus = 1
-            AND PC.Status = 1
+      WHERE
+        PCL.BoardId = @BoardId
+        AND PCL.Status = 1
+        AND PC.DealStatus = 1
+        AND PC.Status = 1
     `;
 
     if (filters.status) query += ` ${filters.status}`;
@@ -54,15 +52,15 @@ export class SumValueOfColumnsRepository
     if (filters.user) query += ` ${filters.user}`;
 
     query += `
-        GROUP BY
-            PCL.Title, 
-            PCL.ColumnDefaultValue,
-            PCL.[Order]
+      GROUP BY
+        PCL.Title, 
+        PCL.ColumnDefaultValue,
+        PCL.[Order]
     `;
 
     query += `
-        ORDER BY 
-            PCL.[Order] ASC;
+      ORDER BY 
+        PCL.[Order] ASC;
     `;
 
     return query;
@@ -87,19 +85,19 @@ export class SumValueOfColumnsRepository
         .replace('T', ' ')
         .slice(0, -1);
 
-      where.status += `AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
+      where.status += ` AND PC.CreateDate BETWEEN '${filters.createInitialDate}' AND '${formattedCreateEndDate}' `;
     }
 
     if (filters.responsibles?.notIn?.length) {
-      where.user += `AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
+      where.user += ` AND PC.AcesCodi NOT IN (${filters.responsibles.notIn}) `;
     }
 
     if (filters.responsibles?.in?.length) {
-      where.user += `AND PC.AcesCodi IN (${filters.responsibles.in}) `;
+      where.user += ` AND PC.AcesCodi IN (${filters.responsibles.in}) `;
     }
 
     if (filters.responsibles?.isNull) {
-      where.user += `AND PC.AcesCodi IS NULL `;
+      where.user += ` AND PC.AcesCodi IS NULL `;
     }
 
     return where;

@@ -15,17 +15,17 @@ export class FindUsersByUsuaSistCodiRepository
       .request()
       .input('UsuaSistCodi', mssql.Int, usuaSistCodi).query<User>(`
         SELECT 
-          UA.AcesCodi AS id, 
-          UA.AcesUsuaNome AS name,
-          ISNULL(UA.AcesUsuaFoto, '/content/images/avatar-default.png') AS photo 
+          USA.AcesCodi AS id, 
+          USA.AcesUsuaNome AS name,
+          ISNULL(USA.AcesUsuaFoto, '/content/images/avatar-default.png') AS photo 
         FROM 
-          UsuaSistAces UA WITH(NOLOCK) 
+          UsuaSistAces USA WITH(NOLOCK) 
         WHERE 
-          UA.UsuaSistCodi = @user 
-          AND UA.AcesUsuaRemo = 0
-          AND UA.AcesUsuaAtiv = 1
+          USA.UsuaSistCodi = @user 
+          AND USA.AcesUsuaRemo = 0
+          AND USA.AcesUsuaAtiv = 1
         ORDER BY 
-          UA.AcesUsuaNome;
+          USA.AcesUsuaNome;
       `);
     return recordset;
   }

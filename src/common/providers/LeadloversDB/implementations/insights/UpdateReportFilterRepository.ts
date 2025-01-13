@@ -19,12 +19,12 @@ export class UpdateReportFilterRepository
       .input('ReportName', mssql.NVarChar, filterName)
       .input('FilterJson', mssql.NVarChar, JSON.stringify(filters)).query(`
         UPDATE 
-            Pipeline_Reports 
+          Pipeline_Reports 
         SET
-            ReportName = @ReportName, 
-            FilterJson = @FilterJson
+          ReportName = @ReportName, 
+          FilterJson = @FilterJson
         WHERE
-            Id = @Id
-    `);
+          Id = @Id;
+      `);
   }
 }
