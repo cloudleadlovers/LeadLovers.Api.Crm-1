@@ -10,6 +10,7 @@ import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonBy
 import { IFindColumnByTitleRepository } from './models/columns/IFindColumnByTitleRepository';
 import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsByBoardIdRepository';
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
+import { IUpdateColumnRepository } from './models/columns/IUpdateColumnRepository';
 import { IInsertPipelineHistoryRepository } from './models/history/IInsertPipelineHistoryRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import { IAverageDaysToCloseAnOpportunityRepository } from './models/insights/IAverageDaysToCloseAnOpportunityRepository';
@@ -34,8 +35,10 @@ import { InsertBoardRepository } from './implementations/boards/InsertBoardRepos
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
 import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
 import { FindColumnByTitleRepository } from './implementations/columns/FindColumnByTitleRepository';
+import { FindColumnRepository } from './implementations/columns/FindColumnRepository';
 import { FindColumnsByBoardIdRepository } from './implementations/columns/FindColumnsByBoardIdRepository';
 import { InsertColumnRepository } from './implementations/columns/InsertColumnRepository';
+import { UpdateColumnRepository } from './implementations/columns/UpdateColumnRepository';
 import { InsertPipelineHistoryRepository } from './implementations/history/InsertPipelineHistoryRepository';
 import { AverageDaysAnOpportunitySpendsInAStageRepository } from './implementations/insights/AverageDaysAnOpportunitySpendsInAStageRepository';
 import { AverageDaysToCloseAnOpportunityRepository } from './implementations/insights/AverageDaysToCloseAnOpportunityRepository';
@@ -51,6 +54,7 @@ import { SumValueOfColumnsRepository } from './implementations/insights/SumValue
 import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementations/insights/SumWonOpportunitiesGroupedByCreationDateRepository';
 import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
+import { IFindColumnRepository } from './models/columns/IFindColumnRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -75,6 +79,11 @@ container.registerSingleton<ICountLostOpportunitiesRepository>(
 container.registerSingleton<IFindBoardResponsiblesRepository>(
   'FindBoardResponsiblesRepository',
   FindBoardResponsiblesRepository
+);
+
+container.registerSingleton<IFindColumnRepository>(
+  'FindColumnRepository',
+  FindColumnRepository
 );
 
 container.registerSingleton<IFindColumnTemplatesRepository>(
@@ -170,6 +179,11 @@ container.registerSingleton<ISumValueOfColumnsRepository>(
 container.registerSingleton<ISumWonOpportunitiesGroupedByCreationDateRepository>(
   'SumWonOpportunitiesGroupedByCreationDateRepository',
   SumWonOpportunitiesGroupedByCreationDateRepository
+);
+
+container.registerSingleton<IUpdateColumnRepository>(
+  'UpdateColumnRepository',
+  UpdateColumnRepository
 );
 
 container.registerSingleton<IUpdateReportFilterRepository>(
