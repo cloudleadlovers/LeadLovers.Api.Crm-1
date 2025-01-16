@@ -8,19 +8,17 @@ export class CreateCRMHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
     const createCRMService = container.resolve(CreateCRMService);
 
-    const userId = Number(request.user.key);
-    const userEmail = request.user.email;
-    const input = createCRMInput.safeParse(request.body);
+    const input = createCRMInput.safeParse({
+      userId: Number(request.user.key),
+      userEmail: request.user.email,
+      ...request.body
+    });
     if (!input.success) {
       return response
         .status(400)
         .json({ status: 'error', result: input.error });
     }
-    const crm = await createCRMService.execute({
-      userId,
-      userEmail,
-      ...input.data
-    });
+    const crm = await createCRMService.execute(input.data);
     const output = createCRMOutput.safeParse(crm);
     if (!output.success) {
       return response

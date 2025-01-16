@@ -2,15 +2,11 @@ import { inject, injectable } from 'tsyringe';
 
 import { LogText } from '@common/shared/enums/LogText';
 import IStageProvider from '@modules/crm/external/providers/DBProviders/models/IStageProvider';
-import { CreateCRMInput } from '@modules/crm/presentation/dtos/CreateCRMDTO';
-import ICRMProvider, {
-  CRM
-} from '../../external/providers/DBProviders/models/ICRMProvider';
-
-type CreateCRMParams = {
-  userId: number;
-  userEmail: string;
-} & CreateCRMInput;
+import {
+  CreateCRMInput,
+  CreateCRMOutput
+} from '@modules/crm/presentation/dtos/CreateCRMDTO';
+import ICRMProvider from '../../external/providers/DBProviders/models/ICRMProvider';
 
 @injectable()
 export default class CreateCRMService {
@@ -21,7 +17,7 @@ export default class CreateCRMService {
     private stageProvider: IStageProvider
   ) {}
 
-  public async execute(params: CreateCRMParams): Promise<Pick<CRM, 'id'>> {
+  public async execute(params: CreateCRMInput): Promise<CreateCRMOutput> {
     const crm = await this.crmProvider.createCRM(params);
     await this.crmProvider.logCRMCreation(crm.id, params.userId, {
       text: LogText.CRMCreated,

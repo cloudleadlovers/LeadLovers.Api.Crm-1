@@ -7,15 +7,17 @@ import { FindCRMsHandler } from '@modules/crm/presentation/handlers/FindCRMsHand
 import { FindPotentialOwnersHandler } from '@modules/crm/presentation/handlers/FindPotentialOwnersHandler';
 import { FindStageContentHandler } from '@modules/crm/presentation/handlers/FindStageContentHandler';
 import { FindStageTemplatesHandler } from '@modules/crm/presentation/handlers/FindStageTemplatesHandler';
+import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateStageHandler';
 import { authenticate } from 'infa/http/middlewares/authJWT';
 
 const createCRM = new CreateCRMHandler();
-const createStageHandler = new CreateStageHandler();
+const createStage = new CreateStageHandler();
 const findCRMContent = new FindCRMContentHandler();
 const findCRMs = new FindCRMsHandler();
 const findPotentialOwners = new FindPotentialOwnersHandler();
 const findStageContent = new FindStageContentHandler();
 const findStageTemplates = new FindStageTemplatesHandler();
+const updateStage = new UpdateStageHandler();
 
 const crmRouter = Router();
 
@@ -25,8 +27,9 @@ crmRouter.post('/', createCRM.handle);
 crmRouter.get('/', findCRMs.handle);
 crmRouter.get('/:crmId', findCRMContent.handle);
 
-crmRouter.post('/:crmId/stages', createStageHandler.handle);
+crmRouter.post('/:crmId/stages', createStage.handle);
 crmRouter.get('/:crmId/stages/:stageId', findStageContent.handle);
+crmRouter.patch('/:crmId/stages/:stageId', updateStage.handle);
 
 crmRouter.get('/stages/templates', findStageTemplates.handle);
 crmRouter.get('/owners', findPotentialOwners.handle);

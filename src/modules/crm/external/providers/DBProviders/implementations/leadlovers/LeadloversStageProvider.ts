@@ -2,10 +2,14 @@ import { inject, injectable } from 'tsyringe';
 
 import { IFindColumnTemplatesRepository } from '@common/providers/LeadloversDB/models/boards/IFindColumnTemplatesRepository';
 import { IFindColumnByTitleRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnByTitleRepository';
+import { IFindColumnRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnsByBoardIdRepository';
 import { IInsertColumnRepository } from '@common/providers/LeadloversDB/models/columns/IInsertColumnRepository';
+import { IUpdateColumnRepository } from '@common/providers/LeadloversDB/models/columns/IUpdateColumnRepository';
 import { IInsertPipelineHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineHistoryRepository';
+import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { LogType } from '@common/shared/enums/LogType';
+import { StageStatus } from '@common/shared/enums/StageStatus';
 import { LogData } from '@common/shared/types/LogData';
 import { formatLogData } from '@common/utils/formatLogData';
 import IStageProvider, {
@@ -17,6 +21,8 @@ import IStageProvider, {
 @injectable()
 export default class LeadloversStageProvider implements IStageProvider {
   constructor(
+    @inject('FindColumnRepository')
+    private findColumnRepository: IFindColumnRepository,
     @inject('FindColumnByTitleRepository')
     private findColumnByTitleRepository: IFindColumnByTitleRepository,
     @inject('FindColumnTemplatesRepository')
@@ -26,7 +32,9 @@ export default class LeadloversStageProvider implements IStageProvider {
     @inject('InsertColumnRepository')
     private insertColumnRepository: IInsertColumnRepository,
     @inject('InsertPipelineHistoryRepository')
-    private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository
+    private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository,
+    @inject('UpdateColumnRepository')
+    private updateColumnRepository: IUpdateColumnRepository
   ) {}
 
   public async createStage(
@@ -39,6 +47,23 @@ export default class LeadloversStageProvider implements IStageProvider {
       params.color
     );
     return { id: columnId };
+  }
+
+  public async findStage(
+    stageId: number
+  ): Promise<Omit<Stage, 'amountCards' | 'earnedRevenue'> | undefined> {
+    const column = await this.findColumnRepository.find(stageId);
+    if (!column) return undefined;
+    return {
+      id: column.id,
+      crmId: column.boardId,
+      name: column.name,
+      color: column.color,
+      order: column.order,
+      status: this.getStageStatus(column.status),
+      estimatedRevenue: column.value,
+      createdAt: column.createdAt
+    };
   }
 
   public async findStageByName(
@@ -93,6 +118,8 @@ export default class LeadloversStageProvider implements IStageProvider {
         name: column.name,
         color: column.color,
         order: column.order,
+        status: this.getStageStatus(column.status),
+        estimatedRevenue: column.value,
         amountCards: column.amountCards,
         earnedRevenue: column.earnedRevenue,
         createdAt: column.createdAt
@@ -113,5 +140,61 @@ export default class LeadloversStageProvider implements IStageProvider {
       type: LogType.CREATED,
       data: formatLogData(data)
     });
+  }
+
+  public async logStageUpdating(
+    stageId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void> {
+    await this.insertPipelineHistoryRepository.insert({
+      columnId: stageId,
+      usuaSistCodi: userId,
+      acesCodi: subUserId,
+      type: LogType.UPDATED,
+      data: formatLogData(data)
+    });
+  }
+
+  public async updateStage(
+    params: Pick<Stage, 'crmId' | 'id'> &
+      Partial<
+        Pick<Stage, 'name' | 'color' | 'status' | 'estimatedRevenue' | 'order'>
+      >
+  ): Promise<void> {
+    await this.updateColumnRepository.update({
+      boardId: params.crmId,
+      columnId: params.id,
+      title: params.name,
+      color: params.color,
+      status: params.status
+        ? this.getColumnStatus(params.status)
+        : params.status,
+      order: params.order,
+      value: params.estimatedRevenue
+    });
+  }
+
+  private getStageStatus(statusId: number): StageStatus {
+    switch (statusId) {
+      case 1:
+        return StageStatus.ACTIVE;
+      case 2:
+        return StageStatus.REMOVED;
+      default:
+        return StageStatus.REMOVED;
+    }
+  }
+
+  private getColumnStatus(stageStatus: StageStatus): ColumnStatus {
+    switch (stageStatus) {
+      case StageStatus.ACTIVE:
+        return ColumnStatus.ACTIVE;
+      case StageStatus.REMOVED:
+        return ColumnStatus.REMOVED;
+      default:
+        return ColumnStatus.REMOVED;
+    }
   }
 }

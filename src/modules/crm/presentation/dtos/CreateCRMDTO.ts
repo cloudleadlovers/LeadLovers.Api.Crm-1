@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 export const createCRMInput = z.object({
+  userId: z.number().int(),
+  userEmail: z.string().email(),
   logo: z.string(),
   name: z.string(),
   goal: z.number(),

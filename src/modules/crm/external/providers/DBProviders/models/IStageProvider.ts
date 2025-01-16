@@ -1,3 +1,4 @@
+import { StageStatus } from '@common/shared/enums/StageStatus';
 import { LogData } from '@common/shared/types/LogData';
 
 export type Stage = {
@@ -6,6 +7,8 @@ export type Stage = {
   name: string;
   color: string;
   order: number;
+  status: StageStatus;
+  estimatedRevenue: number;
   amountCards: number;
   earnedRevenue: number;
   createdAt: Date;
@@ -28,6 +31,9 @@ export default interface IStageProvider {
   createStage(
     params: Pick<Stage, 'crmId' | 'name' | 'order' | 'color'>
   ): Promise<Pick<Stage, 'id'>>;
+  findStage(
+    stageId: number
+  ): Promise<Omit<Stage, 'amountCards' | 'earnedRevenue'> | undefined>;
   findStageByName(
     crmId: number,
     name: string
@@ -39,5 +45,17 @@ export default interface IStageProvider {
     userId: number,
     data: LogData,
     subUserId?: number
+  ): Promise<void>;
+  logStageUpdating(
+    stageId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void>;
+  updateStage(
+    params: Pick<Stage, 'crmId' | 'id'> &
+      Partial<
+        Pick<Stage, 'name' | 'color' | 'status' | 'estimatedRevenue' | 'order'>
+      >
   ): Promise<void>;
 }

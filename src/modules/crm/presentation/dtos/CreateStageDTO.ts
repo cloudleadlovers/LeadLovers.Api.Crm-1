@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 export const createStageInput = z.object({
+  userId: z.number().int(),
+  userEmail: z.string().email(),
   crmId: z.number().int(),
   name: z.string(),
   color: z.string(),
