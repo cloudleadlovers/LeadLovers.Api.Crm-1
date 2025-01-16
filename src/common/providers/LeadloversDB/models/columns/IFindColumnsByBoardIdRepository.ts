@@ -1,13 +1,4 @@
-export type Column = {
-  id: number;
-  boardId: number;
-  name: string;
-  color: string;
-  order: number;
-  amountCards: number;
-  earnedRevenue: number;
-  createdAt: Date;
-};
+import { Column } from './IFindColumnRepository';
 
 export type ColumnFilter = {
   column: {

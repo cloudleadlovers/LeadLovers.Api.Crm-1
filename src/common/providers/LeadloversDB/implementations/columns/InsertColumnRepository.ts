@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { IInsertColumnRepository } from '../../models/columns/IInsertColumnRepository';
 
@@ -20,7 +21,8 @@ export class InsertColumnRepository implements IInsertColumnRepository {
       .input('BoardId', mssql.Int, boardId)
       .input('Title', mssql.NVarChar, title)
       .input('Order', mssql.Int, order)
-      .input('Color', mssql.NVarChar, color).query<Column>(`
+      .input('Color', mssql.NVarChar, color)
+      .input('Status', mssql.Int, ColumnStatus.ACTIVE).query<Column>(`
         INSERT INTO Pipeline_Column (
           [BoardId], 
           [Title],
@@ -38,7 +40,7 @@ export class InsertColumnRepository implements IInsertColumnRepository {
           @Title,
           '',
           GETDATE(),
-          1,
+          @Status,
           0,
           @Order,
           @Color

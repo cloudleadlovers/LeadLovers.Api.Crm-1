@@ -2,7 +2,7 @@ import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { IFindColumnByTitleRepository } from '../../models/columns/IFindColumnByTitleRepository';
-import { Column } from '../../models/columns/IFindColumnsByBoardIdRepository';
+import { Column } from '../../models/columns/IFindColumnRepository';
 
 export class FindColumnByTitleRepository
   implements IFindColumnByTitleRepository

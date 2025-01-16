@@ -1,8 +1,8 @@
 import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
+import { Column } from '../../models/columns/IFindColumnRepository';
 import {
-  Column,
   ColumnFilter,
   IFindColumnsByBoardIdRepository
 } from '../../models/columns/IFindColumnsByBoardIdRepository';
@@ -32,6 +32,8 @@ export class FindColumnsByBoardIdRepository
         PCL.Title AS name,
         PCL.Color AS color,
         PCL.[Order] AS order,
+        PCL.[Status] AS status,
+        PCL.[ColumnDefaultValue] AS value,
         COUNT(PC.Id) AS amountCards,
         ISNULL(SUM(CASE WHEN PC.DealStatus = 1 THEN PC.CardValue END), 0) AS earnedRevenue,
         PCL.CreateDate AS createdAt
