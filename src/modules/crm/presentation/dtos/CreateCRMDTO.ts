@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const createCRMInput = z.object({
   logo: z.string(),
-  title: z.string(),
+  name: z.string(),
   goal: z.number(),
   rule: z.enum(['all-crm', 'only-one-per-column', 'only-one-in-crm']),
   owners: z.array(
@@ -13,11 +13,16 @@ export const createCRMInput = z.object({
   ),
   stages: z.array(
     z.object({
-      title: z.string(),
+      name: z.string(),
       color: z.string(),
       order: z.number().int()
     })
   )
 });
 
+export const createCRMOutput = z.object({
+  id: z.number().int()
+});
+
 export type CreateCRMInput = z.infer<typeof createCRMInput>;
+export type CreateCRMOutput = z.infer<typeof createCRMOutput>;

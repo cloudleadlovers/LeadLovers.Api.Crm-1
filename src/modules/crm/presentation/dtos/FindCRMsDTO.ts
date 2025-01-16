@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { CRMOwnerRole } from '@common/shared/enums/CRMOwnerRole';
+
 export const findCRMsIntput = z.object({
   userId: z.number().int(),
   filters: z
@@ -16,7 +18,7 @@ export const findCRMsOutput = z.array(
   z.object({
     id: z.number().int(),
     logo: z.string(),
-    title: z.string(),
+    name: z.string(),
     goal: z.number().int(),
     createdAt: z.date(),
     opportunity: z.object({
@@ -29,7 +31,7 @@ export const findCRMsOutput = z.array(
         name: z.string(),
         photo: z.string(),
         roleId: z.number().int(),
-        roleName: z.enum(['Reader', 'Editor', 'Administrator'])
+        roleName: z.nativeEnum(CRMOwnerRole)
       })
     )
   })

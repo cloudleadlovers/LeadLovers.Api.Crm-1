@@ -2,24 +2,23 @@ import { inject, injectable } from 'tsyringe';
 
 import { IFindBoardResponsiblesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardsByUsuaSistCodiRepository';
-import { IFindBoardTemplatesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardTemplatesRepository';
 import { IInsertBoardAccessRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardRepository';
-import { IInsertColumnRepository } from '@common/providers/LeadloversDB/models/columns/IInsertColumnRepository';
+import { IInsertPipelineHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineHistoryRepository';
 import { IFindUsersByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/users/IFindUsersByUsuaSistCodiRepository';
+import { CRMOwnerRole } from '@common/shared/enums/CRMOwnerRole';
+import { LogType } from '@common/shared/enums/LogType';
+import { LogData } from '@common/shared/types/LogData';
+import { formatLogData } from '@common/utils/formatLogData';
 import ICRMProvider, {
   CRM,
   CRMOwner,
-  CRMStage,
-  CRMTemplate,
   FindCRMsFilters
 } from '../../models/ICRMProvider';
 
 @injectable()
 export default class LeadloversCRMProvider implements ICRMProvider {
   constructor(
-    @inject('FindBoardTemplatesRepository')
-    private findBoardTemplatesRepository: IFindBoardTemplatesRepository,
     @inject('FindBoardResponsiblesRepository')
     private findBoardResponsibles: IFindBoardResponsiblesRepository,
     @inject('FindBoardsByUsuaSistCodiRepository')
@@ -30,8 +29,8 @@ export default class LeadloversCRMProvider implements ICRMProvider {
     private insertBoardAccessRepository: IInsertBoardAccessRepository,
     @inject('InsertBoardRepository')
     private insertBoardRepository: IInsertBoardRepository,
-    @inject('InsertColumnRepository')
-    private insertColumnRepository: IInsertColumnRepository
+    @inject('InsertPipelineHistoryRepository')
+    private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository
   ) {}
 
   public async assignOwnerToCRM(
@@ -43,24 +42,14 @@ export default class LeadloversCRMProvider implements ICRMProvider {
   }
 
   public async createCRM(
-    params: Pick<CRM, 'userId' | 'title' | 'goal' | 'rule' | 'logo'>
+    params: Pick<CRM, 'userId' | 'name' | 'goal' | 'rule' | 'logo'>
   ): Promise<Pick<CRM, 'id'>> {
     const boardId = await this.insertBoardRepository.insert({
       ...params,
+      title: params.name,
       usuaSistCodi: params.userId
     });
     return { id: boardId };
-  }
-
-  public async createCRMStage(
-    params: Pick<CRMStage, 'crmId' | 'title' | 'order' | 'color'>
-  ): Promise<void> {
-    await this.insertColumnRepository.insert(
-      params.crmId,
-      params.title,
-      params.order,
-      params.color
-    );
   }
 
   public async findCRMsByUserId(
@@ -78,7 +67,7 @@ export default class LeadloversCRMProvider implements ICRMProvider {
           id: board.id,
           userId: board.userId,
           logo: board.logo,
-          title: board.title,
+          name: board.title,
           goal: board.goal,
           rule: board.rule,
           createdAt: board.createdAt,
@@ -98,46 +87,37 @@ export default class LeadloversCRMProvider implements ICRMProvider {
     );
   }
 
-  public async findCRMTemplates(): Promise<CRMTemplate[]> {
-    const boardTemplates = await this.findBoardTemplatesRepository.find();
-    const crmTemplates: CRMTemplate[] = [];
-    boardTemplates.forEach(boardTemplate => {
-      crmTemplates.push({
-        id: boardTemplate.boardId,
-        title: boardTemplate.boardTitle,
-        stage: boardTemplates.reduce((accumulator, column) => {
-          if (column.boardId === boardTemplate.boardId) {
-            accumulator.push({
-              id: column.columnId,
-              crmId: column.boardId,
-              title: column.columnTitle,
-              color: column.columnColor,
-              order: column.columnOrder
-            });
-          }
-          return accumulator;
-        }, [] as CRMStage[])
-      });
-    });
-    return crmTemplates;
-  }
-
   public async findPotentialOwnersByUserId(
     userId: number
   ): Promise<Pick<CRMOwner, 'id' | 'name' | 'photo'>[]> {
     return await this.findUsersByUsuaSistCodiRepository.find(userId);
   }
 
-  private getRoleName(roleId: number): string {
+  public async logCRMCreation(
+    crmId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void> {
+    await this.insertPipelineHistoryRepository.insert({
+      boardId: crmId,
+      usuaSistCodi: userId,
+      acesCodi: subUserId,
+      type: LogType.CREATED,
+      data: formatLogData(data)
+    });
+  }
+
+  private getRoleName(roleId: number): CRMOwnerRole {
     switch (roleId) {
       case 1:
-        return 'Reader';
+        return CRMOwnerRole.READER;
       case 2:
-        return 'Editor';
+        return CRMOwnerRole.EDITOR;
       case 3:
-        return 'Administrator';
+        return CRMOwnerRole.ADMINISTRATOR;
       default:
-        return 'Reader';
+        return CRMOwnerRole.READER;
     }
   }
 }

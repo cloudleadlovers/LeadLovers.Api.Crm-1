@@ -1,4 +1,4 @@
-export type BoardTemplate = {
+export type ColumnTemplate = {
   boardId: number;
   boardTitle: string;
   columnId: number;
@@ -7,6 +7,6 @@ export type BoardTemplate = {
   columnOrder: number;
 };
 
-export interface IFindBoardTemplatesRepository {
-  find(): Promise<BoardTemplate[]>;
+export interface IFindColumnTemplatesRepository {
+  find(): Promise<ColumnTemplate[]>;
 }

@@ -1,16 +1,19 @@
+import { CRMOwnerRole } from '@common/shared/enums/CRMOwnerRole';
+import { LogData } from '@common/shared/types/LogData';
+
 export type CRMOwner = {
   id: number;
   name: string;
   photo: string;
   roleId: number;
-  roleName: string;
+  roleName: CRMOwnerRole;
 };
 
 export type CRM = {
   id: number;
   userId: number;
   logo: string;
-  title: string;
+  name: string;
   goal: number;
   rule: 'all-crm' | 'only-one-per-column' | 'only-one-in-crm';
   createdAt: Date;
@@ -19,20 +22,6 @@ export type CRM = {
     amountWonValue: number;
   };
   owners: CRMOwner[];
-};
-
-export type CRMStage = {
-  id: number;
-  crmId: number;
-  title: string;
-  color: string;
-  order: number;
-};
-
-export type CRMTemplate = {
-  id: number;
-  title: string;
-  stage: Omit<CRMStage, 'crmId'>[];
 };
 
 export type FindCRMsFilters = {
@@ -49,14 +38,16 @@ export default interface ICRMProvider {
     roleId: number
   ): Promise<void>;
   createCRM(
-    params: Pick<CRM, 'userId' | 'title' | 'goal' | 'rule' | 'logo'>
+    params: Pick<CRM, 'userId' | 'name' | 'goal' | 'rule' | 'logo'>
   ): Promise<Pick<CRM, 'id'>>;
-  createCRMStage(
-    params: Pick<CRMStage, 'crmId' | 'title' | 'order'>
-  ): Promise<void>;
   findCRMsByUserId(userId: number, filters?: FindCRMsFilters): Promise<CRM[]>;
-  findCRMTemplates(): Promise<CRMTemplate[]>;
   findPotentialOwnersByUserId(
     userId: number
   ): Promise<Pick<CRMOwner, 'id' | 'name' | 'photo'>[]>;
+  logCRMCreation(
+    crmId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void>;
 }

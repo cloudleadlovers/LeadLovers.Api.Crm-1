@@ -4,5 +4,5 @@ export interface IInsertColumnRepository {
     title: string,
     order: number,
     color: string
-  ): Promise<void>;
+  ): Promise<number>;
 }

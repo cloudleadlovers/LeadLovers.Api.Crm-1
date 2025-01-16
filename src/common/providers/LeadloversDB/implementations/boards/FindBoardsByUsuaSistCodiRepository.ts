@@ -30,7 +30,7 @@ export class FindBoardsByUsuaSistCodiRepository
         ISNULL(PB.[Logo], '') AS logo,
         PB.[Title] AS title,
         ISNULL(PB.[Goal], 0) AS goal,
-        ISNULL(PB.[Rule], 'all-crm') AS rule,
+        ISNULL(PB.[Rule], 'all-crm') AS [rule],
         COUNT(PC.[Id]) AS cardQuantity,
         SUM(CASE
           WHEN PC.[Status] NOT IN (0, 2) AND PC.[DealStatus] = 1 THEN PC.[CardValue] 
@@ -49,7 +49,7 @@ export class FindBoardsByUsuaSistCodiRepository
         PC.[ColumnId] = PCL.[Id]
         AND PC.[Status] NOT IN (0, 2)
       WHERE 
-        PB.[UsuaSistCodi] = @UsuaSistCodi 
+        PB.[UsuaSistCodi] = @UsuaSistCodi
         AND PB.[AcesCodi] IS NULL 
         AND PB.[Status] = 1
     `;
@@ -65,11 +65,13 @@ export class FindBoardsByUsuaSistCodiRepository
     }
 
     query += `
-      GROUP BY 
+      GROUP BY
         PB.[Id],
+        PB.[UsuaSistCodi],
         PB.[Logo],
         PB.[Title],
         PB.[Goal],
+        PB.[Rule],
         PB.[CreateDate]
     `;
 

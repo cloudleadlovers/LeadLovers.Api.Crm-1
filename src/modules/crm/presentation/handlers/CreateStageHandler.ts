@@ -1,27 +1,27 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import CreateCRMService from '@modules/crm/application/leadlovers/CreateCRMService';
-import { createCRMInput, createCRMOutput } from '../dtos/CreateCRMDTO';
+import CreateStageService from '@modules/crm/application/leadlovers/CreateStageService';
+import { createStageInput, createStageOutput } from '../dtos/CreateStageDTO';
 
-export class CreateCRMHandler {
+export class CreateStageHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const createCRMService = container.resolve(CreateCRMService);
+    const createStageService = container.resolve(CreateStageService);
 
     const userId = Number(request.user.key);
     const userEmail = request.user.email;
-    const input = createCRMInput.safeParse(request.body);
+    const input = createStageInput.safeParse(request.body);
     if (!input.success) {
       return response
         .status(400)
         .json({ status: 'error', result: input.error });
     }
-    const crm = await createCRMService.execute({
+    const stage = await createStageService.execute({
       userId,
       userEmail,
       ...input.data
     });
-    const output = createCRMOutput.safeParse(crm);
+    const output = createStageOutput.safeParse(stage);
     if (!output.success) {
       return response
         .status(400)

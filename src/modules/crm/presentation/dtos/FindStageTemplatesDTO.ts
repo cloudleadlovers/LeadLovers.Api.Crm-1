@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const findCRMTemplatesOutput = z.array(
+export const findStageTemplatesOutput = z.array(
   z.object({
     id: z.number().int(),
     title: z.string(),

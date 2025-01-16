@@ -1,15 +1,15 @@
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
-  BoardTemplate,
-  IFindBoardTemplatesRepository
-} from '../../models/boards/IFindBoardTemplatesRepository';
+  ColumnTemplate,
+  IFindColumnTemplatesRepository
+} from '../../models/boards/IFindColumnTemplatesRepository';
 
-export class FindBoardTemplatesRepository
-  implements IFindBoardTemplatesRepository
+export class FindColumnTemplatesRepository
+  implements IFindColumnTemplatesRepository
 {
-  async find(): Promise<BoardTemplate[]> {
+  async find(): Promise<ColumnTemplate[]> {
     const pool = await mssqlPoolConnect('leadlovers');
-    const { recordset } = await pool.request().query<BoardTemplate>(`
+    const { recordset } = await pool.request().query<ColumnTemplate>(`
       SELECT 
         PB.Id AS boardId,
         PB.Title AS boardTitle,

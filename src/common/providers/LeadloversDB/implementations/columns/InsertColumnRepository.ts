@@ -3,20 +3,24 @@ import mssql from 'mssql';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { IInsertColumnRepository } from '../../models/columns/IInsertColumnRepository';
 
+type Column = {
+  id: number;
+};
+
 export class InsertColumnRepository implements IInsertColumnRepository {
   async insert(
     boardId: number,
     title: string,
     order: number,
     color: string
-  ): Promise<void> {
+  ): Promise<number> {
     const pool = await mssqlPoolConnect('leadlovers');
-    await pool
+    const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
       .input('Title', mssql.NVarChar, title)
       .input('Order', mssql.Int, order)
-      .input('Color', mssql.NVarChar, color).query(`
+      .input('Color', mssql.NVarChar, color).query<Column>(`
         INSERT INTO Pipeline_Column (
           [BoardId], 
           [Title],
@@ -27,6 +31,8 @@ export class InsertColumnRepository implements IInsertColumnRepository {
           [Order],
           [Color]
         )
+        OUTPUT 
+          INSERTED.[Id] as id
         VALUES (
           @BoardId,
           @Title,
@@ -38,5 +44,6 @@ export class InsertColumnRepository implements IInsertColumnRepository {
           @Color
         )
       `);
+    return recordset[0].id;
   }
 }
