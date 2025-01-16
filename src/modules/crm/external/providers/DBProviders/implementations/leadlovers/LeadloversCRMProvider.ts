@@ -45,7 +45,10 @@ export default class LeadloversCRMProvider implements ICRMProvider {
   public async createCRM(
     params: Pick<CRM, 'userId' | 'title' | 'goal' | 'rule' | 'logo'>
   ): Promise<Pick<CRM, 'id'>> {
-    const boardId = await this.insertBoardRepository.insert(params);
+    const boardId = await this.insertBoardRepository.insert({
+      ...params,
+      usuaSistCodi: params.userId
+    });
     return { id: boardId };
   }
 
