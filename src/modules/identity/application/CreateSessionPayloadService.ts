@@ -19,7 +19,7 @@ type Params = {
 export default class CreateSessionPayloadService {
   public async execute({ id, name, email }: Params): Promise<Payload> {
     const { secret, expiresIn } = auth.jwt;
-    const token = sign({ name }, secret, {
+    const token = sign({ name, email }, secret, {
       subject: id,
       expiresIn
     });

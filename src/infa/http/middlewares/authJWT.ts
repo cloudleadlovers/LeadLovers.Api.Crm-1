@@ -7,6 +7,7 @@ interface ITokenPayload {
   iat: number;
   exp: number;
   sub: string;
+  email: string;
 }
 
 export function authenticate(
@@ -23,8 +24,8 @@ export function authenticate(
     }
     const [, token] = authorization.split(' ');
     const decoded = verify(token, auth.jwt.secret);
-    const { sub } = decoded as ITokenPayload;
-    request.user = { key: sub };
+    const { email, sub } = decoded as ITokenPayload;
+    request.user = { key: sub, email };
     return next();
   } catch {
     return response
