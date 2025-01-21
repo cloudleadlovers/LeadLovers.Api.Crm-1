@@ -40,10 +40,14 @@ export default interface ICRMProvider {
   createCRM(
     params: Pick<CRM, 'userId' | 'name' | 'goal' | 'rule' | 'logo'>
   ): Promise<Pick<CRM, 'id'>>;
+  findCRM(
+    crmId: number
+  ): Promise<Omit<CRM, 'opportunity' | 'owners'> | undefined>;
   findCRMsByUserId(userId: number, filters?: FindCRMsFilters): Promise<CRM[]>;
   findPotentialOwnersByUserId(
     userId: number
   ): Promise<Pick<CRMOwner, 'id' | 'name' | 'photo'>[]>;
+  findOwnersByCRMId(crmId: number): Promise<CRMOwner[]>;
   logCRMCreation(
     crmId: number,
     userId: number,

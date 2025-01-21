@@ -31,6 +31,10 @@ export default interface IStageProvider {
   createStage(
     params: Pick<Stage, 'crmId' | 'name' | 'order' | 'color'>
   ): Promise<Pick<Stage, 'id'>>;
+  deleteNotificationByStageId(stageId: number): Promise<void>;
+  deleteStage(
+    params: Pick<Stage, 'crmId' | 'id' | 'status'>
+  ): Promise<Pick<Stage, 'name'> | undefined>;
   findStage(
     stageId: number
   ): Promise<Omit<Stage, 'amountCards' | 'earnedRevenue'> | undefined>;
@@ -41,6 +45,12 @@ export default interface IStageProvider {
   findStageTemplates(): Promise<StageTemplate[]>;
   findStagesByCRMId(crmId: number, filters?: FindStageFilter): Promise<Stage[]>;
   logStageCreation(
+    stageId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void>;
+  logStageRemoval(
     stageId: number,
     userId: number,
     data: LogData,

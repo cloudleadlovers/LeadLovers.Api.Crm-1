@@ -1,8 +1,8 @@
 import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
+import { Board } from '../../models/boards/IFindBoardRepository';
 import {
-  Board,
   FindBoardsFilters,
   IFindBoardsByUsuaSistCodiRepository
 } from '../../models/boards/IFindBoardsByUsuaSistCodiRepository';

@@ -1,5 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
+import { IFindBoardAccessByBoardIdRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardAccessByBoardIdRepository';
+import { IFindBoardRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardRepository';
 import { IFindBoardResponsiblesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardsByUsuaSistCodiRepository';
 import { IInsertBoardAccessRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardAccessRepository';
@@ -19,6 +21,10 @@ import ICRMProvider, {
 @injectable()
 export default class LeadloversCRMProvider implements ICRMProvider {
   constructor(
+    @inject('FindBoardAccessByBoardIdRepository')
+    private findBoardAccessByBoardIdRepository: IFindBoardAccessByBoardIdRepository,
+    @inject('FindBoardRepository')
+    private findBoardRepository: IFindBoardRepository,
     @inject('FindBoardResponsiblesRepository')
     private findBoardResponsibles: IFindBoardResponsiblesRepository,
     @inject('FindBoardsByUsuaSistCodiRepository')
@@ -50,6 +56,22 @@ export default class LeadloversCRMProvider implements ICRMProvider {
       usuaSistCodi: params.userId
     });
     return { id: boardId };
+  }
+
+  public async findCRM(
+    crmId: number
+  ): Promise<Omit<CRM, 'opportunity' | 'owners'> | undefined> {
+    const board = await this.findBoardRepository.find(crmId);
+    if (!board) return undefined;
+    return {
+      id: board.id,
+      userId: board.userId,
+      name: board.title,
+      rule: board.rule,
+      logo: board.logo,
+      goal: board.goal,
+      createdAt: board.createdAt
+    };
   }
 
   public async findCRMsByUserId(
@@ -91,6 +113,19 @@ export default class LeadloversCRMProvider implements ICRMProvider {
     userId: number
   ): Promise<Pick<CRMOwner, 'id' | 'name' | 'photo'>[]> {
     return await this.findUsersByUsuaSistCodiRepository.find(userId);
+  }
+
+  public async findOwnersByCRMId(crmId: number): Promise<CRMOwner[]> {
+    const owners = await this.findBoardAccessByBoardIdRepository.find(crmId);
+    return owners.map(owner => {
+      return {
+        id: owner.userId,
+        name: owner.userName,
+        photo: owner.userPhoto,
+        roleId: owner.accessId,
+        roleName: this.getRoleName(owner.accessId)
+      };
+    });
   }
 
   public async logCRMCreation(

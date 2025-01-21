@@ -22,16 +22,16 @@ export class FindCardsByColumnIdRepository
 {
   public async find(
     columnId: number,
-    pagination: Pagination,
+    pagination?: Pagination,
     filters?: CardFilter
   ): Promise<ResultPaginated<Card>> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('ColumnId', mssql.Int, columnId)
-      .input('Limit', mssql.Int, pagination.limit)
-      .input('LastId', mssql.Int, pagination.lastId ?? null)
-      .query<Card>(this.makeQuery(filters));
+      .input('Limit', mssql.Int, pagination?.limit)
+      .input('LastId', mssql.Int, pagination?.lastId ?? null)
+      .query<Card>(this.makeQuery(pagination, filters));
     return {
       items: recordset,
       nextCursor: recordset.length
@@ -40,11 +40,12 @@ export class FindCardsByColumnIdRepository
     };
   }
 
-  private makeQuery(cardFilters?: CardFilter): string {
+  private makeQuery(pagination?: Pagination, cardFilters?: CardFilter): string {
     const filters = this.makeFilters(cardFilters);
 
-    let query = `
-      SELECT TOP (@Limit)
+    let query = pagination?.limit ? 'SELECT TOP (@Limit) ' : 'SELECT ';
+
+    query += `
         PC.Id AS id,
         PC.ColumnId AS columnId,
         ISNULL(PC.LeadName, '') AS name,

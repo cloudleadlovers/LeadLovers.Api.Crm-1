@@ -37,7 +37,7 @@ export type CardFilter = {
 export interface IFindCardsByColumnIdRepository {
   find(
     columnId: number,
-    pagination: Pagination,
+    pagination?: Pagination,
     filters?: CardFilter
   ): Promise<ResultPaginated<Card>>;
 }

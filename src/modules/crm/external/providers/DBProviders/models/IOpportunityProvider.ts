@@ -1,3 +1,4 @@
+import { LogData } from '@common/shared/types/LogData';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 
 export type Opportunity = {
@@ -37,9 +38,22 @@ export type FindOpportunityFilter = {
 };
 
 export default interface IOpportunityProvider {
+  deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
+  deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
+  deleteOpportunity(stageId: number, opportunityId: number): Promise<void>;
+  deleteOpportunitiesByStageId(
+    stageId: number
+  ): Promise<Pick<Opportunity, 'id' | 'name'>[]>;
   findOpportunitiesByStageId(
     stageId: number,
-    pagination: Pagination,
+    pagination?: Pagination,
     filters?: FindOpportunityFilter
   ): Promise<ResultPaginated<Opportunity>>;
+  logOpportunityRemoval(
+    stageId: number,
+    opportunityId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void>;
 }

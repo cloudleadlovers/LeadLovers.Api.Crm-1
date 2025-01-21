@@ -1,5 +1,7 @@
 import { container } from 'tsyringe';
 
+import { IFindBoardAccessByBoardIdRepository } from './models/boards/IFindBoardAccessByBoardIdRepository';
+import { IFindBoardRepository } from './models/boards/IFindBoardRepository';
 import { IFindBoardResponsiblesRepository } from './models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoardsByUsuaSistCodiRepository';
 import { IFindColumnTemplatesRepository } from './models/boards/IFindColumnTemplatesRepository';
@@ -7,7 +9,10 @@ import { IInsertBoardAccessRepository } from './models/boards/IInsertBoardAccess
 import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
 import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
+import { IUpdateCardRepository } from './models/cards/IUpdateCardRepository';
+import { IUpdateCardsByColumnIdRepository } from './models/cards/IUpdateCardsByColumnIdRepository';
 import { IFindColumnByTitleRepository } from './models/columns/IFindColumnByTitleRepository';
+import { IFindColumnRepository } from './models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsByBoardIdRepository';
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
 import { IUpdateColumnRepository } from './models/columns/IUpdateColumnRepository';
@@ -25,8 +30,12 @@ import { IRemoveReportFilterRepository } from './models/insights/IRemoveReportFi
 import { ISumValueOfColumnsRepository } from './models/insights/ISumValueOfColumnsRepository';
 import { ISumWonOpportunitiesGroupedByCreationDateRepository } from './models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 import { IUpdateReportFilterRepository } from './models/insights/IUpdateReportFilterRepository';
+import { IRemoveCardNotificationRepository } from './models/notifications/IRemoveCardNotificationRepository';
+import { IRemoveColumnNotificationRepository } from './models/notifications/IRemoveColumnNotificationRepository';
 import { IFindUsersByUsuaSistCodiRepository } from './models/users/IFindUsersByUsuaSistCodiRepository';
 
+import { FindBoardAccessByBoardIdRepository } from './implementations/boards/FindBoardAccessByBoardIdRepository';
+import { FindBoardRepository } from './implementations/boards/FindBoardRepository';
 import { FindBoardResponsiblesRepository } from './implementations/boards/FindBoardResponsiblesRepository';
 import { FindBoardsByUsuaSistCodiRepository } from './implementations/boards/FindBoardsByUsuaSistCodiRepository';
 import { FindColumnTemplatesRepository } from './implementations/boards/FindColumnTemplatesRepository';
@@ -34,6 +43,8 @@ import { InsertBoardAccessRepository } from './implementations/boards/InsertBoar
 import { InsertBoardRepository } from './implementations/boards/InsertBoardRepository';
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
 import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
+import { UpdateCardRepository } from './implementations/cards/UpdateCardRepository';
+import { UpdateCardsByColumnIdRepository } from './implementations/cards/UpdateCardsByColumnIdRepository';
 import { FindColumnByTitleRepository } from './implementations/columns/FindColumnByTitleRepository';
 import { FindColumnRepository } from './implementations/columns/FindColumnRepository';
 import { FindColumnsByBoardIdRepository } from './implementations/columns/FindColumnsByBoardIdRepository';
@@ -53,8 +64,11 @@ import { RemoveReportFilterRepository } from './implementations/insights/RemoveR
 import { SumValueOfColumnsRepository } from './implementations/insights/SumValueOfColumnsRepository';
 import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementations/insights/SumWonOpportunitiesGroupedByCreationDateRepository';
 import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
+import { RemoveCardNotificationRepository } from './implementations/notifications/RemoveCardNotificationRepository';
+import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
+import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
-import { IFindColumnRepository } from './models/columns/IFindColumnRepository';
+import { IRemoveCardNotificationsRepository } from './models/notifications/IRemoveCardNotificationsRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -76,19 +90,19 @@ container.registerSingleton<ICountLostOpportunitiesRepository>(
   CountLostOpportunitiesRepository
 );
 
+container.registerSingleton<IFindBoardRepository>(
+  'FindBoardRepository',
+  FindBoardRepository
+);
+
+container.registerSingleton<IFindBoardAccessByBoardIdRepository>(
+  'FindBoardAccessByBoardIdRepository',
+  FindBoardAccessByBoardIdRepository
+);
+
 container.registerSingleton<IFindBoardResponsiblesRepository>(
   'FindBoardResponsiblesRepository',
   FindBoardResponsiblesRepository
-);
-
-container.registerSingleton<IFindColumnRepository>(
-  'FindColumnRepository',
-  FindColumnRepository
-);
-
-container.registerSingleton<IFindColumnTemplatesRepository>(
-  'FindColumnTemplatesRepository',
-  FindColumnTemplatesRepository
 );
 
 container.registerSingleton<IFindBoardsByUsuaSistCodiRepository>(
@@ -106,6 +120,11 @@ container.registerSingleton<IFindCardsWonByBoardIdRepository>(
   FindCardsWonByBoardIdRepository
 );
 
+container.registerSingleton<IFindColumnRepository>(
+  'FindColumnRepository',
+  FindColumnRepository
+);
+
 container.registerSingleton<IFindColumnByTitleRepository>(
   'FindColumnByTitleRepository',
   FindColumnByTitleRepository
@@ -114,6 +133,11 @@ container.registerSingleton<IFindColumnByTitleRepository>(
 container.registerSingleton<IFindColumnsByBoardIdRepository>(
   'FindColumnsByBoardIdRepository',
   FindColumnsByBoardIdRepository
+);
+
+container.registerSingleton<IFindColumnTemplatesRepository>(
+  'FindColumnTemplatesRepository',
+  FindColumnTemplatesRepository
 );
 
 container.registerSingleton<IFindConversionRateGraphDataRepository>(
@@ -166,6 +190,21 @@ container.registerSingleton<IInsertReportFilterRepository>(
   InsertReportFilterRepository
 );
 
+container.registerSingleton<IRemoveCardNotificationRepository>(
+  'RemoveCardNotificationRepository',
+  RemoveCardNotificationRepository
+);
+
+container.registerSingleton<IRemoveCardNotificationsRepository>(
+  'RemoveCardNotificationsRepository',
+  RemoveCardNotificationsRepository
+);
+
+container.registerSingleton<IRemoveColumnNotificationRepository>(
+  'RemoveColumnNotificationRepository',
+  RemoveColumnNotificationRepository
+);
+
 container.registerSingleton<IRemoveReportFilterRepository>(
   'RemoveReportFilterRepository',
   RemoveReportFilterRepository
@@ -179,6 +218,16 @@ container.registerSingleton<ISumValueOfColumnsRepository>(
 container.registerSingleton<ISumWonOpportunitiesGroupedByCreationDateRepository>(
   'SumWonOpportunitiesGroupedByCreationDateRepository',
   SumWonOpportunitiesGroupedByCreationDateRepository
+);
+
+container.registerSingleton<IUpdateCardRepository>(
+  'UpdateCardRepository',
+  UpdateCardRepository
+);
+
+container.registerSingleton<IUpdateCardsByColumnIdRepository>(
+  'UpdateCardsByColumnIdRepository',
+  UpdateCardsByColumnIdRepository
 );
 
 container.registerSingleton<IUpdateColumnRepository>(

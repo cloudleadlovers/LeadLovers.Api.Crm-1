@@ -1,4 +1,5 @@
 import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
+import { Column } from './IFindColumnRepository';
 
 export type UpdateColumnParams = {
   boardId: number;
@@ -11,5 +12,5 @@ export type UpdateColumnParams = {
 };
 
 export interface IUpdateColumnRepository {
-  update(params: UpdateColumnParams): Promise<void>;
+  update(params: UpdateColumnParams): Promise<Pick<Column, 'name'> | undefined>;
 }

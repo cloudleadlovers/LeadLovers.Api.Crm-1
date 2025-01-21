@@ -7,6 +7,7 @@ import { IFindColumnsByBoardIdRepository } from '@common/providers/LeadloversDB/
 import { IInsertColumnRepository } from '@common/providers/LeadloversDB/models/columns/IInsertColumnRepository';
 import { IUpdateColumnRepository } from '@common/providers/LeadloversDB/models/columns/IUpdateColumnRepository';
 import { IInsertPipelineHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineHistoryRepository';
+import { IRemoveColumnNotificationRepository } from '@common/providers/LeadloversDB/models/notifications/IRemoveColumnNotificationRepository';
 import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { LogType } from '@common/shared/enums/LogType';
 import { StageStatus } from '@common/shared/enums/StageStatus';
@@ -33,6 +34,8 @@ export default class LeadloversStageProvider implements IStageProvider {
     private insertColumnRepository: IInsertColumnRepository,
     @inject('InsertPipelineHistoryRepository')
     private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository,
+    @inject('RemoveColumnNotificationRepository')
+    private removeColumnNotificationRepository: IRemoveColumnNotificationRepository,
     @inject('UpdateColumnRepository')
     private updateColumnRepository: IUpdateColumnRepository
   ) {}
@@ -47,6 +50,20 @@ export default class LeadloversStageProvider implements IStageProvider {
       params.color
     );
     return { id: columnId };
+  }
+
+  public async deleteNotificationByStageId(stageId: number): Promise<void> {
+    await this.removeColumnNotificationRepository.remove(stageId);
+  }
+
+  public async deleteStage(
+    params: Pick<Stage, 'crmId' | 'id'>
+  ): Promise<Pick<Stage, 'name'> | undefined> {
+    return await this.updateColumnRepository.update({
+      boardId: params.crmId,
+      columnId: params.id,
+      status: this.getColumnStatus(StageStatus.REMOVED)
+    });
   }
 
   public async findStage(
@@ -138,6 +155,21 @@ export default class LeadloversStageProvider implements IStageProvider {
       usuaSistCodi: userId,
       acesCodi: subUserId,
       type: LogType.CREATED,
+      data: formatLogData(data)
+    });
+  }
+
+  public async logStageRemoval(
+    stageId: number,
+    userId: number,
+    data: LogData,
+    subUserId?: number
+  ): Promise<void> {
+    await this.insertPipelineHistoryRepository.insert({
+      columnId: stageId,
+      usuaSistCodi: userId,
+      acesCodi: subUserId,
+      type: LogType.REMOVED,
       data: formatLogData(data)
     });
   }
