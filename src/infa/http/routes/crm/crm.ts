@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import { CreateCRMHandler } from '@modules/crm/presentation/handlers/CreateCRMHandler';
 import { CreateStageHandler } from '@modules/crm/presentation/handlers/CreateStageHandler';
+import { FindContactsHandler } from '@modules/crm/presentation/handlers/FindContactsHandler';
 import { FindCRMContentHandler } from '@modules/crm/presentation/handlers/FindCRMContentHandler';
 import { FindCRMsHandler } from '@modules/crm/presentation/handlers/FindCRMsHandler';
 import { FindPotentialOwnersHandler } from '@modules/crm/presentation/handlers/FindPotentialOwnersHandler';
@@ -13,6 +14,7 @@ import { authenticate } from 'infa/http/middlewares/authJWT';
 
 const createCRM = new CreateCRMHandler();
 const createStage = new CreateStageHandler();
+const findContacts = new FindContactsHandler();
 const findCRMContent = new FindCRMContentHandler();
 const findCRMs = new FindCRMsHandler();
 const findPotentialOwners = new FindPotentialOwnersHandler();
@@ -35,6 +37,7 @@ crmRouter.patch('/:crmId/stages/:stageId', updateStage.handle);
 crmRouter.delete('/:crmId/stages/:stageId', removeStage.handle);
 
 crmRouter.get('/stages/templates', findStageTemplates.handle);
+crmRouter.get('/contacts', findContacts.handle);
 crmRouter.get('/owners', findPotentialOwners.handle);
 
 export default crmRouter;

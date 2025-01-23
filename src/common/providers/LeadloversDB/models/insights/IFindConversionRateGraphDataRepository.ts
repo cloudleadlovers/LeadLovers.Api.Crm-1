@@ -1,10 +1,5 @@
 import { InsightFiltersJSON } from '@modules/dashboard/shared/types/InsightFilter';
 
-export type Pagination = {
-  limit: number;
-  lastId?: number;
-};
-
 export type DealStatus = 'OPENED' | 'LOSED' | 'GAINED';
 
 export type PipelineReportsFilters = InsightFiltersJSON;

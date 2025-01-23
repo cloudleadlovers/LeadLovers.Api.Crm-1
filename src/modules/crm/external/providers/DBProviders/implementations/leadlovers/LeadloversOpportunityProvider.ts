@@ -4,6 +4,7 @@ import { IFindCardsByColumnIdRepository } from '@common/providers/LeadloversDB/m
 import { IUpdateCardRepository } from '@common/providers/LeadloversDB/models/cards/IUpdateCardRepository';
 import { IUpdateCardsByColumnIdRepository } from '@common/providers/LeadloversDB/models/cards/IUpdateCardsByColumnIdRepository';
 import { IInsertPipelineHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineHistoryRepository';
+import { IFindLeadsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/leads/IFindLeadsByUsuaSistCodiRepository';
 import { IRemoveCardNotificationRepository } from '@common/providers/LeadloversDB/models/notifications/IRemoveCardNotificationRepository';
 import { IRemoveCardNotificationsRepository } from '@common/providers/LeadloversDB/models/notifications/IRemoveCardNotificationsRepository';
 import { CardStatus } from '@common/shared/enums/CardStatus';
@@ -13,6 +14,7 @@ import { LogData } from '@common/shared/types/LogData';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { formatLogData } from '@common/utils/formatLogData';
 import IOpportunityProvider, {
+  Contact,
   FindOpportunityFilter,
   Opportunity
 } from '../../models/IOpportunityProvider';
@@ -24,6 +26,8 @@ export default class LeadloversOpportunityProvider
   constructor(
     @inject('FindCardsByColumnIdRepository')
     private findCardsByColumnIdRepository: IFindCardsByColumnIdRepository,
+    @inject('FindLeadsByUsuaSistCodiRepository')
+    private findLeadsByUsuaSistCodiRepository: IFindLeadsByUsuaSistCodiRepository,
     @inject('InsertPipelineHistoryRepository')
     private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository,
     @inject('RemoveCardNotificationRepository')
@@ -72,6 +76,18 @@ export default class LeadloversOpportunityProvider
       cardId: opportunityId,
       status: this.getCardStatus(OpportunityStatus.REMOVED)
     });
+  }
+
+  public async findContacts(
+    userId: number,
+    pagination: Pagination,
+    contactName?: string
+  ): Promise<Contact[]> {
+    return await this.findLeadsByUsuaSistCodiRepository.list(
+      userId,
+      pagination,
+      contactName
+    );
   }
 
   public async findOpportunitiesByStageId(

@@ -30,7 +30,9 @@ import { IRemoveReportFilterRepository } from './models/insights/IRemoveReportFi
 import { ISumValueOfColumnsRepository } from './models/insights/ISumValueOfColumnsRepository';
 import { ISumWonOpportunitiesGroupedByCreationDateRepository } from './models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 import { IUpdateReportFilterRepository } from './models/insights/IUpdateReportFilterRepository';
+import { IFindLeadsByUsuaSistCodiRepository } from './models/leads/IFindLeadsByUsuaSistCodiRepository';
 import { IRemoveCardNotificationRepository } from './models/notifications/IRemoveCardNotificationRepository';
+import { IRemoveCardNotificationsRepository } from './models/notifications/IRemoveCardNotificationsRepository';
 import { IRemoveColumnNotificationRepository } from './models/notifications/IRemoveColumnNotificationRepository';
 import { IFindUsersByUsuaSistCodiRepository } from './models/users/IFindUsersByUsuaSistCodiRepository';
 
@@ -64,11 +66,11 @@ import { RemoveReportFilterRepository } from './implementations/insights/RemoveR
 import { SumValueOfColumnsRepository } from './implementations/insights/SumValueOfColumnsRepository';
 import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementations/insights/SumWonOpportunitiesGroupedByCreationDateRepository';
 import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
+import { FindLeadsByUsuaSistCodiRepository } from './implementations/leads/FindLeadsByUsuaSistCodiRepository';
 import { RemoveCardNotificationRepository } from './implementations/notifications/RemoveCardNotificationRepository';
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
-import { IRemoveCardNotificationsRepository } from './models/notifications/IRemoveCardNotificationsRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -148,6 +150,11 @@ container.registerSingleton<IFindConversionRateGraphDataRepository>(
 container.registerSingleton<IFindGainConversionRateGraphDataRepository>(
   'FindGainConversionRateGraphDataRepository',
   FindGainConversionRateGraphDataRepository
+);
+
+container.registerSingleton<IFindLeadsByUsuaSistCodiRepository>(
+  'FindLeadsByUsuaSistCodiRepository',
+  FindLeadsByUsuaSistCodiRepository
 );
 
 container.registerSingleton<IFindOpportunityStatisticsByResponsibleRepository>(

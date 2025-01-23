@@ -1,7 +1,5 @@
-import {
-  Pagination,
-  PipelineReportsFilters
-} from '../insights/IFindConversionRateGraphDataRepository';
+import { Pagination } from '@common/shared/types/Pagination';
+import { PipelineReportsFilters } from '../insights/IFindConversionRateGraphDataRepository';
 
 export type Card = {
   id: number;

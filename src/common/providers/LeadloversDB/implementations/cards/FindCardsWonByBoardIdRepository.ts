@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { Pagination } from '@common/shared/types/Pagination';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   Card,
@@ -7,7 +8,6 @@ import {
   IFindCardsWonByBoardIdRepository
 } from '../../models/cards/IFindCardsWonByBoardIdRepository';
 import {
-  Pagination,
   PipelineReportsFilters,
   PipelineReportsQueryFilters
 } from '../../models/insights/IFindConversionRateGraphDataRepository';

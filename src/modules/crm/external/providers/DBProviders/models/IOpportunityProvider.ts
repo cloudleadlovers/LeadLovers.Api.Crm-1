@@ -37,6 +37,17 @@ export type FindOpportunityFilter = {
   };
 };
 
+export type Contact = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  state: string;
+  company: string;
+  createdAt: Date;
+};
+
 export default interface IOpportunityProvider {
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
@@ -44,6 +55,11 @@ export default interface IOpportunityProvider {
   deleteOpportunitiesByStageId(
     stageId: number
   ): Promise<Pick<Opportunity, 'id' | 'name'>[]>;
+  findContacts(
+    userId: number,
+    pagination: Pagination,
+    contactName?: string
+  ): Promise<Contact[]>;
   findOpportunitiesByStageId(
     stageId: number,
     pagination?: Pagination,
