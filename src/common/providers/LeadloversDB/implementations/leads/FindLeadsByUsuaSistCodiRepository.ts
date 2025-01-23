@@ -50,7 +50,7 @@ export class FindLeadsByUsuaSistCodiRepository
 
     query += `
       ORDER BY 
-        LU.LeadUsuaSistDataCada DESC;
+        LU.LeadNome ASC;
     `;
 
     return query;
