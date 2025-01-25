@@ -52,6 +52,7 @@ import { FindColumnRepository } from './implementations/columns/FindColumnReposi
 import { FindColumnsByBoardIdRepository } from './implementations/columns/FindColumnsByBoardIdRepository';
 import { InsertColumnRepository } from './implementations/columns/InsertColumnRepository';
 import { UpdateColumnRepository } from './implementations/columns/UpdateColumnRepository';
+import { FindFunnelsByListCodiRepository } from './implementations/funnels/FindFunnelsByListCodiRepository';
 import { InsertPipelineHistoryRepository } from './implementations/history/InsertPipelineHistoryRepository';
 import { AverageDaysAnOpportunitySpendsInAStageRepository } from './implementations/insights/AverageDaysAnOpportunitySpendsInAStageRepository';
 import { AverageDaysToCloseAnOpportunityRepository } from './implementations/insights/AverageDaysToCloseAnOpportunityRepository';
@@ -67,10 +68,17 @@ import { SumValueOfColumnsRepository } from './implementations/insights/SumValue
 import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementations/insights/SumWonOpportunitiesGroupedByCreationDateRepository';
 import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
 import { FindLeadsByUsuaSistCodiRepository } from './implementations/leads/FindLeadsByUsuaSistCodiRepository';
+import { FindListsByUsuaSistCodiRepository } from './implementations/lists/FindListsByUsuaSistCodiRepository';
+import { FindDefaultModelsByFuniCodiRepository } from './implementations/models/FindDefaultModelsByFuniCodiRepository';
+import { FindMessengerModelsByFuniCodiRepository } from './implementations/models/FindMessengerModelsByFuniCodiRepository';
+import { FindWhatsAppModelsByFuniCodiRepository } from './implementations/models/FindWhatsAppModelsByFuniCodiRepository';
 import { RemoveCardNotificationRepository } from './implementations/notifications/RemoveCardNotificationRepository';
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
+import { IFindFunnelsByListCodiRepository } from './models/funnels/IFindFunnelsByListCodiRepository';
+import { IFindListsByUsuaSistCodiRepository } from './models/lists/IFindListsByUsuaSistCodiRepository';
+import { IFindDefaultModelsByFuniCodiRepository } from './models/models/IFindDefaultModelsByFuniCodiRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -147,6 +155,26 @@ container.registerSingleton<IFindConversionRateGraphDataRepository>(
   FindConversionRateGraphDataRepository
 );
 
+container.registerSingleton<IFindDefaultModelsByFuniCodiRepository>(
+  'FindDefaultModelsByFuniCodiRepository',
+  FindDefaultModelsByFuniCodiRepository
+);
+
+container.registerSingleton<IFindDefaultModelsByFuniCodiRepository>(
+  'FindMessengerModelsByFuniCodiRepository',
+  FindMessengerModelsByFuniCodiRepository
+);
+
+container.registerSingleton<IFindDefaultModelsByFuniCodiRepository>(
+  'FindWhatsAppModelsByFuniCodiRepository',
+  FindWhatsAppModelsByFuniCodiRepository
+);
+
+container.registerSingleton<IFindFunnelsByListCodiRepository>(
+  'FindFunnelsByListCodiRepository',
+  FindFunnelsByListCodiRepository
+);
+
 container.registerSingleton<IFindGainConversionRateGraphDataRepository>(
   'FindGainConversionRateGraphDataRepository',
   FindGainConversionRateGraphDataRepository
@@ -155,6 +183,11 @@ container.registerSingleton<IFindGainConversionRateGraphDataRepository>(
 container.registerSingleton<IFindLeadsByUsuaSistCodiRepository>(
   'FindLeadsByUsuaSistCodiRepository',
   FindLeadsByUsuaSistCodiRepository
+);
+
+container.registerSingleton<IFindListsByUsuaSistCodiRepository>(
+  'FindListsByUsuaSistCodiRepository',
+  FindListsByUsuaSistCodiRepository
 );
 
 container.registerSingleton<IFindOpportunityStatisticsByResponsibleRepository>(
