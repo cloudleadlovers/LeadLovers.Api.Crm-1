@@ -1,6 +1,6 @@
 import mssql from 'mssql';
 
-import { Pagination } from '@common/shared/types/Pagination';
+import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   IFindLeadsByUsuaSistCodiRepository,
@@ -14,20 +14,27 @@ export class FindLeadsByUsuaSistCodiRepository
     usuaSistCodi: number,
     pagination: Pagination,
     leadName?: string
-  ): Promise<Lead[]> {
+  ): Promise<ResultPaginated<Lead>> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('UsuaSistCodi', mssql.Int, usuaSistCodi)
       .input('Limit', mssql.Int, pagination.limit)
-      .input('LastId', mssql.Int, pagination.lastId ?? null)
+      .input(
+        'Offset',
+        mssql.Int,
+        pagination.lastId ? (pagination.lastId - 1) * pagination.limit : 0
+      )
       .query<Lead>(this.makeQuery(leadName));
-    return recordset;
+    return {
+      items: recordset,
+      nextCursor: pagination.lastId ? pagination.lastId + 1 : undefined
+    };
   }
 
   private makeQuery(leadName?: string): string {
     let query = `
-      SELECT DISTINCT TOP (@Limit)
+      SELECT DISTINCT
         LU.LeadCodi AS id, 
         ISNULL(LU.LeadNome, '') AS name,
         ISNULL(LU.EmailLead, '') AS email, 
@@ -39,8 +46,7 @@ export class FindLeadsByUsuaSistCodiRepository
       FROM 
         LeadUsuaSist LU WITH(NOLOCK)
       WHERE
-        (@LastId IS NULL OR LU.LeadCodi < @LastId)
-        AND LU.UsuaSistCodi = @UsuaSistCodi 
+        LU.UsuaSistCodi = @UsuaSistCodi 
         AND LU.LeadUsuaSistStatCodi = 1 
     `;
 
@@ -50,7 +56,12 @@ export class FindLeadsByUsuaSistCodiRepository
 
     query += `
       ORDER BY 
-        LU.LeadNome ASC;
+        CASE WHEN LU.LeadNome IS NULL THEN 0 ELSE 1 END ASC,
+        LU.LeadNome ASC
+    `;
+
+    query += `
+      OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY;
     `;
 
     return query;

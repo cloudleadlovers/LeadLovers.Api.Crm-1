@@ -1,10 +1,9 @@
 import mssql from 'mssql';
 
-import { Pagination } from '@common/shared/types/Pagination';
+import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   Card,
-  FindCardsWonPaginatedResult,
   IFindCardsWonByBoardIdRepository
 } from '../../models/cards/IFindCardsWonByBoardIdRepository';
 import {
@@ -19,7 +18,7 @@ export class FindCardsWonByBoardIdRepository
     boardId: number,
     pagination: Pagination,
     filters?: PipelineReportsFilters
-  ): Promise<FindCardsWonPaginatedResult> {
+  ): Promise<ResultPaginated<Card>> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
@@ -28,7 +27,7 @@ export class FindCardsWonByBoardIdRepository
       .input('LastId', mssql.Int, pagination.lastId ?? null)
       .query<Card>(this.makeQuery(filters));
     return {
-      cards: recordset,
+      items: recordset,
       nextCursor: recordset.length
         ? recordset[recordset.length - 1].id
         : undefined

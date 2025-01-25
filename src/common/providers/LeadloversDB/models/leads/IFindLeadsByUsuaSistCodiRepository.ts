@@ -1,4 +1,4 @@
-import { Pagination } from '@common/shared/types/Pagination';
+import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 
 export type Lead = {
   id: number;
@@ -16,5 +16,5 @@ export interface IFindLeadsByUsuaSistCodiRepository {
     usuaSistCodi: number,
     pagination: Pagination,
     leadName?: string
-  ): Promise<Lead[]>;
+  ): Promise<ResultPaginated<Lead>>;
 }

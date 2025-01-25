@@ -1,4 +1,4 @@
-import { Pagination } from '@common/shared/types/Pagination';
+import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { PipelineReportsFilters } from '../insights/IFindConversionRateGraphDataRepository';
 
 export type Card = {
@@ -14,15 +14,10 @@ export type Card = {
   gainedAt: Date;
 };
 
-export type FindCardsWonPaginatedResult = {
-  cards: Card[];
-  nextCursor?: number;
-};
-
 export interface IFindCardsWonByBoardIdRepository {
   find(
     boardId: number,
     pagination: Pagination,
     filters?: PipelineReportsFilters
-  ): Promise<FindCardsWonPaginatedResult>;
+  ): Promise<ResultPaginated<Card>>;
 }
