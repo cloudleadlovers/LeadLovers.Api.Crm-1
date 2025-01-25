@@ -3,9 +3,9 @@ import { inject, injectable } from 'tsyringe';
 import { IFindCardsWonByBoardIdRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardsWonByBoardIdRepository';
 import {
   FindOpportunitiesWon,
-  FindOpportunityFilters,
-  FindOpportunityPagination
+  FindOpportunityFilters
 } from '@common/shared/integration/interfaces/OpportunityIntegration';
+import { Pagination } from '@common/shared/types/Pagination';
 import IOpportunityApiProvider from '../../models/IOpportunityApiProvider';
 
 @injectable()
@@ -19,7 +19,7 @@ export default class LeadloversOpportunityApiProvider
 
   public async findOpportunitiesWonByCRMId(
     crmId: number,
-    pagination: FindOpportunityPagination,
+    pagination: Pagination,
     filters?: FindOpportunityFilters
   ): Promise<FindOpportunitiesWon> {
     const result = await this.FindCardsWonByBoardIdRepository.find(
@@ -28,12 +28,12 @@ export default class LeadloversOpportunityApiProvider
       filters
     );
     return {
-      totalOpportunities: result.cards.length,
-      totalWonValue: result.cards.reduce((totalValue, opportunity) => {
+      totalOpportunities: result.items.length,
+      totalWonValue: result.items.reduce((totalValue, opportunity) => {
         totalValue = totalValue + opportunity.value;
         return totalValue;
       }, 0),
-      opportunities: result.cards.map(opportunity => {
+      opportunities: result.items.map(opportunity => {
         return {
           id: opportunity.id,
           columnId: opportunity.columnId,
