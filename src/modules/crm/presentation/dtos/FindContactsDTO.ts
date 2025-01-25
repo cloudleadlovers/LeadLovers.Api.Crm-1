@@ -17,15 +17,22 @@ export const findContactsInput = z
     };
   });
 
-export const findContactsOutput = z.array(
-  z.object({
-    id: z.number().int(),
-    name: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    company: z.string().optional(),
-    createdAt: z.date()
+export const findContactsOutput = z.object({
+  contacts: z.array(
+    z.object({
+      id: z.number().int(),
+      name: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      company: z.string().optional(),
+      createdAt: z.date()
+    })
+  ),
+  pagination: z.object({
+    nextCursor: z.number().int().optional()
   })
-);
+});
+
+export type FindContactsOutput = z.infer<typeof findContactsOutput>;
