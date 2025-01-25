@@ -1,3 +1,4 @@
+import { MachineType } from '@common/shared/enums/MachineType';
 import { LogData } from '@common/shared/types/LogData';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 
@@ -48,6 +49,21 @@ export type Contact = {
   createdAt: Date;
 };
 
+export type Machine = {
+  id: number;
+  name: string;
+};
+
+export type Message = {
+  id: number;
+  name: string;
+};
+
+export type Sequence = {
+  id: number;
+  name: string;
+};
+
 export default interface IOpportunityProvider {
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
@@ -59,12 +75,25 @@ export default interface IOpportunityProvider {
     userId: number,
     pagination: Pagination,
     contactName?: string
-  ): Promise<Contact[]>;
+  ): Promise<ResultPaginated<Contact>>;
+  findMachines(
+    userId: number,
+    pagination: Pagination
+  ): Promise<ResultPaginated<Machine>>;
+  findMessages(
+    machineType: MachineType,
+    sequenceId: number,
+    pagination: Pagination
+  ): Promise<ResultPaginated<Message>>;
   findOpportunitiesByStageId(
     stageId: number,
     pagination?: Pagination,
     filters?: FindOpportunityFilter
   ): Promise<ResultPaginated<Opportunity>>;
+  findSequences(
+    machineId: number,
+    pagination: Pagination
+  ): Promise<ResultPaginated<Sequence>>;
   logOpportunityRemoval(
     stageId: number,
     opportunityId: number,

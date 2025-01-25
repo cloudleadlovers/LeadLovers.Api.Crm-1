@@ -3,12 +3,16 @@ import { inject, injectable } from 'tsyringe';
 import { IFindCardsByColumnIdRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardsByColumnIdRepository';
 import { IUpdateCardRepository } from '@common/providers/LeadloversDB/models/cards/IUpdateCardRepository';
 import { IUpdateCardsByColumnIdRepository } from '@common/providers/LeadloversDB/models/cards/IUpdateCardsByColumnIdRepository';
+import { IFindFunnelsByListCodiRepository } from '@common/providers/LeadloversDB/models/funnels/IFindFunnelsByListCodiRepository';
 import { IInsertPipelineHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineHistoryRepository';
 import { IFindLeadsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/leads/IFindLeadsByUsuaSistCodiRepository';
+import { IFindListsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/lists/IFindListsByUsuaSistCodiRepository';
+import { IFindDefaultModelsByFuniCodiRepository } from '@common/providers/LeadloversDB/models/models/IFindDefaultModelsByFuniCodiRepository';
 import { IRemoveCardNotificationRepository } from '@common/providers/LeadloversDB/models/notifications/IRemoveCardNotificationRepository';
 import { IRemoveCardNotificationsRepository } from '@common/providers/LeadloversDB/models/notifications/IRemoveCardNotificationsRepository';
 import { CardStatus } from '@common/shared/enums/CardStatus';
 import { LogType } from '@common/shared/enums/LogType';
+import { MachineType } from '@common/shared/enums/MachineType';
 import { OpportunityStatus } from '@common/shared/enums/OpportunityStatus';
 import { LogData } from '@common/shared/types/LogData';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
@@ -16,7 +20,10 @@ import { formatLogData } from '@common/utils/formatLogData';
 import IOpportunityProvider, {
   Contact,
   FindOpportunityFilter,
-  Opportunity
+  Machine,
+  Message,
+  Opportunity,
+  Sequence
 } from '../../models/IOpportunityProvider';
 
 @injectable()
@@ -26,8 +33,18 @@ export default class LeadloversOpportunityProvider
   constructor(
     @inject('FindCardsByColumnIdRepository')
     private findCardsByColumnIdRepository: IFindCardsByColumnIdRepository,
+    @inject('FindDefaultModelsByFuniCodiRepository')
+    private findDefaultModelsByFuniCodiRepository: IFindDefaultModelsByFuniCodiRepository,
+    @inject('FindFunnelsByListCodiRepository')
+    private findFunnelsByListCodiRepository: IFindFunnelsByListCodiRepository,
     @inject('FindLeadsByUsuaSistCodiRepository')
     private findLeadsByUsuaSistCodiRepository: IFindLeadsByUsuaSistCodiRepository,
+    @inject('FindListsByUsuaSistCodiRepository')
+    private findListsByUsuaSistCodiRepository: IFindListsByUsuaSistCodiRepository,
+    @inject('FindMessengerModelsByFuniCodiRepository')
+    private findMessengerModelsByFuniCodiRepository: IFindDefaultModelsByFuniCodiRepository,
+    @inject('FindWhatsAppModelsByFuniCodiRepository')
+    private findWhatsAppModelsByFuniCodiRepository: IFindDefaultModelsByFuniCodiRepository,
     @inject('InsertPipelineHistoryRepository')
     private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository,
     @inject('RemoveCardNotificationRepository')
@@ -82,12 +99,30 @@ export default class LeadloversOpportunityProvider
     userId: number,
     pagination: Pagination,
     contactName?: string
-  ): Promise<Contact[]> {
+  ): Promise<ResultPaginated<Contact>> {
     return await this.findLeadsByUsuaSistCodiRepository.list(
       userId,
       pagination,
       contactName
     );
+  }
+
+  public async findMachines(
+    userId: number,
+    pagination: Pagination
+  ): Promise<ResultPaginated<Machine>> {
+    return await this.findListsByUsuaSistCodiRepository.find(
+      userId,
+      pagination
+    );
+  }
+  public async findMessages(
+    machineType: MachineType,
+    sequenceId: number,
+    pagination: Pagination
+  ): Promise<ResultPaginated<Message>> {
+    const repository = this.getMessageRepository(machineType);
+    return await repository.find(sequenceId, pagination);
   }
 
   public async findOpportunitiesByStageId(
@@ -123,6 +158,16 @@ export default class LeadloversOpportunityProvider
     };
   }
 
+  public async findSequences(
+    machineId: number,
+    pagination: Pagination
+  ): Promise<ResultPaginated<Sequence>> {
+    return await this.findFunnelsByListCodiRepository.find(
+      machineId,
+      pagination
+    );
+  }
+
   public async logOpportunityRemoval(
     stageId: number,
     opportunityId: number,
@@ -149,5 +194,17 @@ export default class LeadloversOpportunityProvider
       default:
         return CardStatus.REMOVED;
     }
+  }
+
+  private getMessageRepository(
+    machineType: MachineType
+  ): IFindDefaultModelsByFuniCodiRepository {
+    if (machineType === MachineType.MESSENGER) {
+      return this.findWhatsAppModelsByFuniCodiRepository;
+    }
+    if (machineType === MachineType.WHATSAPP) {
+      return this.findMessengerModelsByFuniCodiRepository;
+    }
+    return this.findDefaultModelsByFuniCodiRepository;
   }
 }
