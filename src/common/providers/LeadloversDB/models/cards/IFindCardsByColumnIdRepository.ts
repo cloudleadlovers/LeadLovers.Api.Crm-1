@@ -2,11 +2,20 @@ import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 
 export type Card = {
   id: number;
+  usuaSistCodi: number | null;
   columnId: number;
+  leadCodi: number | null;
   name: string | null;
   email: string | null;
   phone: string | null;
+  commercialPhone: string | null;
+  score: number | null;
+  tags: string | null;
+  status: number;
   value: number;
+  dealStatus: number | null;
+  dealScheduleDate: Date | null;
+  position: number;
   responsibleId: number | null;
   responsibleName: string | null;
   responsibleIcon: string | null;

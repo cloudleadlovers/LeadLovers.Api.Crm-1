@@ -47,22 +47,31 @@ export class FindCardsByColumnIdRepository
 
     query += `
         PC.Id AS id,
+        ISNULL(PC.UsuaSistCodi, 0) AS usuaSistCodi,
         PC.ColumnId AS columnId,
+        ISNULL(PC.LeadCodi, 0) AS leadCodi,
         ISNULL(PC.LeadName, '') AS name,
         ISNULL(PC.LeadEmail, '') AS email,
         ISNULL(PC.LeadPhone, '') AS phone,
+        ISNULL(PC.LeadCommercialPhone, '') AS commercialPhone,
+        ISNULL(PC.LeadScore, '') AS score,
+        ISNULL(PC.LeadTags, '') AS tags,
+        PC.Status AS status,
         PC.CardValue AS value,
+        PC.DealStatus AS dealStatus,
+        PC.DealScheduleDate AS dealScheduleDate,
+        PC.CardPosition AS position,
         PC.CreateDate AS createdAt,
         ISNULL(PC.AcesCodi, 0) AS responsibleId,
         ISNULL(USA.AcesUsuaNome, '') AS responsibleName,
         ISNULL(USA.AcesUsuaFoto, '/content/images/avatar-default.png') AS responsibleIcon ,
         CASE 
-            WHEN PC.DealStatus = 1 THEN PDH.CreatedAt
-            ELSE NULL
+          WHEN PC.DealStatus = 1 THEN PDH.CreatedAt
+          ELSE NULL
         END AS gainedAt,
         CASE 
-            WHEN PC.DealStatus = 0 THEN PDH.CreatedAt
-            ELSE NULL
+          WHEN PC.DealStatus = 0 THEN PDH.CreatedAt
+          ELSE NULL
         END AS losedAt
       FROM
         Pipeline_Card PC WITH(NOLOCK)

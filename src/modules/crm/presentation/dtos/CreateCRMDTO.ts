@@ -1,3 +1,4 @@
+import { CRMRule } from '@common/shared/enums/CRMRules';
 import { z } from 'zod';
 
 export const createCRMInput = z.object({
@@ -6,7 +7,7 @@ export const createCRMInput = z.object({
   logo: z.string(),
   name: z.string(),
   goal: z.number(),
-  rule: z.enum(['all-crm', 'only-one-per-column', 'only-one-in-crm']),
+  rule: z.nativeEnum(CRMRule),
   owners: z.array(
     z.object({
       id: z.number().int(),

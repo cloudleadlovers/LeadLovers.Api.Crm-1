@@ -7,8 +7,11 @@ import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoards
 import { IFindColumnTemplatesRepository } from './models/boards/IFindColumnTemplatesRepository';
 import { IInsertBoardAccessRepository } from './models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
+import { IFindCardByBoardIdAndLeadCodiRepository } from './models/cards/IFindCardByBoardIdAndLeadCodiRepository';
+import { IFindCardByColumnIdAndLeadCodiRepository } from './models/cards/IFindCardByColumnIdAndLeadCodiRepository';
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
 import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
+import { IInsertCardRepository } from './models/cards/IInsertCardRepository';
 import { IUpdateCardRepository } from './models/cards/IUpdateCardRepository';
 import { IUpdateCardsByColumnIdRepository } from './models/cards/IUpdateCardsByColumnIdRepository';
 import { IFindColumnByTitleRepository } from './models/columns/IFindColumnByTitleRepository';
@@ -16,6 +19,8 @@ import { IFindColumnRepository } from './models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsByBoardIdRepository';
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
 import { IUpdateColumnRepository } from './models/columns/IUpdateColumnRepository';
+import { IFindFunnelsByListCodiRepository } from './models/funnels/IFindFunnelsByListCodiRepository';
+import { IInsertPipelineDealHistoryRepository } from './models/history/IInsertPipelineDealHistoryRepository';
 import { IInsertPipelineHistoryRepository } from './models/history/IInsertPipelineHistoryRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
 import { IAverageDaysToCloseAnOpportunityRepository } from './models/insights/IAverageDaysToCloseAnOpportunityRepository';
@@ -31,6 +36,8 @@ import { ISumValueOfColumnsRepository } from './models/insights/ISumValueOfColum
 import { ISumWonOpportunitiesGroupedByCreationDateRepository } from './models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 import { IUpdateReportFilterRepository } from './models/insights/IUpdateReportFilterRepository';
 import { IFindLeadsByUsuaSistCodiRepository } from './models/leads/IFindLeadsByUsuaSistCodiRepository';
+import { IFindListsByUsuaSistCodiRepository } from './models/lists/IFindListsByUsuaSistCodiRepository';
+import { IFindDefaultModelsByFuniCodiRepository } from './models/models/IFindDefaultModelsByFuniCodiRepository';
 import { IRemoveCardNotificationRepository } from './models/notifications/IRemoveCardNotificationRepository';
 import { IRemoveCardNotificationsRepository } from './models/notifications/IRemoveCardNotificationsRepository';
 import { IRemoveColumnNotificationRepository } from './models/notifications/IRemoveColumnNotificationRepository';
@@ -43,8 +50,11 @@ import { FindBoardsByUsuaSistCodiRepository } from './implementations/boards/Fin
 import { FindColumnTemplatesRepository } from './implementations/boards/FindColumnTemplatesRepository';
 import { InsertBoardAccessRepository } from './implementations/boards/InsertBoardAccessRepository';
 import { InsertBoardRepository } from './implementations/boards/InsertBoardRepository';
+import { FindCardByBoardIdAndLeadCodiRepository } from './implementations/cards/FindCardByBoardIdAndLeadCodiRepository';
+import { FindCardByColumnIdAndLeadCodiRepository } from './implementations/cards/FindCardByColumnIdAndLeadCodiRepository';
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
 import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
+import { InsertCardRepository } from './implementations/cards/InsertCardRepository';
 import { UpdateCardRepository } from './implementations/cards/UpdateCardRepository';
 import { UpdateCardsByColumnIdRepository } from './implementations/cards/UpdateCardsByColumnIdRepository';
 import { FindColumnByTitleRepository } from './implementations/columns/FindColumnByTitleRepository';
@@ -53,6 +63,7 @@ import { FindColumnsByBoardIdRepository } from './implementations/columns/FindCo
 import { InsertColumnRepository } from './implementations/columns/InsertColumnRepository';
 import { UpdateColumnRepository } from './implementations/columns/UpdateColumnRepository';
 import { FindFunnelsByListCodiRepository } from './implementations/funnels/FindFunnelsByListCodiRepository';
+import { InsertPipelineDealHistoryRepository } from './implementations/history/InsertPipelineDealHistoryRepository';
 import { InsertPipelineHistoryRepository } from './implementations/history/InsertPipelineHistoryRepository';
 import { AverageDaysAnOpportunitySpendsInAStageRepository } from './implementations/insights/AverageDaysAnOpportunitySpendsInAStageRepository';
 import { AverageDaysToCloseAnOpportunityRepository } from './implementations/insights/AverageDaysToCloseAnOpportunityRepository';
@@ -76,9 +87,6 @@ import { RemoveCardNotificationRepository } from './implementations/notification
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
-import { IFindFunnelsByListCodiRepository } from './models/funnels/IFindFunnelsByListCodiRepository';
-import { IFindListsByUsuaSistCodiRepository } from './models/lists/IFindListsByUsuaSistCodiRepository';
-import { IFindDefaultModelsByFuniCodiRepository } from './models/models/IFindDefaultModelsByFuniCodiRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -118,6 +126,16 @@ container.registerSingleton<IFindBoardResponsiblesRepository>(
 container.registerSingleton<IFindBoardsByUsuaSistCodiRepository>(
   'FindBoardsByUsuaSistCodiRepository',
   FindBoardsByUsuaSistCodiRepository
+);
+
+container.registerSingleton<IFindCardByBoardIdAndLeadCodiRepository>(
+  'FindCardByBoardIdAndLeadCodiRepository',
+  FindCardByBoardIdAndLeadCodiRepository
+);
+
+container.registerSingleton<IFindCardByColumnIdAndLeadCodiRepository>(
+  'FindCardByColumnIdAndLeadCodiRepository',
+  FindCardByColumnIdAndLeadCodiRepository
 );
 
 container.registerSingleton<IFindCardsByColumnIdRepository>(
@@ -215,9 +233,19 @@ container.registerSingleton<IInsertBoardAccessRepository>(
   InsertBoardAccessRepository
 );
 
+container.registerSingleton<IInsertCardRepository>(
+  'InsertCardRepository',
+  InsertCardRepository
+);
+
 container.registerSingleton<IInsertColumnRepository>(
   'InsertColumnRepository',
   InsertColumnRepository
+);
+
+container.registerSingleton<IInsertPipelineDealHistoryRepository>(
+  'InsertPipelineDealHistoryRepository',
+  InsertPipelineDealHistoryRepository
 );
 
 container.registerSingleton<IInsertPipelineHistoryRepository>(

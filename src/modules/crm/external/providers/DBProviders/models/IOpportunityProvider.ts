@@ -1,19 +1,29 @@
+import { DealStatus } from '@common/shared/enums/DealStatus';
 import { MachineType } from '@common/shared/enums/MachineType';
-import { LogData } from '@common/shared/types/LogData';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 
 export type Opportunity = {
   id: number;
+  userId: number;
   stageId: number;
+  contactId: number;
   name: string;
   email: string;
   phone: string;
+  commercialPhone?: string;
+  score: number;
+  tags?: string;
   value: number;
   responsible: {
     id: number;
     name: string;
     icon: string;
   };
+  deal: {
+    state: DealStatus;
+    scheduleDate?: Date;
+  };
+  position: number;
   createdAt: Date;
   gainedAt?: Date;
   losedAt?: Date;
@@ -30,7 +40,7 @@ export type FindOpportunityFilter = {
     notIn?: number[];
     isNull?: boolean;
   };
-  stateCards?: ('OPENED' | 'LOSED' | 'GAINED')[];
+  state?: ('OPENED' | 'LOSED' | 'GAINED')[];
   value?: {
     greaterThan?: number;
     lessThan?: number;
@@ -64,13 +74,33 @@ export type Sequence = {
   name: string;
 };
 
+export type OpportunityLogParams = {
+  stage: {
+    sourceId?: number;
+    destinationId?: number;
+  };
+  opportunity: {
+    id: number;
+    dataBefore?: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    dataAfter?: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+  };
+  userId: number;
+  subUserId?: number;
+};
+
 export default interface IOpportunityProvider {
+  createOpportunity(
+    params: Omit<
+      Opportunity,
+      'id' | 'position' | 'gainedAt' | 'losedAt' | 'createdAt'
+    >
+  ): Promise<Pick<Opportunity, 'id' | 'position' | 'createdAt'>>;
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
   deleteOpportunity(stageId: number, opportunityId: number): Promise<void>;
   deleteOpportunitiesByStageId(
     stageId: number
-  ): Promise<Pick<Opportunity, 'id' | 'name'>[]>;
+  ): Promise<Omit<Opportunity, 'gainedAt' | 'losedAt'>[]>;
   findContacts(
     userId: number,
     pagination: Pagination,
@@ -85,6 +115,14 @@ export default interface IOpportunityProvider {
     sequenceId: number,
     pagination: Pagination
   ): Promise<ResultPaginated<Message>>;
+  findOpportunityByCRMIdAndContactId(
+    crmId: number,
+    contactId: number
+  ): Promise<Pick<Opportunity, 'id'> | undefined>;
+  findOpportunityByStageIdAndContactId(
+    stageId: number,
+    contactId: number
+  ): Promise<Pick<Opportunity, 'id'> | undefined>;
   findOpportunitiesByStageId(
     stageId: number,
     pagination?: Pagination,
@@ -94,11 +132,6 @@ export default interface IOpportunityProvider {
     machineId: number,
     pagination: Pagination
   ): Promise<ResultPaginated<Sequence>>;
-  logOpportunityRemoval(
-    stageId: number,
-    opportunityId: number,
-    userId: number,
-    data: LogData,
-    subUserId?: number
-  ): Promise<void>;
+  logOpportunityCreation(params: OpportunityLogParams): Promise<void>;
+  logOpportunityRemoval(params: OpportunityLogParams): Promise<void>;
 }

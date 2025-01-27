@@ -1,23 +1,26 @@
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { PipelineReportsFilters } from '../insights/IFindConversionRateGraphDataRepository';
-
-export type Card = {
-  id: number;
-  columnId: number;
-  name: string | null;
-  email: string | null;
-  phone: string | null;
-  value: number;
-  responsibleId: number | null;
-  responsibleName: string | null;
-  createdAt: Date;
-  gainedAt: Date;
-};
+import { Card } from './IFindCardsByColumnIdRepository';
 
 export interface IFindCardsWonByBoardIdRepository {
   find(
     boardId: number,
     pagination: Pagination,
     filters?: PipelineReportsFilters
-  ): Promise<ResultPaginated<Card>>;
+  ): Promise<
+    ResultPaginated<
+      Pick<
+        Card,
+        | 'id'
+        | 'name'
+        | 'email'
+        | 'phone'
+        | 'value'
+        | 'responsibleId'
+        | 'responsibleName'
+        | 'createdAt'
+        | 'gainedAt'
+      >
+    >
+  >;
 }

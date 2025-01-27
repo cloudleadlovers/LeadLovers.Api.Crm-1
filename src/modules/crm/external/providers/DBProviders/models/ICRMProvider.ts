@@ -1,4 +1,5 @@
 import { CRMOwnerRole } from '@common/shared/enums/CRMOwnerRole';
+import { CRMRule } from '@common/shared/enums/CRMRules';
 import { LogData } from '@common/shared/types/LogData';
 
 export type CRMOwner = {
@@ -15,7 +16,7 @@ export type CRM = {
   logo: string;
   name: string;
   goal: number;
-  rule: 'all-crm' | 'only-one-per-column' | 'only-one-in-crm';
+  rule: CRMRule;
   createdAt: Date;
   opportunity: {
     overallQuantity: number;

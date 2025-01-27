@@ -1,10 +1,12 @@
+import { CRMRule } from '@common/shared/enums/CRMRules';
+
 export type Board = {
   id: number;
   userId: number;
   logo: string;
   title: string;
   goal: number;
-  rule: 'all-crm' | 'only-one-per-column' | 'only-one-in-crm';
+  rule: CRMRule;
   cardQuantity: number;
   totalCardValue: number;
   createdAt: Date;

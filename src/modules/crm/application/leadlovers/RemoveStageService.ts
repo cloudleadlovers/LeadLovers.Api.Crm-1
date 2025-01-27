@@ -58,15 +58,34 @@ export default class RemoveStageService {
     );
     await Promise.all(
       opportunities.map(async opportunity => {
-        await this.opportunityProvider.logOpportunityRemoval(
-          params.id,
-          opportunity.id,
-          params.userId,
-          {
-            text: LogText.OpportunityRemoved,
-            args: [opportunity.name, params.userEmail]
-          }
-        );
+        await this.opportunityProvider.logOpportunityRemoval({
+          stage: {},
+          opportunity: {
+            id: opportunity.id,
+            dataBefore: {
+              contactId: opportunity.contactId,
+              stageId: opportunity.stageId,
+              deal: opportunity.deal,
+              email: opportunity.email ?? '',
+              name: opportunity.name,
+              phone: opportunity.phone ?? '',
+              responsible: {
+                id: opportunity.responsible.id,
+                name: opportunity.responsible.name,
+                icon: opportunity.responsible.icon
+              },
+              score: opportunity.score ?? 0,
+              value: opportunity.value ?? 0,
+              commercialPhone: opportunity.commercialPhone,
+              tags: opportunity.tags,
+              id: opportunity.id,
+              createdAt: opportunity.createdAt,
+              position: opportunity.position,
+              userId: opportunity.userId
+            }
+          },
+          userId: params.userId
+        });
       })
     );
   }

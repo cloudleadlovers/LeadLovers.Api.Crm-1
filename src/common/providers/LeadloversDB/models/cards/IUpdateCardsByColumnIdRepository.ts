@@ -7,5 +7,7 @@ export type UpdateCardsParams = {
 };
 
 export interface IUpdateCardsByColumnIdRepository {
-  update(params: UpdateCardsParams): Promise<Pick<Card, 'id' | 'name'>[]>;
+  update(
+    params: UpdateCardsParams
+  ): Promise<Omit<Card, 'gainedAt' | 'losedAt'>[]>;
 }

@@ -1,13 +1,13 @@
 import {
   FindOpportunitiesWon,
-  FindOpportunityFilters,
-  FindOpportunityPagination
+  FindOpportunityFilters
 } from '@common/shared/integration/interfaces/OpportunityIntegration';
+import { Pagination } from '@common/shared/types/Pagination';
 
 export default interface IOpportunityApiProvider {
   findOpportunitiesWonByCRMId(
     crmId: number,
-    pagination: FindOpportunityPagination,
+    pagination: Pagination,
     filters?: FindOpportunityFilters
   ): Promise<FindOpportunitiesWon>;
 }

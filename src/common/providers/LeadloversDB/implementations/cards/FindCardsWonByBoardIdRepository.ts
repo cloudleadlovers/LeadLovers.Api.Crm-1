@@ -2,10 +2,8 @@ import mssql from 'mssql';
 
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
-import {
-  Card,
-  IFindCardsWonByBoardIdRepository
-} from '../../models/cards/IFindCardsWonByBoardIdRepository';
+import { Card } from '../../models/cards/IFindCardsByColumnIdRepository';
+import { IFindCardsWonByBoardIdRepository } from '../../models/cards/IFindCardsWonByBoardIdRepository';
 import {
   PipelineReportsFilters,
   PipelineReportsQueryFilters
@@ -18,14 +16,42 @@ export class FindCardsWonByBoardIdRepository
     boardId: number,
     pagination: Pagination,
     filters?: PipelineReportsFilters
-  ): Promise<ResultPaginated<Card>> {
+  ): Promise<
+    ResultPaginated<
+      Pick<
+        Card,
+        | 'id'
+        | 'name'
+        | 'email'
+        | 'phone'
+        | 'value'
+        | 'responsibleId'
+        | 'responsibleName'
+        | 'createdAt'
+        | 'gainedAt'
+      >
+    >
+  > {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
       .input('Limit', mssql.Int, pagination.limit)
       .input('LastId', mssql.Int, pagination.lastId ?? null)
-      .query<Card>(this.makeQuery(filters));
+      .query<
+        Pick<
+          Card,
+          | 'id'
+          | 'name'
+          | 'email'
+          | 'phone'
+          | 'value'
+          | 'responsibleId'
+          | 'responsibleName'
+          | 'createdAt'
+          | 'gainedAt'
+        >
+      >(this.makeQuery(filters));
     return {
       items: recordset,
       nextCursor: recordset.length

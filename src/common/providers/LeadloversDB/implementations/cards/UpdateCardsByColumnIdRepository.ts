@@ -12,24 +12,39 @@ export class UpdateCardsByColumnIdRepository
 {
   public async update(
     params: UpdateCardsParams
-  ): Promise<Pick<Card, 'id' | 'name'>[]> {
+  ): Promise<Omit<Card, 'gainedAt' | 'losedAt'>[]> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('Status', mssql.Int, params.status)
       .input('ColumnId', mssql.Int, params.columnId).query<
-      Pick<Card, 'id' | 'name'>
+      Omit<Card, 'gainedAt' | 'losedAt'>
     >(`
-        UPDATE 
-          Pipeline_Card
-        SET 
-          [Status] = @Status
-        OUTPUT 
-          INSERTED.Id AS id,
-          INSERTED.LeadName AS name
-        WHERE
-          ColumnId = @ColumnId;
-      `);
+      UPDATE 
+        Pipeline_Card
+      SET 
+        [Status] = @Status
+      OUTPUT 
+        INSERTED.Id AS id,
+        ISNULL(INSERTED.UsuaSistCodi, 0) AS usuaSistCodi,
+        INSERTED.ColumnId AS columnId,
+        ISNULL(INSERTED.LeadCodi, 0) AS leadCodi,
+        ISNULL(INSERTED.LeadName, '') AS name,
+        ISNULL(INSERTED.LeadEmail, '') AS email,
+        ISNULL(INSERTED.LeadPhone, '') AS phone,
+        ISNULL(INSERTED.LeadCommercialPhone, '') AS commercialPhone,
+        ISNULL(INSERTED.LeadScore, '') AS score,
+        ISNULL(INSERTED.LeadTags, '') AS tags,
+        INSERTED.Status AS status,
+        INSERTED.CardValue AS value,
+        INSERTED.DealStatus AS dealStatus,
+        INSERTED.DealScheduleDate AS dealScheduleDate,
+        INSERTED.CardPosition AS position,
+        INSERTED.CreateDate AS createdAt,
+        ISNULL(INSERTED.AcesCodi, 0) AS responsibleId
+      WHERE
+        ColumnId = @ColumnId;
+    `);
     return recordset;
   }
 }

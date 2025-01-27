@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import { CreateCRMHandler } from '@modules/crm/presentation/handlers/CreateCRMHandler';
+import { CreateOpportunityHandler } from '@modules/crm/presentation/handlers/CreateOpportunityHandler';
 import { CreateStageHandler } from '@modules/crm/presentation/handlers/CreateStageHandler';
 import { FindContactsHandler } from '@modules/crm/presentation/handlers/FindContactsHandler';
 import { FindCRMContentHandler } from '@modules/crm/presentation/handlers/FindCRMContentHandler';
@@ -16,6 +17,7 @@ import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateSta
 import { authenticate } from 'infa/http/middlewares/authJWT';
 
 const createCRM = new CreateCRMHandler();
+const createOpportunity = new CreateOpportunityHandler();
 const createStage = new CreateStageHandler();
 const findContacts = new FindContactsHandler();
 const findCRMContent = new FindCRMContentHandler();
@@ -41,6 +43,11 @@ crmRouter.post('/:crmId/stages', createStage.handle);
 crmRouter.get('/:crmId/stages/:stageId', findStageContent.handle);
 crmRouter.patch('/:crmId/stages/:stageId', updateStage.handle);
 crmRouter.delete('/:crmId/stages/:stageId', removeStage.handle);
+
+crmRouter.post(
+  '/:crmId/stages/:stageId/opportunities',
+  createOpportunity.handle
+);
 
 crmRouter.get('/stages/templates', findStageTemplates.handle);
 crmRouter.get('/contacts', findContacts.handle);
