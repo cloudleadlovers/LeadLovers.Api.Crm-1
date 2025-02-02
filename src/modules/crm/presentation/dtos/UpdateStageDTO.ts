@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const updateStageInput = z.object({
   userId: z.number().int(),
   userEmail: z.string().email(),
-  id: z.number().int(),
+  stageId: z.number().int(),
   crmId: z.number().int(),
   name: z.string().optional(),
   color: z.string().optional(),

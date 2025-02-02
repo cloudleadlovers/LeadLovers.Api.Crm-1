@@ -1,21 +1,26 @@
 import { inject, injectable } from 'tsyringe';
 
+import { IInsertBoardAccessRepository } from '@common/providers/LeadloversDB/models/boardAccess/IInsertBoardAccessRepository';
 import { IFindBoardAccessByBoardIdRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardAccessByBoardIdRepository';
 import { IFindBoardRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardRepository';
 import { IFindBoardResponsiblesRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/boards/IFindBoardsByUsuaSistCodiRepository';
-import { IInsertBoardAccessRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from '@common/providers/LeadloversDB/models/boards/IInsertBoardRepository';
+import { IUpdateBoardRepository } from '@common/providers/LeadloversDB/models/boards/IUpdateBoardRepository';
+import { IFindCardLayoutByBoardIdRepository } from '@common/providers/LeadloversDB/models/cardLayouts/IFindCardLayoutByBoardIdRepository';
+import { IInsertCardLayoutRepository } from '@common/providers/LeadloversDB/models/cardLayouts/IInsertCardLayoutRepository';
 import { IInsertPipelineHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineHistoryRepository';
 import { IFindUsersByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/users/IFindUsersByUsuaSistCodiRepository';
 import { CRMOwnerRole } from '@common/shared/enums/CRMOwnerRole';
 import { LogType } from '@common/shared/enums/LogType';
 import { LogData } from '@common/shared/types/LogData';
+import { OpportunityLayout } from '@common/shared/types/OpportunityLayout';
 import { formatLogData } from '@common/utils/formatLogData';
 import ICRMProvider, {
   CRM,
   CRMOwner,
-  FindCRMsFilters
+  FindCRMsFilters,
+  OpportunityDisplayLayout
 } from '../../models/ICRMProvider';
 
 @injectable()
@@ -29,14 +34,20 @@ export default class LeadloversCRMProvider implements ICRMProvider {
     private findBoardResponsibles: IFindBoardResponsiblesRepository,
     @inject('FindBoardsByUsuaSistCodiRepository')
     private findBoardsByUsuaSistCodi: IFindBoardsByUsuaSistCodiRepository,
+    @inject('FindCardLayoutByBoardIdRepository')
+    private findCardLayoutByBoardIdRepository: IFindCardLayoutByBoardIdRepository,
     @inject('FindUsersByUsuaSistCodiRepository')
     private findUsersByUsuaSistCodiRepository: IFindUsersByUsuaSistCodiRepository,
     @inject('InsertBoardAccessRepository')
     private insertBoardAccessRepository: IInsertBoardAccessRepository,
     @inject('InsertBoardRepository')
     private insertBoardRepository: IInsertBoardRepository,
+    @inject('InsertCardLayoutRepository')
+    private insertCardLayoutRepository: IInsertCardLayoutRepository,
     @inject('InsertPipelineHistoryRepository')
-    private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository
+    private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository,
+    @inject('UpdateBoardRepository')
+    private updateBoardRepository: IUpdateBoardRepository
   ) {}
 
   public async assignOwnerToCRM(
@@ -56,6 +67,27 @@ export default class LeadloversCRMProvider implements ICRMProvider {
       usuaSistCodi: params.userId
     });
     return { id: boardId };
+  }
+
+  public async createLayoutForOpportunitiesDisplay(
+    crmId: number,
+    layout: OpportunityLayout
+  ): Promise<void> {
+    await this.insertCardLayoutRepository.insert({
+      boardId: crmId,
+      layout: {
+        leadCodi: layout.contactId,
+        leadEmail: layout.email,
+        leadName: layout.name,
+        leadPhone: layout.phone,
+        leadCommercialPhone: layout.commercialPhone,
+        leadScore: layout.score,
+        leadTags: layout.tags,
+        value: layout.value,
+        dealStatus: layout.dealStatus,
+        dealScheduleDate: layout.dealScheduleDate
+      }
+    });
   }
 
   public async findCRM(
@@ -109,6 +141,30 @@ export default class LeadloversCRMProvider implements ICRMProvider {
     );
   }
 
+  public async findOpportunityDisplayLayoutByCrmId(
+    crmId: number
+  ): Promise<OpportunityDisplayLayout | undefined> {
+    const result = await this.findCardLayoutByBoardIdRepository.find(crmId);
+    if (!result) return undefined;
+    return {
+      id: result.id,
+      crmId: result.boardId,
+      layout: {
+        contactId: result.layout.leadCodi,
+        email: result.layout.leadEmail,
+        name: result.layout.leadName,
+        phone: result.layout.leadPhone,
+        commercialPhone: result.layout.leadCommercialPhone,
+        score: result.layout.leadScore,
+        tags: result.layout.leadTags,
+        value: result.layout.value,
+        dealStatus: result.layout.dealStatus,
+        dealScheduleDate: result.layout.dealScheduleDate
+      },
+      createdAt: result.createdAt
+    };
+  }
+
   public async findPotentialOwnersByUserId(
     userId: number
   ): Promise<Pick<CRMOwner, 'id' | 'name' | 'photo'>[]> {
@@ -140,6 +196,16 @@ export default class LeadloversCRMProvider implements ICRMProvider {
       acesCodi: subUserId,
       type: LogType.CREATED,
       data: formatLogData(data)
+    });
+  }
+
+  public async updateCRM(
+    params: Pick<CRM, 'id'> & Partial<Pick<CRM, 'logo' | 'name' | 'goal'>>
+  ): Promise<void> {
+    await this.updateBoardRepository.update({
+      ...params,
+      boardId: params.id,
+      title: params.name
     });
   }
 

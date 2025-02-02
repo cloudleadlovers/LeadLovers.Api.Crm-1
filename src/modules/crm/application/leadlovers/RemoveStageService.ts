@@ -39,10 +39,13 @@ export default class RemoveStageService {
   }
 
   private async deleteStage(params: RemoveStageInput): Promise<void> {
-    const stage = await this.stageProvider.deleteStage(params);
+    const stage = await this.stageProvider.deleteStage({
+      ...params,
+      id: params.stageId
+    });
     if (!stage) throw new Error('Stage not found.');
-    await this.stageProvider.deleteNotificationByStageId(params.id);
-    await this.stageProvider.logStageRemoval(params.id, params.userId, {
+    await this.stageProvider.deleteNotificationByStageId(params.stageId);
+    await this.stageProvider.logStageRemoval(params.stageId, params.userId, {
       text: LogText.StageRemoved,
       args: [stage.name, params.userEmail]
     });
@@ -50,7 +53,9 @@ export default class RemoveStageService {
 
   private async deleteOpportunities(params: RemoveStageInput): Promise<void> {
     const opportunities =
-      await this.opportunityProvider.deleteOpportunitiesByStageId(params.id);
+      await this.opportunityProvider.deleteOpportunitiesByStageId(
+        params.stageId
+      );
     if (!opportunities.length) return;
     const opportunityIds = opportunities.map(opportunity => opportunity.id);
     await this.opportunityProvider.deleteNotificationsByOpportunityIds(

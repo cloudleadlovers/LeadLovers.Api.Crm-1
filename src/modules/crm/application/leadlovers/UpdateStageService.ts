@@ -15,9 +15,9 @@ export default class UpdateStageService {
     if (params.name) {
       await this.ensureUniqueStageName(params.crmId, params.name);
     }
-    await this.stageProvider.updateStage(params);
-    const stageName = await this.getStageName(params.id);
-    await this.stageProvider.logStageUpdating(params.id, params.userId, {
+    await this.stageProvider.updateStage({ ...params, id: params.stageId });
+    const stageName = await this.getStageName(params.stageId);
+    await this.stageProvider.logStageUpdating(params.stageId, params.userId, {
       text: LogText.StageUpdated,
       args: [stageName, params.userEmail]
     });

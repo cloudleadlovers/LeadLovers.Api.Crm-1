@@ -1,7 +1,7 @@
 import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
-import { IInsertBoardAccessRepository } from '../../models/boards/IInsertBoardAccessRepository';
+import { IInsertBoardAccessRepository } from '../../models/boardAccess/IInsertBoardAccessRepository';
 
 export class InsertBoardAccessRepository
   implements IInsertBoardAccessRepository
@@ -27,6 +27,6 @@ export class InsertBoardAccessRepository
           @AcesCodi,
           @AccessType
         );
-    `);
+      `);
   }
 }

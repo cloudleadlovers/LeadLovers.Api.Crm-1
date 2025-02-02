@@ -1,12 +1,15 @@
 import { container } from 'tsyringe';
 
+import { IInsertBoardAccessRepository } from './models/boardAccess/IInsertBoardAccessRepository';
 import { IFindBoardAccessByBoardIdRepository } from './models/boards/IFindBoardAccessByBoardIdRepository';
 import { IFindBoardRepository } from './models/boards/IFindBoardRepository';
 import { IFindBoardResponsiblesRepository } from './models/boards/IFindBoardResponsiblesRepository';
 import { IFindBoardsByUsuaSistCodiRepository } from './models/boards/IFindBoardsByUsuaSistCodiRepository';
 import { IFindColumnTemplatesRepository } from './models/boards/IFindColumnTemplatesRepository';
-import { IInsertBoardAccessRepository } from './models/boards/IInsertBoardAccessRepository';
 import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
+import { IUpdateBoardRepository } from './models/boards/IUpdateBoardRepository';
+import { IFindCardLayoutByBoardIdRepository } from './models/cardLayouts/IFindCardLayoutByBoardIdRepository';
+import { IInsertCardLayoutRepository } from './models/cardLayouts/IInsertCardLayoutRepository';
 import { IFindCardByBoardIdAndLeadCodiRepository } from './models/cards/IFindCardByBoardIdAndLeadCodiRepository';
 import { IFindCardByColumnIdAndLeadCodiRepository } from './models/cards/IFindCardByColumnIdAndLeadCodiRepository';
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
@@ -43,13 +46,16 @@ import { IRemoveCardNotificationsRepository } from './models/notifications/IRemo
 import { IRemoveColumnNotificationRepository } from './models/notifications/IRemoveColumnNotificationRepository';
 import { IFindUsersByUsuaSistCodiRepository } from './models/users/IFindUsersByUsuaSistCodiRepository';
 
+import { InsertBoardAccessRepository } from './implementations/boardAccess/InsertBoardAccessRepository';
 import { FindBoardAccessByBoardIdRepository } from './implementations/boards/FindBoardAccessByBoardIdRepository';
 import { FindBoardRepository } from './implementations/boards/FindBoardRepository';
 import { FindBoardResponsiblesRepository } from './implementations/boards/FindBoardResponsiblesRepository';
 import { FindBoardsByUsuaSistCodiRepository } from './implementations/boards/FindBoardsByUsuaSistCodiRepository';
 import { FindColumnTemplatesRepository } from './implementations/boards/FindColumnTemplatesRepository';
-import { InsertBoardAccessRepository } from './implementations/boards/InsertBoardAccessRepository';
 import { InsertBoardRepository } from './implementations/boards/InsertBoardRepository';
+import { UpdateBoardRepository } from './implementations/boards/UpdateBoardRepository';
+import { FindCardLayoutByBoardIdRepository } from './implementations/cardLayouts/FindCardLayoutByBoardIdRepository';
+import { InsertCardLayoutRepository } from './implementations/cardLayouts/InsertCardLayoutRepository';
 import { FindCardByBoardIdAndLeadCodiRepository } from './implementations/cards/FindCardByBoardIdAndLeadCodiRepository';
 import { FindCardByColumnIdAndLeadCodiRepository } from './implementations/cards/FindCardByColumnIdAndLeadCodiRepository';
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
@@ -126,6 +132,11 @@ container.registerSingleton<IFindBoardResponsiblesRepository>(
 container.registerSingleton<IFindBoardsByUsuaSistCodiRepository>(
   'FindBoardsByUsuaSistCodiRepository',
   FindBoardsByUsuaSistCodiRepository
+);
+
+container.registerSingleton<IFindCardLayoutByBoardIdRepository>(
+  'FindCardLayoutByBoardIdRepository',
+  FindCardLayoutByBoardIdRepository
 );
 
 container.registerSingleton<IFindCardByBoardIdAndLeadCodiRepository>(
@@ -238,6 +249,11 @@ container.registerSingleton<IInsertCardRepository>(
   InsertCardRepository
 );
 
+container.registerSingleton<IInsertCardLayoutRepository>(
+  'InsertCardLayoutRepository',
+  InsertCardLayoutRepository
+);
+
 container.registerSingleton<IInsertColumnRepository>(
   'InsertColumnRepository',
   InsertColumnRepository
@@ -286,6 +302,11 @@ container.registerSingleton<ISumValueOfColumnsRepository>(
 container.registerSingleton<ISumWonOpportunitiesGroupedByCreationDateRepository>(
   'SumWonOpportunitiesGroupedByCreationDateRepository',
   SumWonOpportunitiesGroupedByCreationDateRepository
+);
+
+container.registerSingleton<IUpdateBoardRepository>(
+  'UpdateBoardRepository',
+  UpdateBoardRepository
 );
 
 container.registerSingleton<IUpdateCardRepository>(
