@@ -38,7 +38,19 @@ import { IRemoveReportFilterRepository } from './models/insights/IRemoveReportFi
 import { ISumValueOfColumnsRepository } from './models/insights/ISumValueOfColumnsRepository';
 import { ISumWonOpportunitiesGroupedByCreationDateRepository } from './models/insights/ISumWonOpportunitiesGroupedByCreationDateRepository';
 import { IUpdateReportFilterRepository } from './models/insights/IUpdateReportFilterRepository';
+import { IRemoveLeadFromBlackListRepository } from './models/leadBlackList/IRemoveLeadFromBlackListRepository';
+import { IUpsertLeadCaptureDataRepository } from './models/leadCaptureData/IUpsertLeadCaptureDataRepository';
+import { IFindLeadCaptureFieldsByUserIdRepository } from './models/leadCaptureField/IFindLeadCaptureFieldsByUserIdRepository';
+import { IFindLeadFromMachineByPhoneRepository } from './models/leads/IFindLeadFromMachineByPhoneRepository';
 import { IFindLeadsByUsuaSistCodiRepository } from './models/leads/IFindLeadsByUsuaSistCodiRepository';
+import { IInsertLeadOnWhatsAppMachineRepository } from './models/leads/IInsertLeadOnWhatsAppMachineRepository';
+import { IInsertLeadRepository } from './models/leads/IInsertLeadRepository';
+import { IInsertLeadTrackRepository } from './models/leadTrack/IInsertLeadTrackRepository';
+import { IRemoveTagsTrackRepository } from './models/leadTrack/IRemoveTagsTrackRepository';
+import { IFindLeadUsuaSistByLeadCodiRepository } from './models/leadUsuaSists/IFindLeadUsuaSistByLeadCodiRepository';
+import { IFindLeadUsuaSistRepository } from './models/leadUsuaSists/IFindLeadUsuaSistRepository';
+import { IInsertLeadUsuaSistTagRepository } from './models/leadUsuaSistTags/IInsertLeadUsuaSistTagRepository';
+import { IRemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository } from './models/leadUsuaSistTags/IRemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository';
 import { IFindListsByUsuaSistCodiRepository } from './models/lists/IFindListsByUsuaSistCodiRepository';
 import { IFindDefaultModelsByFuniCodiRepository } from './models/models/IFindDefaultModelsByFuniCodiRepository';
 import { IRemoveCardNotificationRepository } from './models/notifications/IRemoveCardNotificationRepository';
@@ -84,7 +96,20 @@ import { RemoveReportFilterRepository } from './implementations/insights/RemoveR
 import { SumValueOfColumnsRepository } from './implementations/insights/SumValueOfColumnsRepository';
 import { SumWonOpportunitiesGroupedByCreationDateRepository } from './implementations/insights/SumWonOpportunitiesGroupedByCreationDateRepository';
 import { UpdateReportFilterRepository } from './implementations/insights/UpdateReportFilterRepository';
+import { RemoveLeadFromBlackListRepository } from './implementations/leadBlackList/RemoveLeadFromBlackListRepository';
+import { UpsertLeadCaptureDataRepository } from './implementations/leadCaptureData/UpsertLeadCaptureDataRepository';
+import { FindLeadCaptureFieldsByUserIdRepository } from './implementations/leadCaptureField/FindLeadCaptureFieldsByUserIdRepository';
+import { FindLeadFromMachineByPhoneRepository } from './implementations/leads/FindLeadFromMachineByPhoneRepository';
 import { FindLeadsByUsuaSistCodiRepository } from './implementations/leads/FindLeadsByUsuaSistCodiRepository';
+import { InsertLeadOnWhatsAppMachineRepository } from './implementations/leads/InsertLeadOnWhatsAppMachineRepository';
+import { InsertLeadRepository } from './implementations/leads/InsertLeadRepository';
+import { InsertLeadTrackRepository } from './implementations/leadTrack/InsertLeadTrackRepository';
+import { InsertTagsTrackRepository } from './implementations/leadTrack/InsertTagsTrackRepository';
+import { RemoveTagsTrackRepository } from './implementations/leadTrack/RemoveTagsTrackRepository';
+import { FindLeadUsuaSistByLeadCodiRepository } from './implementations/leadUsuaSists/FindLeadUsuaSistByLeadCodiRepository';
+import { FindLeadUsuaSistRepository } from './implementations/leadUsuaSists/FindLeadUsuaSistRepository';
+import { InsertLeadUsuaSistTagRepository } from './implementations/leadUsuaSistTags/InsertLeadUsuaSistTagRepository';
+import { RemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository } from './implementations/leadUsuaSistTags/RemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository';
 import { FindListsByUsuaSistCodiRepository } from './implementations/lists/FindListsByUsuaSistCodiRepository';
 import { FindDefaultModelsByFuniCodiRepository } from './implementations/models/FindDefaultModelsByFuniCodiRepository';
 import { FindMessengerModelsByFuniCodiRepository } from './implementations/models/FindMessengerModelsByFuniCodiRepository';
@@ -93,6 +118,7 @@ import { RemoveCardNotificationRepository } from './implementations/notification
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
+import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -209,9 +235,29 @@ container.registerSingleton<IFindGainConversionRateGraphDataRepository>(
   FindGainConversionRateGraphDataRepository
 );
 
+container.registerSingleton<IFindLeadCaptureFieldsByUserIdRepository>(
+  'FindLeadCaptureFieldsByUserIdRepository',
+  FindLeadCaptureFieldsByUserIdRepository
+);
+
+container.registerSingleton<IFindLeadFromMachineByPhoneRepository>(
+  'FindLeadFromMachineByPhoneRepository',
+  FindLeadFromMachineByPhoneRepository
+);
+
 container.registerSingleton<IFindLeadsByUsuaSistCodiRepository>(
   'FindLeadsByUsuaSistCodiRepository',
   FindLeadsByUsuaSistCodiRepository
+);
+
+container.registerSingleton<IFindLeadUsuaSistRepository>(
+  'FindLeadUsuaSistRepository',
+  FindLeadUsuaSistRepository
+);
+
+container.registerSingleton<IFindLeadUsuaSistByLeadCodiRepository>(
+  'FindLeadUsuaSistByLeadCodiRepository',
+  FindLeadUsuaSistByLeadCodiRepository
 );
 
 container.registerSingleton<IFindListsByUsuaSistCodiRepository>(
@@ -259,6 +305,26 @@ container.registerSingleton<IInsertColumnRepository>(
   InsertColumnRepository
 );
 
+container.registerSingleton<IInsertLeadRepository>(
+  'InsertLeadRepository',
+  InsertLeadRepository
+);
+
+container.registerSingleton<IInsertLeadOnWhatsAppMachineRepository>(
+  'InsertLeadOnWhatsAppMachineRepository',
+  InsertLeadOnWhatsAppMachineRepository
+);
+
+container.registerSingleton<IInsertLeadTrackRepository>(
+  'InsertLeadTrackRepository',
+  InsertLeadTrackRepository
+);
+
+container.registerSingleton<IInsertLeadUsuaSistTagRepository>(
+  'InsertLeadUsuaSistTagRepository',
+  InsertLeadUsuaSistTagRepository
+);
+
 container.registerSingleton<IInsertPipelineDealHistoryRepository>(
   'InsertPipelineDealHistoryRepository',
   InsertPipelineDealHistoryRepository
@@ -272,6 +338,11 @@ container.registerSingleton<IInsertPipelineHistoryRepository>(
 container.registerSingleton<IInsertReportFilterRepository>(
   'InsertReportFilterRepository',
   InsertReportFilterRepository
+);
+
+container.registerSingleton<IInsertTagsTrackRepository>(
+  'InsertTagsTrackRepository',
+  InsertTagsTrackRepository
 );
 
 container.registerSingleton<IRemoveCardNotificationRepository>(
@@ -289,9 +360,24 @@ container.registerSingleton<IRemoveColumnNotificationRepository>(
   RemoveColumnNotificationRepository
 );
 
+container.registerSingleton<IRemoveLeadFromBlackListRepository>(
+  'RemoveLeadFromBlackListRepository',
+  RemoveLeadFromBlackListRepository
+);
+
+container.registerSingleton<IRemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository>(
+  'RemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository',
+  RemoveLeadUsuaSistTagsByLeadUsuaSistCodiRepository
+);
+
 container.registerSingleton<IRemoveReportFilterRepository>(
   'RemoveReportFilterRepository',
   RemoveReportFilterRepository
+);
+
+container.registerSingleton<IRemoveTagsTrackRepository>(
+  'RemoveTagsTrackRepository',
+  RemoveTagsTrackRepository
 );
 
 container.registerSingleton<ISumValueOfColumnsRepository>(
@@ -327,4 +413,9 @@ container.registerSingleton<IUpdateColumnRepository>(
 container.registerSingleton<IUpdateReportFilterRepository>(
   'UpdateReportFilterRepository',
   UpdateReportFilterRepository
+);
+
+container.registerSingleton<IUpsertLeadCaptureDataRepository>(
+  'UpsertLeadCaptureDataRepository',
+  UpsertLeadCaptureDataRepository
 );

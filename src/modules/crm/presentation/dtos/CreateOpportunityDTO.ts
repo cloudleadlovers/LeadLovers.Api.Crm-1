@@ -5,13 +5,17 @@ export const createOpportunityInput = z.object({
   userId: z.number().int(),
   crmId: z.number().int(),
   stageId: z.number().int(),
-  contactId: z.number().int(),
+  contactId: z.number().int().optional(),
   name: z.string(),
   email: z.string().optional(),
   phone: z.string().optional(),
   commercialPhone: z.string().optional(),
   score: z.number().int().default(0),
-  tags: z.string().optional(),
+  company: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  birthDate: z.date().optional(),
+  tags: z.array(z.number()).optional(),
   value: z.number().int().default(0),
   responsible: z.object({
     id: z.number().int(),
@@ -21,7 +25,13 @@ export const createOpportunityInput = z.object({
   deal: z.object({
     state: z.nativeEnum(DealStatus),
     scheduleDate: z.date().optional()
-  })
+  }),
+  insertOnMachine: z.boolean(),
+  machineType: z.number().int().default(1),
+  machineId: z.number().int().default(0),
+  funnelId: z.number().int().default(0),
+  modelIndex: z.number().int().default(-1),
+  dynamicFieldValues: z.record(z.string(), z.string()).default({})
 });
 
 export const createOpportunityOutput = z.object({
