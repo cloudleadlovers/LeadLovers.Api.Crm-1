@@ -66,6 +66,52 @@ export default class LeadloversOpportunityProvider
     private updateCardsByColumnIdRepository: IUpdateCardsByColumnIdRepository
   ) {}
 
+  public async assignResponsibleToOpportunity(
+    stageId: number,
+    opportunityId: number,
+    responsibleId: number
+  ): Promise<
+    | {
+        oldValues: { responsibleId: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  > {
+    const card = await this.updateCardRepository.update({
+      columnId: stageId,
+      cardId: opportunityId,
+      responsibleId
+    });
+    if (!card) return undefined;
+    return {
+      oldValues: { responsibleId: card.oldResponsibleId },
+      currentValues: {
+        id: card.id,
+        userId: card.usuaSistCodi ?? 0,
+        stageId: card.columnId,
+        contactId: card.leadCodi ?? 0,
+        name: card.name ?? '',
+        email: card.email ?? '',
+        phone: card.phone ?? '',
+        commercialPhone: card.commercialPhone ?? '',
+        score: card.score ?? 0,
+        tags: card.tags ?? '',
+        value: card.value,
+        responsible: {
+          id: card.responsibleId ?? 0,
+          name: card.responsibleName ?? '',
+          icon: card.responsibleIcon ?? ''
+        },
+        deal: {
+          state: this.getDealStatus(card.dealStatus),
+          scheduleDate: card.dealScheduleDate ?? undefined
+        },
+        position: card.position,
+        createdAt: card.createdAt
+      }
+    };
+  }
+
   public async createOpportunity(
     params: Omit<
       Opportunity,
@@ -103,37 +149,43 @@ export default class LeadloversOpportunityProvider
     await this.removeCardNotificationsRepository.remove(opportunityIds);
   }
 
-  public async deleteOpportunitiesByStageId(
-    stageId: number
-  ): Promise<Omit<Opportunity, 'gainedAt' | 'losedAt'>[]> {
+  public async deleteOpportunitiesByStageId(stageId: number): Promise<
+    {
+      oldValues: { status: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  > {
     const cards = await this.updateCardsByColumnIdRepository.update({
       columnId: stageId,
       status: this.getCardStatus(OpportunityStatus.REMOVED)
     });
     return cards.map(card => {
       return {
-        id: card.id,
-        userId: card.usuaSistCodi ?? 0,
-        stageId: card.columnId,
-        contactId: card.leadCodi ?? 0,
-        name: card.name ?? '',
-        email: card.email ?? '',
-        phone: card.phone ?? '',
-        commercialPhone: card.commercialPhone ?? '',
-        score: card.score ?? 0,
-        tags: card.tags ?? '',
-        value: card.value,
-        responsible: {
-          id: card.responsibleId ?? 0,
-          name: card.responsibleName ?? '',
-          icon: card.responsibleIcon ?? ''
-        },
-        deal: {
-          state: this.getDealStatus(card.dealStatus),
-          scheduleDate: card.dealScheduleDate ?? undefined
-        },
-        position: card.position,
-        createdAt: card.createdAt
+        oldValues: { status: card.oldStatus },
+        currentValues: {
+          id: card.id,
+          userId: card.usuaSistCodi ?? 0,
+          stageId: card.columnId,
+          contactId: card.leadCodi ?? 0,
+          name: card.name ?? '',
+          email: card.email ?? '',
+          phone: card.phone ?? '',
+          commercialPhone: card.commercialPhone ?? '',
+          score: card.score ?? 0,
+          tags: card.tags ?? '',
+          value: card.value,
+          responsible: {
+            id: card.responsibleId ?? 0,
+            name: card.responsibleName ?? '',
+            icon: card.responsibleIcon ?? ''
+          },
+          deal: {
+            state: this.getDealStatus(card.dealStatus),
+            scheduleDate: card.dealScheduleDate ?? undefined
+          },
+          position: card.position,
+          createdAt: card.createdAt
+        }
       };
     });
   }
@@ -277,6 +329,22 @@ export default class LeadloversOpportunityProvider
   ): Promise<void> {
     await this.insertPipelineDealHistoryRepository.insert({
       type: LogType.REMOVED,
+      dealId: params.opportunity.id,
+      columnSourceId: params.stage.sourceId,
+      columnDestinationId: params.stage.destinationId,
+      dealDataBefore: JSON.stringify(params.opportunity.dataBefore),
+      dealDataAfter: JSON.stringify(params.opportunity.dataAfter),
+      annotationId: undefined,
+      usuaSistCodi: params.userId,
+      acesCodi: params.subUserId
+    });
+  }
+
+  public async logResponsibleAssignmentToOpportunity(
+    params: OpportunityLogParams
+  ): Promise<void> {
+    await this.insertPipelineDealHistoryRepository.insert({
+      type: LogType.RESPONSIBLE_ASSIGNMENT,
       dealId: params.opportunity.id,
       columnSourceId: params.stage.sourceId,
       columnDestinationId: params.stage.destinationId,

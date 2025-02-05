@@ -19,6 +19,6 @@ export class UpdateCRMHandler {
         .json({ status: 'error', result: input.error });
     }
     await updateCRMService.execute(input.data);
-    return response.status(201).json({ status: 'success', result: {} });
+    return response.status(204).json({ status: 'success', result: {} });
   }
 }

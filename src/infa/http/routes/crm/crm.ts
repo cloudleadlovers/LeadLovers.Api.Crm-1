@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { AssignResponsibleToOpportunitiesHandler } from '@modules/crm/presentation/handlers/AssignResponsibleToOpportunityHandler';
 import { CreateCRMHandler } from '@modules/crm/presentation/handlers/CreateCRMHandler';
 import { CreateLayoutForOpportunitiesDisplayHandler } from '@modules/crm/presentation/handlers/CreateLayoutForOpportunitiesDisplayHandler';
 import { CreateOpportunityHandler } from '@modules/crm/presentation/handlers/CreateOpportunityHandler';
@@ -19,6 +20,8 @@ import { UpdateCRMHandler } from '@modules/crm/presentation/handlers/UpdateCRMHa
 import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateStageHandler';
 import { authenticate } from 'infa/http/middlewares/authJWT';
 
+const assignResponsibleToOpportunities =
+  new AssignResponsibleToOpportunitiesHandler();
 const createCRM = new CreateCRMHandler();
 const CreateLayoutForOpportunitiesDisplay =
   new CreateLayoutForOpportunitiesDisplayHandler();
@@ -64,6 +67,10 @@ crmRouter.delete('/:crmId/stages/:stageId', removeStage.handle);
 crmRouter.post(
   '/:crmId/stages/:stageId/opportunities',
   createOpportunity.handle
+);
+crmRouter.patch(
+  '/:crmId/add-responsible-to-opportunities',
+  assignResponsibleToOpportunities.handle
 );
 
 crmRouter.get('/stages/templates', findStageTemplates.handle);

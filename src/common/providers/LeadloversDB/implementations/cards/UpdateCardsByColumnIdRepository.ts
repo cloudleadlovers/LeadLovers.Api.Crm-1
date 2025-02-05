@@ -1,29 +1,30 @@
 import mssql from 'mssql';
 
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
-import { Card } from '../../models/cards/IFindCardsByColumnIdRepository';
 import {
   IUpdateCardsByColumnIdRepository,
-  UpdateCardsParams
+  UpdateCardsByColumnIdParams,
+  UpdateCardsByColumnIdResponse
 } from '../../models/cards/IUpdateCardsByColumnIdRepository';
 
 export class UpdateCardsByColumnIdRepository
   implements IUpdateCardsByColumnIdRepository
 {
   public async update(
-    params: UpdateCardsParams
-  ): Promise<Omit<Card, 'gainedAt' | 'losedAt'>[]> {
+    params: UpdateCardsByColumnIdParams
+  ): Promise<UpdateCardsByColumnIdResponse[]> {
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
       .input('Status', mssql.Int, params.status)
-      .input('ColumnId', mssql.Int, params.columnId).query<
-      Omit<Card, 'gainedAt' | 'losedAt'>
-    >(`
+      .input('AcesCodi', mssql.Int, params.responsibleId)
+      .input('ColumnId', mssql.Int, params.columnId)
+      .query<UpdateCardsByColumnIdResponse>(`
       UPDATE 
         Pipeline_Card
       SET 
-        [Status] = @Status
+        [Status] = @Status,
+        [AcesCodi] = @AcesCodi
       OUTPUT 
         INSERTED.Id AS id,
         ISNULL(INSERTED.UsuaSistCodi, 0) AS usuaSistCodi,
@@ -41,7 +42,9 @@ export class UpdateCardsByColumnIdRepository
         INSERTED.DealScheduleDate AS dealScheduleDate,
         INSERTED.CardPosition AS position,
         INSERTED.CreateDate AS createdAt,
-        ISNULL(INSERTED.AcesCodi, 0) AS responsibleId
+        ISNULL(INSERTED.AcesCodi, 0) AS responsibleId,
+        DELETED.Status AS oldStatus,
+        ISNULL(DELETED.AcesCodi, 0) AS oldResponsibleId
       WHERE
         ColumnId = @ColumnId;
     `);

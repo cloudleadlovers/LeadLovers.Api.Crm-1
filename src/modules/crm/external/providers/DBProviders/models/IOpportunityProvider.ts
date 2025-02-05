@@ -89,6 +89,17 @@ export type OpportunityLogParams = {
 };
 
 export default interface IOpportunityProvider {
+  assignResponsibleToOpportunity(
+    stageId: number,
+    opportunityId: number,
+    responsibleId: number
+  ): Promise<
+    | {
+        oldValues: { responsibleId: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  >;
   createOpportunity(
     params: Omit<
       Opportunity,
@@ -98,9 +109,12 @@ export default interface IOpportunityProvider {
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
   deleteOpportunity(stageId: number, opportunityId: number): Promise<void>;
-  deleteOpportunitiesByStageId(
-    stageId: number
-  ): Promise<Omit<Opportunity, 'gainedAt' | 'losedAt'>[]>;
+  deleteOpportunitiesByStageId(stageId: number): Promise<
+    {
+      oldValues: { status: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
   findContacts(
     userId: number,
     pagination: Pagination,
@@ -134,4 +148,7 @@ export default interface IOpportunityProvider {
   ): Promise<ResultPaginated<Sequence>>;
   logOpportunityCreation(params: OpportunityLogParams): Promise<void>;
   logOpportunityRemoval(params: OpportunityLogParams): Promise<void>;
+  logResponsibleAssignmentToOpportunity(
+    params: OpportunityLogParams
+  ): Promise<void>;
 }

@@ -20,6 +20,6 @@ export class UpdateStageHandler {
         .json({ status: 'error', result: input.error });
     }
     await updateStageService.execute(input.data);
-    return response.status(201).json({ status: 'success', result: {} });
+    return response.status(204).json({ status: 'success', result: {} });
   }
 }
