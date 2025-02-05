@@ -15,6 +15,7 @@ import { FindPotentialOwnersHandler } from '@modules/crm/presentation/handlers/F
 import { FindSequencesHandler } from '@modules/crm/presentation/handlers/FindSequencesHandler';
 import { FindStageContentHandler } from '@modules/crm/presentation/handlers/FindStageContentHandler';
 import { FindStageTemplatesHandler } from '@modules/crm/presentation/handlers/FindStageTemplatesHandler';
+import { RemoveOpportunitiesHandler } from '@modules/crm/presentation/handlers/RemoveOpportunitiesHandler';
 import { RemoveStageHandler } from '@modules/crm/presentation/handlers/RemoveStageHandler';
 import { UpdateCRMHandler } from '@modules/crm/presentation/handlers/UpdateCRMHandler';
 import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateStageHandler';
@@ -37,6 +38,7 @@ const findPotentialOwners = new FindPotentialOwnersHandler();
 const findSequences = new FindSequencesHandler();
 const findStageContent = new FindStageContentHandler();
 const findStageTemplates = new FindStageTemplatesHandler();
+const removeOpportunities = new RemoveOpportunitiesHandler();
 const removeStage = new RemoveStageHandler();
 const updateCRM = new UpdateCRMHandler();
 const updateStage = new UpdateStageHandler();
@@ -50,6 +52,10 @@ crmRouter.get('/', findCRMs.handle);
 crmRouter.get('/:crmId', findCRMContent.handle);
 crmRouter.patch('/:crmId', updateCRM.handle);
 
+crmRouter.patch(
+  '/:crmId/add-responsible-to-opportunities',
+  assignResponsibleToOpportunities.handle
+);
 crmRouter.post(
   '/:crmId/opportunities-display-layouts',
   CreateLayoutForOpportunitiesDisplay.handle
@@ -58,6 +64,7 @@ crmRouter.get(
   '/:crmId/opportunities-display-layouts',
   FindOpportunityDisplayLayout.handle
 );
+crmRouter.patch('/:crmId/remove-opportunities', removeOpportunities.handle);
 
 crmRouter.post('/:crmId/stages', createStage.handle);
 crmRouter.get('/:crmId/stages/:stageId', findStageContent.handle);
@@ -67,10 +74,6 @@ crmRouter.delete('/:crmId/stages/:stageId', removeStage.handle);
 crmRouter.post(
   '/:crmId/stages/:stageId/opportunities',
   createOpportunity.handle
-);
-crmRouter.patch(
-  '/:crmId/add-responsible-to-opportunities',
-  assignResponsibleToOpportunities.handle
 );
 
 crmRouter.get('/stages/templates', findStageTemplates.handle);

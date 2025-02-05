@@ -10,6 +10,7 @@ import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
 import { IUpdateBoardRepository } from './models/boards/IUpdateBoardRepository';
 import { IFindCardLayoutByBoardIdRepository } from './models/cardLayouts/IFindCardLayoutByBoardIdRepository';
 import { IInsertCardLayoutRepository } from './models/cardLayouts/IInsertCardLayoutRepository';
+import { IDecrementsCardsPositionByColumnIdAndPositionRepository } from './models/cards/IDecrementsCardsPositionByColumnIdAndPositionRepository';
 import { IFindCardByBoardIdAndLeadCodiRepository } from './models/cards/IFindCardByBoardIdAndLeadCodiRepository';
 import { IFindCardByColumnIdAndLeadCodiRepository } from './models/cards/IFindCardByColumnIdAndLeadCodiRepository';
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
@@ -46,6 +47,7 @@ import { IFindLeadsByUsuaSistCodiRepository } from './models/leads/IFindLeadsByU
 import { IInsertLeadOnWhatsAppMachineRepository } from './models/leads/IInsertLeadOnWhatsAppMachineRepository';
 import { IInsertLeadRepository } from './models/leads/IInsertLeadRepository';
 import { IInsertLeadTrackRepository } from './models/leadTrack/IInsertLeadTrackRepository';
+import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
 import { IRemoveTagsTrackRepository } from './models/leadTrack/IRemoveTagsTrackRepository';
 import { IFindLeadUsuaSistByLeadCodiRepository } from './models/leadUsuaSists/IFindLeadUsuaSistByLeadCodiRepository';
 import { IFindLeadUsuaSistRepository } from './models/leadUsuaSists/IFindLeadUsuaSistRepository';
@@ -68,6 +70,7 @@ import { InsertBoardRepository } from './implementations/boards/InsertBoardRepos
 import { UpdateBoardRepository } from './implementations/boards/UpdateBoardRepository';
 import { FindCardLayoutByBoardIdRepository } from './implementations/cardLayouts/FindCardLayoutByBoardIdRepository';
 import { InsertCardLayoutRepository } from './implementations/cardLayouts/InsertCardLayoutRepository';
+import { DecrementsCardsPositionByColumnIdAndPositionRepository } from './implementations/cards/DecrementsCardsPositionByColumnIdAndPositionRepository';
 import { FindCardByBoardIdAndLeadCodiRepository } from './implementations/cards/FindCardByBoardIdAndLeadCodiRepository';
 import { FindCardByColumnIdAndLeadCodiRepository } from './implementations/cards/FindCardByColumnIdAndLeadCodiRepository';
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
@@ -118,7 +121,6 @@ import { RemoveCardNotificationRepository } from './implementations/notification
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
-import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -138,6 +140,11 @@ container.registerSingleton<IAverageValueOfOpportunitiesWonRepository>(
 container.registerSingleton<ICountLostOpportunitiesRepository>(
   'CountLostOpportunitiesRepository',
   CountLostOpportunitiesRepository
+);
+
+container.registerSingleton<IDecrementsCardsPositionByColumnIdAndPositionRepository>(
+  'DecrementsCardsPositionByColumnIdAndPositionRepository',
+  DecrementsCardsPositionByColumnIdAndPositionRepository
 );
 
 container.registerSingleton<IFindBoardRepository>(

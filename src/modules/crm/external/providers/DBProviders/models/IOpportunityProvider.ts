@@ -108,7 +108,16 @@ export default interface IOpportunityProvider {
   ): Promise<Pick<Opportunity, 'id' | 'position' | 'createdAt'>>;
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
-  deleteOpportunity(stageId: number, opportunityId: number): Promise<void>;
+  deleteOpportunity(
+    stageId: number,
+    opportunityId: number
+  ): Promise<
+    | {
+        oldValues: { status: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  >;
   deleteOpportunitiesByStageId(stageId: number): Promise<
     {
       oldValues: { status: number };

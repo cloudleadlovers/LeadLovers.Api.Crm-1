@@ -56,8 +56,12 @@ export default class RemoveStageService {
       await this.opportunityProvider.deleteOpportunitiesByStageId(
         params.stageId
       );
-    if (!opportunities.length) return;
-    const opportunityIds = opportunities.map(opportunity => opportunity.id);
+    if (!opportunities.length) {
+      throw new Error(`Failure to remove opportunities.`);
+    }
+    const opportunityIds = opportunities.map(
+      opportunity => opportunity.currentValues.id
+    );
     await this.opportunityProvider.deleteNotificationsByOpportunityIds(
       opportunityIds
     );
@@ -66,27 +70,27 @@ export default class RemoveStageService {
         await this.opportunityProvider.logOpportunityRemoval({
           stage: {},
           opportunity: {
-            id: opportunity.id,
+            id: opportunity.currentValues.id,
             dataBefore: {
-              contactId: opportunity.contactId,
-              stageId: opportunity.stageId,
-              deal: opportunity.deal,
-              email: opportunity.email ?? '',
-              name: opportunity.name,
-              phone: opportunity.phone ?? '',
+              contactId: opportunity.currentValues.contactId,
+              stageId: opportunity.currentValues.stageId,
+              deal: opportunity.currentValues.deal,
+              email: opportunity.currentValues.email ?? '',
+              name: opportunity.currentValues.name,
+              phone: opportunity.currentValues.phone ?? '',
               responsible: {
-                id: opportunity.responsible.id,
-                name: opportunity.responsible.name,
-                icon: opportunity.responsible.icon
+                id: opportunity.currentValues.responsible.id,
+                name: opportunity.currentValues.responsible.name,
+                icon: opportunity.currentValues.responsible.icon
               },
-              score: opportunity.score ?? 0,
-              value: opportunity.value ?? 0,
-              commercialPhone: opportunity.commercialPhone,
-              tags: opportunity.tags,
-              id: opportunity.id,
-              createdAt: opportunity.createdAt,
-              position: opportunity.position,
-              userId: opportunity.userId
+              score: opportunity.currentValues.score ?? 0,
+              value: opportunity.currentValues.value ?? 0,
+              commercialPhone: opportunity.currentValues.commercialPhone,
+              tags: opportunity.currentValues.tags,
+              id: opportunity.currentValues.id,
+              createdAt: opportunity.currentValues.createdAt,
+              position: opportunity.currentValues.position,
+              userId: opportunity.currentValues.userId
             }
           },
           userId: params.userId

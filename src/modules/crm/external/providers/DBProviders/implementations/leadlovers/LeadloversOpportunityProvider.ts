@@ -193,12 +193,46 @@ export default class LeadloversOpportunityProvider
   public async deleteOpportunity(
     stageId: number,
     opportunityId: number
-  ): Promise<void> {
-    await this.updateCardRepository.update({
+  ): Promise<
+    | {
+        oldValues: { status: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  > {
+    const card = await this.updateCardRepository.update({
       columnId: stageId,
       cardId: opportunityId,
       status: this.getCardStatus(OpportunityStatus.REMOVED)
     });
+    if (!card) return undefined;
+    return {
+      oldValues: { status: card.oldStatus },
+      currentValues: {
+        id: card.id,
+        userId: card.usuaSistCodi ?? 0,
+        stageId: card.columnId,
+        contactId: card.leadCodi ?? 0,
+        name: card.name ?? '',
+        email: card.email ?? '',
+        phone: card.phone ?? '',
+        commercialPhone: card.commercialPhone ?? '',
+        score: card.score ?? 0,
+        tags: card.tags ?? '',
+        value: card.value,
+        responsible: {
+          id: card.responsibleId ?? 0,
+          name: card.responsibleName ?? '',
+          icon: card.responsibleIcon ?? ''
+        },
+        deal: {
+          state: this.getDealStatus(card.dealStatus),
+          scheduleDate: card.dealScheduleDate ?? undefined
+        },
+        position: card.position,
+        createdAt: card.createdAt
+      }
+    };
   }
 
   public async findContacts(

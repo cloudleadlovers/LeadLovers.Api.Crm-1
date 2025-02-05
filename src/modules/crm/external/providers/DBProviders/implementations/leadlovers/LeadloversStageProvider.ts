@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { IFindColumnTemplatesRepository } from '@common/providers/LeadloversDB/models/boards/IFindColumnTemplatesRepository';
+import { IDecrementsCardsPositionByColumnIdAndPositionRepository } from '@common/providers/LeadloversDB/models/cards/IDecrementsCardsPositionByColumnIdAndPositionRepository';
 import { IFindColumnByTitleRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnByTitleRepository';
 import { IFindColumnRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnsByBoardIdRepository';
@@ -22,6 +23,8 @@ import IStageProvider, {
 @injectable()
 export default class LeadloversStageProvider implements IStageProvider {
   constructor(
+    @inject('DecrementsCardsPositionByColumnIdAndPositionRepository')
+    private decrementsCardsPositionByColumnIdAndPositionRepository: IDecrementsCardsPositionByColumnIdAndPositionRepository,
     @inject('FindColumnRepository')
     private findColumnRepository: IFindColumnRepository,
     @inject('FindColumnByTitleRepository')
@@ -187,6 +190,16 @@ export default class LeadloversStageProvider implements IStageProvider {
       type: LogType.UPDATED,
       data: formatLogData(data)
     });
+  }
+
+  public async reorderOpportunitiesByPosition(
+    stageId: number,
+    position: number
+  ): Promise<void> {
+    await this.decrementsCardsPositionByColumnIdAndPositionRepository.decrements(
+      stageId,
+      position
+    );
   }
 
   public async updateStage(
