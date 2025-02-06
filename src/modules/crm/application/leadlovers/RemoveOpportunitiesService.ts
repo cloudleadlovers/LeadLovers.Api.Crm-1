@@ -56,9 +56,9 @@ export default class RemoveOpportunitiesService {
     if (!opportunity) {
       throw new Error(`Failure to remove opportunity.`);
     }
-    await this.opportunityProvider.deleteNotificationsByOpportunityIds([
+    await this.opportunityProvider.deleteNotificationByOpportunityId(
       opportunityId
-    ]);
+    );
     await this.opportunityProvider.logOpportunityRemoval({
       stage: {},
       opportunity: {
