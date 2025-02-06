@@ -18,15 +18,7 @@ export default class RemoveOpportunitiesService {
 
   public async execute(params: RemoveOpportunitiesInput): Promise<void> {
     await this.ensureCRMOwnership(params.crmId, params.userId);
-    await Promise.all(
-      params.opportunities.map(async opportunity => {
-        await this.deleteOpportunities(
-          params.userId,
-          opportunity.stageId,
-          opportunity.id
-        );
-      })
-    );
+    await this.deleteOpportunitiesSequentially(params);
   }
 
   private async ensureCRMOwnership(
@@ -44,52 +36,53 @@ export default class RemoveOpportunitiesService {
     );
   }
 
-  private async deleteOpportunities(
-    userId: number,
-    stageId: number,
-    opportunityId: number
+  private async deleteOpportunitiesSequentially(
+    params: RemoveOpportunitiesInput
   ): Promise<void> {
-    const opportunity = await this.opportunityProvider.deleteOpportunity(
-      stageId,
-      opportunityId
-    );
-    if (!opportunity) {
-      throw new Error(`Failure to remove opportunity.`);
+    for await (const opportunity of params.opportunities) {
+      const opportunityDeleted =
+        await this.opportunityProvider.deleteOpportunity(
+          opportunity.stageId,
+          opportunity.id
+        );
+      if (!opportunityDeleted) {
+        throw new Error(`Failure to remove opportunity.`);
+      }
+      await this.opportunityProvider.deleteNotificationByOpportunityId(
+        opportunity.id
+      );
+      await this.opportunityProvider.logOpportunityRemoval({
+        stage: {},
+        opportunity: {
+          id: opportunityDeleted.currentValues.id,
+          dataBefore: {
+            contactId: opportunityDeleted.currentValues.contactId,
+            stageId: opportunityDeleted.currentValues.stageId,
+            deal: opportunityDeleted.currentValues.deal,
+            email: opportunityDeleted.currentValues.email ?? '',
+            name: opportunityDeleted.currentValues.name,
+            phone: opportunityDeleted.currentValues.phone ?? '',
+            responsible: {
+              id: opportunityDeleted.currentValues.responsible.id,
+              name: opportunityDeleted.currentValues.responsible.name,
+              icon: opportunityDeleted.currentValues.responsible.icon
+            },
+            score: opportunityDeleted.currentValues.score ?? 0,
+            value: opportunityDeleted.currentValues.value ?? 0,
+            commercialPhone: opportunityDeleted.currentValues.commercialPhone,
+            tags: opportunityDeleted.currentValues.tags,
+            id: opportunityDeleted.currentValues.id,
+            createdAt: opportunityDeleted.currentValues.createdAt,
+            position: opportunityDeleted.currentValues.position,
+            userId: opportunityDeleted.currentValues.userId
+          }
+        },
+        userId: params.userId
+      });
+      await this.stageProvider.reorderOpportunitiesByPosition(
+        opportunity.stageId,
+        opportunityDeleted.currentValues.position
+      );
     }
-    await this.opportunityProvider.deleteNotificationByOpportunityId(
-      opportunityId
-    );
-    await this.opportunityProvider.logOpportunityRemoval({
-      stage: {},
-      opportunity: {
-        id: opportunity.currentValues.id,
-        dataBefore: {
-          contactId: opportunity.currentValues.contactId,
-          stageId: opportunity.currentValues.stageId,
-          deal: opportunity.currentValues.deal,
-          email: opportunity.currentValues.email ?? '',
-          name: opportunity.currentValues.name,
-          phone: opportunity.currentValues.phone ?? '',
-          responsible: {
-            id: opportunity.currentValues.responsible.id,
-            name: opportunity.currentValues.responsible.name,
-            icon: opportunity.currentValues.responsible.icon
-          },
-          score: opportunity.currentValues.score ?? 0,
-          value: opportunity.currentValues.value ?? 0,
-          commercialPhone: opportunity.currentValues.commercialPhone,
-          tags: opportunity.currentValues.tags,
-          id: opportunity.currentValues.id,
-          createdAt: opportunity.currentValues.createdAt,
-          position: opportunity.currentValues.position,
-          userId: opportunity.currentValues.userId
-        }
-      },
-      userId: userId
-    });
-    await this.stageProvider.reorderOpportunitiesByPosition(
-      stageId,
-      opportunity.currentValues.position
-    );
   }
 }
