@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   Column,
@@ -11,21 +12,24 @@ export class FindColumnRepository implements IFindColumnRepository {
     columnId: number
   ): Promise<Omit<Column, 'amountCards' | 'earnedRevenue'> | undefined> {
     const pool = await mssqlPoolConnect('leadlovers');
-    const { recordset } = await pool.request().input('Id', mssql.Int, columnId)
-      .query<Column>(`
+    const { recordset } = await pool
+      .request()
+      .input('Id', mssql.Int, columnId)
+      .input('Status', mssql.Int, ColumnStatus.ACTIVE).query<Column>(`
         SELECT
-            PCL.Id AS id,
-            PCL.BoardId AS boardId,
-            PCL.Title AS name,
-            PCL.Color AS color,
-            PCL.[Order] AS order,
-            PCL.[Status] AS status,
-            PCL.[ColumnDefaultValue] AS value,
-            PCL.CreateDate AS createdAt
+          Id AS id,
+          BoardId AS boardId,
+          Title AS name,
+          Color AS color,
+          [Order] AS order,
+          [Status] AS status,
+          [ColumnDefaultValue] AS value,
+          CreateDate AS createdAt
         FROM
-          Pipeline_Column PCL WITH(NOLOCK) 
+          Pipeline_Column WITH(NOLOCK) 
         WHERE
-          PCL.Id = @Id
+          Id = @Id
+          AND Status = @Status
       `);
     return recordset.length ? recordset[0] : undefined;
   }

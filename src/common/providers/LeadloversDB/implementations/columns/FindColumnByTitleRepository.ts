@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { IFindColumnByTitleRepository } from '../../models/columns/IFindColumnByTitleRepository';
 import { Column } from '../../models/columns/IFindColumnRepository';
@@ -15,15 +16,16 @@ export class FindColumnByTitleRepository
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
-      .input('Title', mssql.NVarChar, title).query<Column>(`
+      .input('Title', mssql.NVarChar, title)
+      .input('Status', mssql.Int, ColumnStatus.ACTIVE).query<Column>(`
         SELECT
-          PCL.Id AS id
+          Id AS id
         FROM
-          Pipeline_Column PCL WITH(NOLOCK) 
+          Pipeline_Column WITH(NOLOCK) 
         WHERE
-          PCL.BoardId = @BoardId
-          AND PCL.Status = 1
-          AND PCL.Title = @Title  
+          BoardId = @BoardId
+          AND Status = @Status
+          AND Title = @Title  
       `);
     return recordset.length ? recordset[0] : undefined;
   }

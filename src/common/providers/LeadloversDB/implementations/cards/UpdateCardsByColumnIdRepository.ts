@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { CardStatus } from '@common/shared/enums/CardStatus';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
   IUpdateCardsByColumnIdRepository,
@@ -16,14 +17,15 @@ export class UpdateCardsByColumnIdRepository
     const pool = await mssqlPoolConnect('leadlovers');
     const { recordset } = await pool
       .request()
-      .input('Status', mssql.Int, params.status)
+      .input('NewStatus', mssql.Int, params.status)
       .input('AcesCodi', mssql.Int, params.responsibleId)
       .input('ColumnId', mssql.Int, params.columnId)
+      .input('Status', mssql.Int, CardStatus.ACTIVE)
       .query<UpdateCardsByColumnIdResponse>(`
       UPDATE 
         Pipeline_Card
       SET 
-        [Status] = @Status,
+        [Status] = @NewStatus,
         [AcesCodi] = @AcesCodi
       OUTPUT 
         INSERTED.Id AS id,
@@ -46,7 +48,8 @@ export class UpdateCardsByColumnIdRepository
         DELETED.Status AS oldStatus,
         ISNULL(DELETED.AcesCodi, 0) AS oldResponsibleId
       WHERE
-        ColumnId = @ColumnId;
+        ColumnId = @ColumnId
+        AND Status = @Status;
     `);
     return recordset;
   }

@@ -1,5 +1,7 @@
 import mssql from 'mssql';
 
+import { CardStatus } from '@common/shared/enums/CardStatus';
+import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { Card } from '../../models/cards/IFindCardsByColumnIdRepository';
@@ -38,6 +40,8 @@ export class FindCardsWonByBoardIdRepository
       .input('BoardId', mssql.Int, boardId)
       .input('Limit', mssql.Int, pagination.limit)
       .input('LastId', mssql.Int, pagination.lastId ?? null)
+      .input('ColumnStatus', mssql.Int, ColumnStatus.ACTIVE)
+      .input('CardStatus', mssql.Int, CardStatus.ACTIVE)
       .query<
         Pick<
           Card,
@@ -88,8 +92,8 @@ export class FindCardsWonByBoardIdRepository
       WHERE
         (@LastId IS NULL OR PC.Id < @LastId)
         AND PB.Id = @BoardId
-        AND PCL.Status = 1
-        AND PC.Status = 1
+        AND PCL.Status = @ColumnStatus
+        AND PC.Status = @CardStatus
         AND PC.DealStatus = 1
         AND PDH.HistoryTypeId = 7
     `;

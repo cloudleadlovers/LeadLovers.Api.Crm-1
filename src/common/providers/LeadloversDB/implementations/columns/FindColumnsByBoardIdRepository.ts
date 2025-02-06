@@ -1,5 +1,7 @@
 import mssql from 'mssql';
 
+import { CardStatus } from '@common/shared/enums/CardStatus';
+import { ColumnStatus } from '@common/shared/enums/ColumnStatus';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { Column } from '../../models/columns/IFindColumnRepository';
 import {
@@ -19,6 +21,8 @@ export class FindColumnsByBoardIdRepository
     const { recordset } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
+      .input('ColumnStatus', mssql.Int, ColumnStatus.ACTIVE)
+      .input('CardStatus', mssql.Int, CardStatus.ACTIVE)
       .query<Column>(this.makeQuery(filter));
     return recordset;
   }
@@ -46,8 +50,8 @@ export class FindColumnsByBoardIdRepository
     query += `
       WHERE
         PCL.BoardId = @BoardId
-        AND PCL.Status = 1
-        AND PC.Status = 1
+        AND PCL.Status = @ColumnStatus
+        AND PC.Status = @CardStatus
     `;
 
     if (filters.columns) query += ` ${filters.columns}`;
