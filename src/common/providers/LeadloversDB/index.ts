@@ -16,8 +16,10 @@ import { IFindCardByColumnIdAndLeadCodiRepository } from './models/cards/IFindCa
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
 import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
 import { IInsertCardRepository } from './models/cards/IInsertCardRepository';
+import { ISortCardsRepository } from './models/cards/ISortCardsRepository';
 import { IUpdateCardRepository } from './models/cards/IUpdateCardRepository';
 import { IUpdateCardsByColumnIdRepository } from './models/cards/IUpdateCardsByColumnIdRepository';
+import { IUpdateCardsRepository } from './models/cards/IUpdateCardsRepository';
 import { IFindColumnByTitleRepository } from './models/columns/IFindColumnByTitleRepository';
 import { IFindColumnRepository } from './models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsByBoardIdRepository';
@@ -76,8 +78,10 @@ import { FindCardByColumnIdAndLeadCodiRepository } from './implementations/cards
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
 import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
 import { InsertCardRepository } from './implementations/cards/InsertCardRepository';
+import { SortCardsRepository } from './implementations/cards/SortCardsRepository';
 import { UpdateCardRepository } from './implementations/cards/UpdateCardRepository';
 import { UpdateCardsByColumnIdRepository } from './implementations/cards/UpdateCardsByColumnIdRepository';
+import { UpdateCardsRepository } from './implementations/cards/UpdateCardsRepository';
 import { FindColumnByTitleRepository } from './implementations/columns/FindColumnByTitleRepository';
 import { FindColumnRepository } from './implementations/columns/FindColumnRepository';
 import { FindColumnsByBoardIdRepository } from './implementations/columns/FindColumnsByBoardIdRepository';
@@ -387,6 +391,11 @@ container.registerSingleton<IRemoveTagsTrackRepository>(
   RemoveTagsTrackRepository
 );
 
+container.registerSingleton<ISortCardsRepository>(
+  'SortCardsRepository',
+  SortCardsRepository
+);
+
 container.registerSingleton<ISumValueOfColumnsRepository>(
   'SumValueOfColumnsRepository',
   SumValueOfColumnsRepository
@@ -405,6 +414,11 @@ container.registerSingleton<IUpdateBoardRepository>(
 container.registerSingleton<IUpdateCardRepository>(
   'UpdateCardRepository',
   UpdateCardRepository
+);
+
+container.registerSingleton<IUpdateCardsRepository>(
+  'UpdateCardsRepository',
+  UpdateCardsRepository
 );
 
 container.registerSingleton<IUpdateCardsByColumnIdRepository>(

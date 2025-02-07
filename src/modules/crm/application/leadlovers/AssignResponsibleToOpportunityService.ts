@@ -17,16 +17,7 @@ export default class AssignResponsibleToOpportunitiesService {
     params: AssignResponsibleToOpportunitiesInput
   ): Promise<void> {
     await this.ensureCRMOwnership(params.crmId, params.userId);
-    await Promise.all(
-      params.opportunities.map(async opportunity => {
-        await this.assignResponsible(
-          params.userId,
-          opportunity.stageId,
-          opportunity.id,
-          params.responsibleId
-        );
-      })
-    );
+    await this.assignResponsible(params);
   }
 
   private async ensureCRMOwnership(
@@ -45,69 +36,66 @@ export default class AssignResponsibleToOpportunitiesService {
   }
 
   private async assignResponsible(
-    userId: number,
-    stageId: number,
-    opportunityId: number,
-    responsibleId: number
+    params: AssignResponsibleToOpportunitiesInput
   ): Promise<void> {
-    const opportunity =
-      await this.opportunityProvider.assignResponsibleToOpportunity(
-        stageId,
-        opportunityId,
-        responsibleId
+    const opportunities =
+      await this.opportunityProvider.assignResponsibleToOpportunities(
+        params.opportunityIds,
+        params.responsibleId
       );
-    if (!opportunity) {
-      throw new Error(`Failure to assign responsible.`);
-    }
-    await this.opportunityProvider.logResponsibleAssignmentToOpportunity({
-      stage: {},
-      opportunity: {
-        id: opportunity.currentValues.id,
-        dataBefore: {
-          contactId: opportunity.currentValues.contactId,
-          stageId: opportunity.currentValues.stageId,
-          deal: opportunity.currentValues.deal,
-          email: opportunity.currentValues.email ?? '',
-          name: opportunity.currentValues.name,
-          phone: opportunity.currentValues.phone ?? '',
-          responsible: {
-            id: opportunity.oldValues.responsibleId,
-            name: opportunity.currentValues.responsible.name,
-            icon: opportunity.currentValues.responsible.icon
+    await Promise.all(
+      opportunities.map(async opportunity => {
+        await this.opportunityProvider.logResponsibleAssignmentToOpportunity({
+          stage: {},
+          opportunity: {
+            id: opportunity.currentValues.id,
+            dataBefore: {
+              contactId: opportunity.currentValues.contactId,
+              stageId: opportunity.currentValues.stageId,
+              deal: opportunity.currentValues.deal,
+              email: opportunity.currentValues.email ?? '',
+              name: opportunity.currentValues.name,
+              phone: opportunity.currentValues.phone ?? '',
+              responsible: {
+                id: opportunity.oldValues.responsibleId,
+                name: opportunity.currentValues.responsible.name,
+                icon: opportunity.currentValues.responsible.icon
+              },
+              score: opportunity.currentValues.score ?? 0,
+              value: opportunity.currentValues.value ?? 0,
+              commercialPhone: opportunity.currentValues.commercialPhone,
+              tags: opportunity.currentValues.tags,
+              id: opportunity.currentValues.id,
+              createdAt: opportunity.currentValues.createdAt,
+              position: opportunity.currentValues.position,
+              userId: opportunity.currentValues.userId
+            },
+            dataAfter: {
+              contactId: opportunity.currentValues.contactId,
+              stageId: opportunity.currentValues.stageId,
+              deal: opportunity.currentValues.deal,
+              email: opportunity.currentValues.email ?? '',
+              name: opportunity.currentValues.name,
+              phone: opportunity.currentValues.phone ?? '',
+              responsible: {
+                id: opportunity.currentValues.responsible.id,
+                name: opportunity.currentValues.responsible.name,
+                icon: opportunity.currentValues.responsible.icon
+              },
+              score: opportunity.currentValues.score ?? 0,
+              value: opportunity.currentValues.value ?? 0,
+              commercialPhone: opportunity.currentValues.commercialPhone,
+              tags: opportunity.currentValues.tags,
+              id: opportunity.currentValues.id,
+              createdAt: opportunity.currentValues.createdAt,
+              position: opportunity.currentValues.position,
+              userId: opportunity.currentValues.userId
+            }
           },
-          score: opportunity.currentValues.score ?? 0,
-          value: opportunity.currentValues.value ?? 0,
-          commercialPhone: opportunity.currentValues.commercialPhone,
-          tags: opportunity.currentValues.tags,
-          id: opportunity.currentValues.id,
-          createdAt: opportunity.currentValues.createdAt,
-          position: opportunity.currentValues.position,
-          userId: opportunity.currentValues.userId
-        },
-        dataAfter: {
-          contactId: opportunity.currentValues.contactId,
-          stageId: opportunity.currentValues.stageId,
-          deal: opportunity.currentValues.deal,
-          email: opportunity.currentValues.email ?? '',
-          name: opportunity.currentValues.name,
-          phone: opportunity.currentValues.phone ?? '',
-          responsible: {
-            id: opportunity.currentValues.responsible.id,
-            name: opportunity.currentValues.responsible.name,
-            icon: opportunity.currentValues.responsible.icon
-          },
-          score: opportunity.currentValues.score ?? 0,
-          value: opportunity.currentValues.value ?? 0,
-          commercialPhone: opportunity.currentValues.commercialPhone,
-          tags: opportunity.currentValues.tags,
-          id: opportunity.currentValues.id,
-          createdAt: opportunity.currentValues.createdAt,
-          position: opportunity.currentValues.position,
-          userId: opportunity.currentValues.userId
-        }
-      },
-      userId: userId,
-      subUserId: responsibleId
-    });
+          userId: params.userId,
+          subUserId: params.responsibleId
+        });
+      })
+    );
   }
 }

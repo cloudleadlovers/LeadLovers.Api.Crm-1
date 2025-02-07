@@ -90,7 +90,6 @@ export type OpportunityLogParams = {
 
 export default interface IOpportunityProvider {
   assignResponsibleToOpportunity(
-    stageId: number,
     opportunityId: number,
     responsibleId: number
   ): Promise<
@@ -100,6 +99,15 @@ export default interface IOpportunityProvider {
       }
     | undefined
   >;
+  assignResponsibleToOpportunities(
+    opportunityIds: number[],
+    responsibleId: number
+  ): Promise<
+    {
+      oldValues: { responsibleId: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
   createOpportunity(
     params: Omit<
       Opportunity,
@@ -108,21 +116,24 @@ export default interface IOpportunityProvider {
   ): Promise<Pick<Opportunity, 'id' | 'position' | 'createdAt'>>;
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
-  deleteOpportunity(
-    stageId: number,
-    opportunityId: number
-  ): Promise<
-    | {
-        oldValues: { status: number };
-        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
-      }
-    | undefined
+  deleteOpportunities(opportunityIds: number[]): Promise<
+    {
+      oldValues: { status: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
   >;
   deleteOpportunitiesByStageId(stageId: number): Promise<
     {
       oldValues: { status: number };
       currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
     }[]
+  >;
+  deleteOpportunity(opportunityId: number): Promise<
+    | {
+        oldValues: { status: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
   >;
   findContacts(
     userId: number,
@@ -156,8 +167,28 @@ export default interface IOpportunityProvider {
     pagination: Pagination
   ): Promise<ResultPaginated<Sequence>>;
   logOpportunityCreation(params: OpportunityLogParams): Promise<void>;
+  logOpportunityMovement(params: OpportunityLogParams): Promise<void>;
   logOpportunityRemoval(params: OpportunityLogParams): Promise<void>;
   logResponsibleAssignmentToOpportunity(
     params: OpportunityLogParams
   ): Promise<void>;
+  moveOpportunity(
+    opportunityId: number,
+    destinationStageId: number
+  ): Promise<
+    | {
+        oldValues: { stageId: number; position: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  >;
+  moveOpportunities(
+    opportunityIds: number[],
+    destinationStageId: number
+  ): Promise<
+    {
+      oldValues: { stageId: number; position: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
 }

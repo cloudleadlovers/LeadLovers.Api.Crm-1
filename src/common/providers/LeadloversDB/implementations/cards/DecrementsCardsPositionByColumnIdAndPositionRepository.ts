@@ -17,14 +17,14 @@ export class DecrementsCardsPositionByColumnIdAndPositionRepository
       .input('Status', mssql.Int, CardStatus.ACTIVE).query<
       Pick<Column, 'name'>
     >(`
-        UPDATE 
-          [Pipeline_Card] 
-        SET 
-          [CardPosition] = [CardPosition] - 1
-        WHERE
-          ColumnId = @ColumnId
-          AND CardPosition > @CardPosition
-          AND Status = @Status;
-      `);
+      UPDATE 
+        [Pipeline_Card] 
+      SET 
+        [CardPosition] = [CardPosition] - 1
+      WHERE
+        ColumnId = @ColumnId
+        AND CardPosition > @CardPosition
+        AND Status = @Status;
+    `);
   }
 }

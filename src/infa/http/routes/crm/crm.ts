@@ -15,6 +15,7 @@ import { FindPotentialOwnersHandler } from '@modules/crm/presentation/handlers/F
 import { FindSequencesHandler } from '@modules/crm/presentation/handlers/FindSequencesHandler';
 import { FindStageContentHandler } from '@modules/crm/presentation/handlers/FindStageContentHandler';
 import { FindStageTemplatesHandler } from '@modules/crm/presentation/handlers/FindStageTemplatesHandler';
+import { MoveOpportunitiesHandler } from '@modules/crm/presentation/handlers/MoveOpportunitiesHandler';
 import { RemoveOpportunitiesHandler } from '@modules/crm/presentation/handlers/RemoveOpportunitiesHandler';
 import { RemoveStageHandler } from '@modules/crm/presentation/handlers/RemoveStageHandler';
 import { UpdateCRMHandler } from '@modules/crm/presentation/handlers/UpdateCRMHandler';
@@ -38,6 +39,7 @@ const findPotentialOwners = new FindPotentialOwnersHandler();
 const findSequences = new FindSequencesHandler();
 const findStageContent = new FindStageContentHandler();
 const findStageTemplates = new FindStageTemplatesHandler();
+const moveOpportunities = new MoveOpportunitiesHandler();
 const removeOpportunities = new RemoveOpportunitiesHandler();
 const removeStage = new RemoveStageHandler();
 const updateCRM = new UpdateCRMHandler();
@@ -56,6 +58,7 @@ crmRouter.patch(
   '/:crmId/add-responsible-to-opportunities',
   assignResponsibleToOpportunities.handle
 );
+crmRouter.patch('/:crmId/move-opportunities', moveOpportunities.handle);
 crmRouter.post(
   '/:crmId/opportunities-display-layouts',
   CreateLayoutForOpportunitiesDisplay.handle

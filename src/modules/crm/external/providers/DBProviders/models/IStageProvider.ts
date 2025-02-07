@@ -62,6 +62,7 @@ export default interface IStageProvider {
     data: LogData,
     subUserId?: number
   ): Promise<void>;
+  reorderOpportunities(stageId: number): Promise<void>;
   reorderOpportunitiesByPosition(
     stageId: number,
     position: number

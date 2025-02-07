@@ -3,10 +3,10 @@ import { inject, injectable } from 'tsyringe';
 import ICRMProvider from '@modules/crm/external/providers/DBProviders/models/ICRMProvider';
 import IOpportunityProvider from '@modules/crm/external/providers/DBProviders/models/IOpportunityProvider';
 import IStageProvider from '@modules/crm/external/providers/DBProviders/models/IStageProvider';
-import { RemoveOpportunitiesInput } from '@modules/crm/presentation/dtos/RemoveOpportunitiesDTO';
+import { MoveOpportunitiesInput } from '@modules/crm/presentation/dtos/MoveOpportunitiesDTO';
 
 @injectable()
-export default class RemoveOpportunitiesService {
+export default class MoveOpportunitiesService {
   constructor(
     @inject('LeadloversCRMProvider')
     private crmProvider: ICRMProvider,
@@ -16,9 +16,9 @@ export default class RemoveOpportunitiesService {
     private stageProvider: IStageProvider
   ) {}
 
-  public async execute(params: RemoveOpportunitiesInput): Promise<void> {
+  public async execute(params: MoveOpportunitiesInput): Promise<void> {
     await this.ensureCRMOwnership(params.crmId, params.userId);
-    await this.deleteOpportunities(params);
+    await this.moveOpportunities(params);
   }
 
   private async ensureCRMOwnership(
@@ -36,23 +36,47 @@ export default class RemoveOpportunitiesService {
     );
   }
 
-  private async deleteOpportunities(
-    params: RemoveOpportunitiesInput
+  private async moveOpportunities(
+    params: MoveOpportunitiesInput
   ): Promise<void> {
-    const opportunities = await this.opportunityProvider.deleteOpportunities(
-      params.opportunityIds
+    const opportunities = await this.opportunityProvider.moveOpportunities(
+      params.opportunityIds,
+      params.destinatinationStageId
     );
-    await this.opportunityProvider.deleteNotificationsByOpportunityIds(
-      params.opportunityIds
-    );
-    const stageIds = new Set<number>();
+    //TO-DO Verificar se é necessário implementar notificação de oportunidade e etapa
+    const oldStageIds = new Set<number>();
+    const currentStageIds = new Set<number>();
     await Promise.all(
       opportunities.map(async opportunity => {
-        await this.opportunityProvider.logOpportunityRemoval({
-          stage: {},
+        await this.opportunityProvider.logOpportunityMovement({
+          stage: {
+            sourceId: opportunity.oldValues.stageId,
+            destinationId: opportunity.currentValues.stageId
+          },
           opportunity: {
             id: opportunity.currentValues.id,
             dataBefore: {
+              contactId: opportunity.currentValues.contactId,
+              stageId: opportunity.oldValues.stageId,
+              deal: opportunity.currentValues.deal,
+              email: opportunity.currentValues.email ?? '',
+              name: opportunity.currentValues.name,
+              phone: opportunity.currentValues.phone ?? '',
+              responsible: {
+                id: opportunity.currentValues.responsible.id,
+                name: opportunity.currentValues.responsible.name,
+                icon: opportunity.currentValues.responsible.icon
+              },
+              score: opportunity.currentValues.score ?? 0,
+              value: opportunity.currentValues.value ?? 0,
+              commercialPhone: opportunity.currentValues.commercialPhone,
+              tags: opportunity.currentValues.tags,
+              id: opportunity.currentValues.id,
+              createdAt: opportunity.currentValues.createdAt,
+              position: opportunity.oldValues.position,
+              userId: opportunity.currentValues.userId
+            },
+            dataAfter: {
               contactId: opportunity.currentValues.contactId,
               stageId: opportunity.currentValues.stageId,
               deal: opportunity.currentValues.deal,
@@ -76,11 +100,17 @@ export default class RemoveOpportunitiesService {
           },
           userId: params.userId
         });
-        stageIds.add(opportunity.currentValues.stageId);
+        oldStageIds.add(opportunity.oldValues.stageId);
+        currentStageIds.add(opportunity.currentValues.stageId);
       })
     );
     await Promise.all(
-      Array.from(stageIds).map(async stageId => {
+      Array.from(oldStageIds).map(async stageId => {
+        await this.stageProvider.reorderOpportunities(stageId);
+      })
+    );
+    await Promise.all(
+      Array.from(currentStageIds).map(async stageId => {
         await this.stageProvider.reorderOpportunities(stageId);
       })
     );

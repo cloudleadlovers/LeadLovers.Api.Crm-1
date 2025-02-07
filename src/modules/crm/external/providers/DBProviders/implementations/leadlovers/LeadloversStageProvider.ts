@@ -2,6 +2,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { IFindColumnTemplatesRepository } from '@common/providers/LeadloversDB/models/boards/IFindColumnTemplatesRepository';
 import { IDecrementsCardsPositionByColumnIdAndPositionRepository } from '@common/providers/LeadloversDB/models/cards/IDecrementsCardsPositionByColumnIdAndPositionRepository';
+import { ISortCardsRepository } from '@common/providers/LeadloversDB/models/cards/ISortCardsRepository';
 import { IFindColumnByTitleRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnByTitleRepository';
 import { IFindColumnRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from '@common/providers/LeadloversDB/models/columns/IFindColumnsByBoardIdRepository';
@@ -39,6 +40,8 @@ export default class LeadloversStageProvider implements IStageProvider {
     private insertPipelineHistoryRepository: IInsertPipelineHistoryRepository,
     @inject('RemoveColumnNotificationRepository')
     private removeColumnNotificationRepository: IRemoveColumnNotificationRepository,
+    @inject('SortCardsRepository')
+    private sortCardsRepository: ISortCardsRepository,
     @inject('UpdateColumnRepository')
     private updateColumnRepository: IUpdateColumnRepository
   ) {}
@@ -190,6 +193,10 @@ export default class LeadloversStageProvider implements IStageProvider {
       type: LogType.UPDATED,
       data: formatLogData(data)
     });
+  }
+
+  public async reorderOpportunities(stageId: number): Promise<void> {
+    await this.sortCardsRepository.sort(stageId);
   }
 
   public async reorderOpportunitiesByPosition(
