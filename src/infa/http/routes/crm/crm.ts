@@ -5,6 +5,7 @@ import { CreateCRMHandler } from '@modules/crm/presentation/handlers/CreateCRMHa
 import { CreateLayoutForOpportunitiesDisplayHandler } from '@modules/crm/presentation/handlers/CreateLayoutForOpportunitiesDisplayHandler';
 import { CreateOpportunityHandler } from '@modules/crm/presentation/handlers/CreateOpportunityHandler';
 import { CreateStageHandler } from '@modules/crm/presentation/handlers/CreateStageHandler';
+import { CreateTagHandler } from '@modules/crm/presentation/handlers/CreateTagHandler';
 import { FindContactsHandler } from '@modules/crm/presentation/handlers/FindContactsHandler';
 import { FindCRMContentHandler } from '@modules/crm/presentation/handlers/FindCRMContentHandler';
 import { FindCRMsHandler } from '@modules/crm/presentation/handlers/FindCRMsHandler';
@@ -15,9 +16,11 @@ import { FindPotentialOwnersHandler } from '@modules/crm/presentation/handlers/F
 import { FindSequencesHandler } from '@modules/crm/presentation/handlers/FindSequencesHandler';
 import { FindStageContentHandler } from '@modules/crm/presentation/handlers/FindStageContentHandler';
 import { FindStageTemplatesHandler } from '@modules/crm/presentation/handlers/FindStageTemplatesHandler';
+import { FindTagsHandler } from '@modules/crm/presentation/handlers/FindTagsHandler';
 import { MoveOpportunitiesHandler } from '@modules/crm/presentation/handlers/MoveOpportunitiesHandler';
 import { RemoveOpportunitiesHandler } from '@modules/crm/presentation/handlers/RemoveOpportunitiesHandler';
 import { RemoveStageHandler } from '@modules/crm/presentation/handlers/RemoveStageHandler';
+import { TagContactsHandler } from '@modules/crm/presentation/handlers/TagContactsHandler';
 import { UpdateCRMHandler } from '@modules/crm/presentation/handlers/UpdateCRMHandler';
 import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateStageHandler';
 import { authenticate } from 'infa/http/middlewares/authJWT';
@@ -29,19 +32,22 @@ const CreateLayoutForOpportunitiesDisplay =
   new CreateLayoutForOpportunitiesDisplayHandler();
 const createOpportunity = new CreateOpportunityHandler();
 const createStage = new CreateStageHandler();
+const createTag = new CreateTagHandler();
 const findContacts = new FindContactsHandler();
 const findCRMContent = new FindCRMContentHandler();
 const findCRMs = new FindCRMsHandler();
 const findMachines = new FindMachinesHandler();
 const findMessages = new FindMessagesHandler();
-const FindOpportunityDisplayLayout = new FindOpportunityDisplayLayoutHandler();
+const findOpportunityDisplayLayout = new FindOpportunityDisplayLayoutHandler();
 const findPotentialOwners = new FindPotentialOwnersHandler();
 const findSequences = new FindSequencesHandler();
 const findStageContent = new FindStageContentHandler();
 const findStageTemplates = new FindStageTemplatesHandler();
+const findTags = new FindTagsHandler();
 const moveOpportunities = new MoveOpportunitiesHandler();
 const removeOpportunities = new RemoveOpportunitiesHandler();
 const removeStage = new RemoveStageHandler();
+const tagContacts = new TagContactsHandler();
 const updateCRM = new UpdateCRMHandler();
 const updateStage = new UpdateStageHandler();
 
@@ -65,7 +71,7 @@ crmRouter.post(
 );
 crmRouter.get(
   '/:crmId/opportunities-display-layouts',
-  FindOpportunityDisplayLayout.handle
+  findOpportunityDisplayLayout.handle
 );
 crmRouter.patch('/:crmId/remove-opportunities', removeOpportunities.handle);
 
@@ -90,5 +96,9 @@ crmRouter.get(
 
 crmRouter.get('/contacts', findContacts.handle);
 crmRouter.get('/owners', findPotentialOwners.handle);
+
+crmRouter.post('/tags', createTag.handle);
+crmRouter.get('/tags', findTags.handle);
+crmRouter.post('/tags/tag-contacts', tagContacts.handle);
 
 export default crmRouter;

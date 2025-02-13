@@ -10,6 +10,10 @@ import { IUpdateCardsRepository } from '@common/providers/LeadloversDB/models/ca
 import { IFindFunnelsByListCodiRepository } from '@common/providers/LeadloversDB/models/funnels/IFindFunnelsByListCodiRepository';
 import { IInsertPipelineDealHistoryRepository } from '@common/providers/LeadloversDB/models/history/IInsertPipelineDealHistoryRepository';
 import { IFindLeadsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/leads/IFindLeadsByUsuaSistCodiRepository';
+import { IFindLeadTagByNameRepository } from '@common/providers/LeadloversDB/models/leadTags/IFindLeadTagByNameRepository';
+import { IFindLeadTagsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/leadTags/IFindLeadTagsByUsuaSistCodiRepository';
+import { IInsertLeadTagRepository } from '@common/providers/LeadloversDB/models/leadTags/IInsertLeadTagRepository';
+import { IInsertLeadUsuaSistTagRepository } from '@common/providers/LeadloversDB/models/leadUsuaSistTags/IInsertLeadUsuaSistTagRepository';
 import { IFindListsByUsuaSistCodiRepository } from '@common/providers/LeadloversDB/models/lists/IFindListsByUsuaSistCodiRepository';
 import { IFindDefaultModelsByFuniCodiRepository } from '@common/providers/LeadloversDB/models/models/IFindDefaultModelsByFuniCodiRepository';
 import { IRemoveCardNotificationRepository } from '@common/providers/LeadloversDB/models/notifications/IRemoveCardNotificationRepository';
@@ -27,7 +31,8 @@ import IOpportunityProvider, {
   Message,
   Opportunity,
   OpportunityLogParams,
-  Sequence
+  Sequence,
+  Tag
 } from '../../models/IOpportunityProvider';
 
 @injectable()
@@ -45,6 +50,10 @@ export default class LeadloversOpportunityProvider
     private findDefaultModelsByFuniCodiRepository: IFindDefaultModelsByFuniCodiRepository,
     @inject('FindFunnelsByListCodiRepository')
     private findFunnelsByListCodiRepository: IFindFunnelsByListCodiRepository,
+    @inject('FindLeadTagByNameRepository')
+    private findLeadTagByNameRepository: IFindLeadTagByNameRepository,
+    @inject('FindLeadTagsByUsuaSistCodiRepository')
+    private findLeadTagsByUsuaSistCodiRepository: IFindLeadTagsByUsuaSistCodiRepository,
     @inject('FindLeadsByUsuaSistCodiRepository')
     private findLeadsByUsuaSistCodiRepository: IFindLeadsByUsuaSistCodiRepository,
     @inject('FindListsByUsuaSistCodiRepository')
@@ -55,6 +64,10 @@ export default class LeadloversOpportunityProvider
     private findWhatsAppModelsByFuniCodiRepository: IFindDefaultModelsByFuniCodiRepository,
     @inject('InsertCardRepository')
     private insertCardRepository: IInsertCardRepository,
+    @inject('InsertLeadTagRepository')
+    private insertLeadTagRepository: IInsertLeadTagRepository,
+    @inject('InsertLeadUsuaSistTagRepository')
+    private insertLeadUsuaSistTagRepository: IInsertLeadUsuaSistTagRepository,
     @inject('InsertPipelineDealHistoryRepository')
     private insertPipelineDealHistoryRepository: IInsertPipelineDealHistoryRepository,
     @inject('RemoveCardNotificationRepository')
@@ -180,6 +193,13 @@ export default class LeadloversOpportunityProvider
       notifications: false
     });
     return card;
+  }
+
+  public async createTag(
+    userId: number,
+    name: string
+  ): Promise<Pick<Tag, 'id'>> {
+    return await this.insertLeadTagRepository.insert(userId, name);
   }
 
   public async deleteNotificationByOpportunityId(
@@ -424,6 +444,17 @@ export default class LeadloversOpportunityProvider
     );
   }
 
+  public async findTagByName(
+    userId: number,
+    name: string
+  ): Promise<Tag | undefined> {
+    return await this.findLeadTagByNameRepository.find(userId, name);
+  }
+
+  public async findTagsByUserId(userId: number): Promise<Tag[]> {
+    return await this.findLeadTagsByUsuaSistCodiRepository.find(userId);
+  }
+
   public async logOpportunityCreation(
     params: OpportunityLogParams
   ): Promise<void> {
@@ -576,6 +607,10 @@ export default class LeadloversOpportunityProvider
         }
       };
     });
+  }
+
+  public async tagContact(contactId: number, tagId: number): Promise<void> {
+    await this.insertLeadUsuaSistTagRepository.insert(contactId, tagId);
   }
 
   private getCardStatus(opportunityStatus: OpportunityStatus): CardStatus {

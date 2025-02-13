@@ -48,6 +48,9 @@ import { IFindLeadFromMachineByPhoneRepository } from './models/leads/IFindLeadF
 import { IFindLeadsByUsuaSistCodiRepository } from './models/leads/IFindLeadsByUsuaSistCodiRepository';
 import { IInsertLeadOnWhatsAppMachineRepository } from './models/leads/IInsertLeadOnWhatsAppMachineRepository';
 import { IInsertLeadRepository } from './models/leads/IInsertLeadRepository';
+import { IFindLeadTagByNameRepository } from './models/leadTags/IFindLeadTagByNameRepository';
+import { IFindLeadTagsByUsuaSistCodiRepository } from './models/leadTags/IFindLeadTagsByUsuaSistCodiRepository';
+import { IInsertLeadTagRepository } from './models/leadTags/IInsertLeadTagRepository';
 import { IInsertLeadTrackRepository } from './models/leadTrack/IInsertLeadTrackRepository';
 import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
 import { IRemoveTagsTrackRepository } from './models/leadTrack/IRemoveTagsTrackRepository';
@@ -110,6 +113,9 @@ import { FindLeadFromMachineByPhoneRepository } from './implementations/leads/Fi
 import { FindLeadsByUsuaSistCodiRepository } from './implementations/leads/FindLeadsByUsuaSistCodiRepository';
 import { InsertLeadOnWhatsAppMachineRepository } from './implementations/leads/InsertLeadOnWhatsAppMachineRepository';
 import { InsertLeadRepository } from './implementations/leads/InsertLeadRepository';
+import { FindLeadTagByNameRepository } from './implementations/leadTags/FindLeadTagByNameRepository';
+import { FindLeadTagsByUsuaSistCodiRepository } from './implementations/leadTags/FindLeadTagsByUsuaSistCodiRepository';
+import { InsertLeadTagRepository } from './implementations/leadTags/InsertLeadTagRepository';
 import { InsertLeadTrackRepository } from './implementations/leadTrack/InsertLeadTrackRepository';
 import { InsertTagsTrackRepository } from './implementations/leadTrack/InsertTagsTrackRepository';
 import { RemoveTagsTrackRepository } from './implementations/leadTrack/RemoveTagsTrackRepository';
@@ -261,6 +267,16 @@ container.registerSingleton<IFindLeadsByUsuaSistCodiRepository>(
   FindLeadsByUsuaSistCodiRepository
 );
 
+container.registerSingleton<IFindLeadTagByNameRepository>(
+  'FindLeadTagByNameRepository',
+  FindLeadTagByNameRepository
+);
+
+container.registerSingleton<IFindLeadTagsByUsuaSistCodiRepository>(
+  'FindLeadTagsByUsuaSistCodiRepository',
+  FindLeadTagsByUsuaSistCodiRepository
+);
+
 container.registerSingleton<IFindLeadUsuaSistRepository>(
   'FindLeadUsuaSistRepository',
   FindLeadUsuaSistRepository
@@ -316,14 +332,19 @@ container.registerSingleton<IInsertColumnRepository>(
   InsertColumnRepository
 );
 
+container.registerSingleton<IInsertLeadOnWhatsAppMachineRepository>(
+  'InsertLeadOnWhatsAppMachineRepository',
+  InsertLeadOnWhatsAppMachineRepository
+);
+
 container.registerSingleton<IInsertLeadRepository>(
   'InsertLeadRepository',
   InsertLeadRepository
 );
 
-container.registerSingleton<IInsertLeadOnWhatsAppMachineRepository>(
-  'InsertLeadOnWhatsAppMachineRepository',
-  InsertLeadOnWhatsAppMachineRepository
+container.registerSingleton<IInsertLeadTagRepository>(
+  'InsertLeadTagRepository',
+  InsertLeadTagRepository
 );
 
 container.registerSingleton<IInsertLeadTrackRepository>(

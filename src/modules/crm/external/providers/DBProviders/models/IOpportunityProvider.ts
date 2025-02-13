@@ -74,6 +74,11 @@ export type Sequence = {
   name: string;
 };
 
+export type Tag = {
+  id: number;
+  name: string;
+};
+
 export type OpportunityLogParams = {
   stage: {
     sourceId?: number;
@@ -114,6 +119,7 @@ export default interface IOpportunityProvider {
       'id' | 'position' | 'gainedAt' | 'losedAt' | 'createdAt'
     >
   ): Promise<Pick<Opportunity, 'id' | 'position' | 'createdAt'>>;
+  createTag(userId: number, name: string): Promise<Pick<Tag, 'id'>>;
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
   deleteOpportunities(opportunityIds: number[]): Promise<
@@ -166,6 +172,8 @@ export default interface IOpportunityProvider {
     machineId: number,
     pagination: Pagination
   ): Promise<ResultPaginated<Sequence>>;
+  findTagByName(userId: number, name: string): Promise<Tag | undefined>;
+  findTagsByUserId(userId: number): Promise<Tag[]>;
   logOpportunityCreation(params: OpportunityLogParams): Promise<void>;
   logOpportunityMovement(params: OpportunityLogParams): Promise<void>;
   logOpportunityRemoval(params: OpportunityLogParams): Promise<void>;
@@ -191,4 +199,5 @@ export default interface IOpportunityProvider {
       currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
     }[]
   >;
+  tagContact(contactId: number, tagId: number): Promise<void>;
 }
