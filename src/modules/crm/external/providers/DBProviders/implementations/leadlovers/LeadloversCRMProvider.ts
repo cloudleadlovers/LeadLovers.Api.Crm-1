@@ -59,7 +59,18 @@ export default class LeadloversCRMProvider implements ICRMProvider {
   }
 
   public async createCRM(
-    params: Pick<CRM, 'userId' | 'name' | 'goal' | 'rule' | 'logo'>
+    params: Pick<
+      CRM,
+      | 'userId'
+      | 'name'
+      | 'description'
+      | 'goal'
+      | 'goalRecurrency'
+      | 'goalRecurrencyStartIn'
+      | 'goalRecurrencyFinishIn'
+      | 'rule'
+      | 'logo'
+    >
   ): Promise<Pick<CRM, 'id'>> {
     const boardId = await this.insertBoardRepository.insert({
       ...params,
@@ -99,9 +110,13 @@ export default class LeadloversCRMProvider implements ICRMProvider {
       id: board.id,
       userId: board.userId,
       name: board.title,
+      description: board.description,
       rule: board.rule,
       logo: board.logo,
       goal: board.goal,
+      goalRecurrency: board.goalRecurrency,
+      goalRecurrencyStartIn: board.goalRecurrencyStartIn,
+      goalRecurrencyFinishIn: board.goalRecurrencyFinishIn,
       createdAt: board.createdAt
     };
   }
@@ -122,7 +137,11 @@ export default class LeadloversCRMProvider implements ICRMProvider {
           userId: board.userId,
           logo: board.logo,
           name: board.title,
+          description: board.description,
           goal: board.goal,
+          goalRecurrency: board.goalRecurrency,
+          goalRecurrencyStartIn: board.goalRecurrencyStartIn,
+          goalRecurrencyFinishIn: board.goalRecurrencyFinishIn,
           rule: board.rule,
           createdAt: board.createdAt,
           opportunity: {
@@ -200,7 +219,18 @@ export default class LeadloversCRMProvider implements ICRMProvider {
   }
 
   public async updateCRM(
-    params: Pick<CRM, 'id'> & Partial<Pick<CRM, 'logo' | 'name' | 'goal'>>
+    params: Pick<CRM, 'id'> &
+      Partial<
+        Pick<
+          CRM,
+          | 'logo'
+          | 'name'
+          | 'goal'
+          | 'goalRecurrency'
+          | 'goalRecurrencyStartIn'
+          | 'goalRecurrencyFinishIn'
+        >
+      >
   ): Promise<void> {
     await this.updateBoardRepository.update({
       ...params,

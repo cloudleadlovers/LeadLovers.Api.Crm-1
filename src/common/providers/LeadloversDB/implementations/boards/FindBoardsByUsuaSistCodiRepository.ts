@@ -30,6 +30,9 @@ export class FindBoardsByUsuaSistCodiRepository
         ISNULL(PB.[Logo], '') AS logo,
         PB.[Title] AS title,
         ISNULL(PB.[Goal], 0) AS goal,
+        ISNULL(PB.[GoalRecurrency], 0) AS goalRecurrency,
+        GoalRecurrencyStartIn AS goalRecurrencyStartIn,
+        GoalRecurrencyFinishIn AS goalRecurrencyFinishIn,
         ISNULL(PB.[Rule], 'all-crm') AS [rule],
         COUNT(PC.[Id]) AS cardQuantity,
         SUM(CASE

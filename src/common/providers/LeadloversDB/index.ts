@@ -119,6 +119,16 @@ import { RemoveCardNotificationsRepository } from './implementations/notificatio
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
 import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
+import { IDeletePendingItemsRepository } from './models/goalQueue/IDeletePendingItemsRepository';
+import { DeletePendingItemsRepository } from './implementations/goalQueue/deletePendingItemsRepository';
+import { IFindPendingItemRepository } from './models/goalQueue/IFindPendingItemRepository';
+import { FindPendingItemRepository } from './implementations/goalQueue/findPendingItemRepository_';
+import { IFindLastItemRepository } from './models/goalHistory/IFindLastItemRepository';
+import { FindLastItemRepository } from './implementations/goalHistory/findLastItemRepository';
+import { IUpdateVerifyDateRepository } from './models/goalQueue/IUpdateVerifyDateRepository';
+import { UpdateVerifyDateRepository } from './implementations/goalQueue/updateVerifyDateRepository';
+import { IInsertGoalQueueRepository } from './models/goalQueue/IInsertGoalQueueRepository';
+import { InsertGoalQueueRepository } from './implementations/goalQueue/insertGoalQueueRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -418,4 +428,29 @@ container.registerSingleton<IUpdateReportFilterRepository>(
 container.registerSingleton<IUpsertLeadCaptureDataRepository>(
   'UpsertLeadCaptureDataRepository',
   UpsertLeadCaptureDataRepository
+);
+
+container.registerSingleton<IDeletePendingItemsRepository>(
+  'DeletePendingItemsRepository',
+  DeletePendingItemsRepository
+);
+
+container.registerSingleton<IFindPendingItemRepository>(
+  'FindPendingItemRepository',
+  FindPendingItemRepository
+);
+
+container.registerSingleton<IFindLastItemRepository>(
+  'FindLastItemRepository',
+  FindLastItemRepository
+);
+
+container.registerSingleton<IUpdateVerifyDateRepository>(
+  'UpdateVerifyDateRepository',
+  UpdateVerifyDateRepository
+);
+
+container.registerSingleton<IInsertGoalQueueRepository>(
+  'InsertGoalQueueRepository',
+  InsertGoalQueueRepository
 );
