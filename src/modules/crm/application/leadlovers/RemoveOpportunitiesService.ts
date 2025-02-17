@@ -1,25 +1,23 @@
 import { inject, injectable } from 'tsyringe';
 
-import { LogText } from '@common/shared/enums/LogText';
 import ICRMProvider from '@modules/crm/external/providers/DBProviders/models/ICRMProvider';
 import IOpportunityProvider from '@modules/crm/external/providers/DBProviders/models/IOpportunityProvider';
 import IStageProvider from '@modules/crm/external/providers/DBProviders/models/IStageProvider';
-import { RemoveStageInput } from '@modules/crm/presentation/dtos/RemoveStageDTO';
+import { RemoveOpportunitiesInput } from '@modules/crm/presentation/dtos/RemoveOpportunitiesDTO';
 
 @injectable()
-export default class RemoveStageService {
+export default class RemoveOpportunitiesService {
   constructor(
     @inject('LeadloversCRMProvider')
     private crmProvider: ICRMProvider,
-    @inject('LeadloversStageProvider')
-    private stageProvider: IStageProvider,
     @inject('LeadloversOpportunityProvider')
-    private opportunityProvider: IOpportunityProvider
+    private opportunityProvider: IOpportunityProvider,
+    @inject('LeadloversStageProvider')
+    private stageProvider: IStageProvider
   ) {}
 
-  public async execute(params: RemoveStageInput): Promise<void> {
+  public async execute(params: RemoveOpportunitiesInput): Promise<void> {
     await this.ensureCRMOwnership(params.crmId, params.userId);
-    await this.deleteStage(params);
     await this.deleteOpportunities(params);
   }
 
@@ -38,33 +36,16 @@ export default class RemoveStageService {
     );
   }
 
-  private async deleteStage(params: RemoveStageInput): Promise<void> {
-    const stage = await this.stageProvider.deleteStage({
-      ...params,
-      id: params.stageId
-    });
-    if (!stage) throw new Error('Stage not found.');
-    await this.stageProvider.deleteNotificationByStageId(params.stageId);
-    await this.stageProvider.logStageRemoval(params.stageId, params.userId, {
-      text: LogText.StageRemoved,
-      args: [stage.name, params.userEmail]
-    });
-  }
-
-  private async deleteOpportunities(params: RemoveStageInput): Promise<void> {
-    const opportunities =
-      await this.opportunityProvider.deleteOpportunitiesByStageId(
-        params.stageId
-      );
-    if (!opportunities.length) {
-      throw new Error(`Failure to remove opportunities.`);
-    }
-    const opportunityIds = opportunities.map(
-      opportunity => opportunity.currentValues.id
+  private async deleteOpportunities(
+    params: RemoveOpportunitiesInput
+  ): Promise<void> {
+    const opportunities = await this.opportunityProvider.deleteOpportunities(
+      params.opportunityIds
     );
     await this.opportunityProvider.deleteNotificationsByOpportunityIds(
-      opportunityIds
+      params.opportunityIds
     );
+    const stageIds = new Set<number>();
     await Promise.all(
       opportunities.map(async opportunity => {
         await this.opportunityProvider.logOpportunityRemoval({
@@ -95,6 +76,12 @@ export default class RemoveStageService {
           },
           userId: params.userId
         });
+        stageIds.add(opportunity.currentValues.stageId);
+      })
+    );
+    await Promise.all(
+      Array.from(stageIds).map(async stageId => {
+        await this.stageProvider.reorderOpportunities(stageId);
       })
     );
   }

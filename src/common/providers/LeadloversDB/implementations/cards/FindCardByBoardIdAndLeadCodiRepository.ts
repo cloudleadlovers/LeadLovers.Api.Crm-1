@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { CardStatus } from '@common/shared/enums/CardStatus';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import { IFindCardByBoardIdAndLeadCodiRepository } from '../../models/cards/IFindCardByBoardIdAndLeadCodiRepository';
 
@@ -15,7 +16,8 @@ export class FindCardByBoardIdAndLeadCodiRepository
     const { recordset: cards } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId)
-      .input('LeadCodi', mssql.Int, leadCodi).query<Card>(`
+      .input('LeadCodi', mssql.Int, leadCodi)
+      .input('Status', mssql.Int, CardStatus.ACTIVE).query<Card>(`
         SELECT TOP 1
           PC.LeadCodi AS leadCodi
         FROM 
@@ -27,7 +29,7 @@ export class FindCardByBoardIdAndLeadCodiRepository
         WHERE 
           PB.Id = @BoardId
           AND PC.LeadCodi = @LeadCodi
-          AND PC.Status = 1;
+          AND PC.Status = @Status;
       `);
     return cards.length ? cards[0].leadCodi : undefined;
   }

@@ -10,13 +10,16 @@ import { IInsertBoardRepository } from './models/boards/IInsertBoardRepository';
 import { IUpdateBoardRepository } from './models/boards/IUpdateBoardRepository';
 import { IFindCardLayoutByBoardIdRepository } from './models/cardLayouts/IFindCardLayoutByBoardIdRepository';
 import { IInsertCardLayoutRepository } from './models/cardLayouts/IInsertCardLayoutRepository';
+import { IDecrementsCardsPositionByColumnIdAndPositionRepository } from './models/cards/IDecrementsCardsPositionByColumnIdAndPositionRepository';
 import { IFindCardByBoardIdAndLeadCodiRepository } from './models/cards/IFindCardByBoardIdAndLeadCodiRepository';
 import { IFindCardByColumnIdAndLeadCodiRepository } from './models/cards/IFindCardByColumnIdAndLeadCodiRepository';
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
 import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
 import { IInsertCardRepository } from './models/cards/IInsertCardRepository';
+import { ISortCardsRepository } from './models/cards/ISortCardsRepository';
 import { IUpdateCardRepository } from './models/cards/IUpdateCardRepository';
 import { IUpdateCardsByColumnIdRepository } from './models/cards/IUpdateCardsByColumnIdRepository';
+import { IUpdateCardsRepository } from './models/cards/IUpdateCardsRepository';
 import { IFindColumnByTitleRepository } from './models/columns/IFindColumnByTitleRepository';
 import { IFindColumnRepository } from './models/columns/IFindColumnRepository';
 import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsByBoardIdRepository';
@@ -45,6 +48,9 @@ import { IFindLeadFromMachineByPhoneRepository } from './models/leads/IFindLeadF
 import { IFindLeadsByUsuaSistCodiRepository } from './models/leads/IFindLeadsByUsuaSistCodiRepository';
 import { IInsertLeadOnWhatsAppMachineRepository } from './models/leads/IInsertLeadOnWhatsAppMachineRepository';
 import { IInsertLeadRepository } from './models/leads/IInsertLeadRepository';
+import { IFindLeadTagByNameRepository } from './models/leadTags/IFindLeadTagByNameRepository';
+import { IFindLeadTagsByUsuaSistCodiRepository } from './models/leadTags/IFindLeadTagsByUsuaSistCodiRepository';
+import { IInsertLeadTagRepository } from './models/leadTags/IInsertLeadTagRepository';
 import { IInsertLeadTrackRepository } from './models/leadTrack/IInsertLeadTrackRepository';
 import { IRemoveTagsTrackRepository } from './models/leadTrack/IRemoveTagsTrackRepository';
 import { IFindLeadUsuaSistByLeadCodiRepository } from './models/leadUsuaSists/IFindLeadUsuaSistByLeadCodiRepository';
@@ -68,13 +74,16 @@ import { InsertBoardRepository } from './implementations/boards/InsertBoardRepos
 import { UpdateBoardRepository } from './implementations/boards/UpdateBoardRepository';
 import { FindCardLayoutByBoardIdRepository } from './implementations/cardLayouts/FindCardLayoutByBoardIdRepository';
 import { InsertCardLayoutRepository } from './implementations/cardLayouts/InsertCardLayoutRepository';
+import { DecrementsCardsPositionByColumnIdAndPositionRepository } from './implementations/cards/DecrementsCardsPositionByColumnIdAndPositionRepository';
 import { FindCardByBoardIdAndLeadCodiRepository } from './implementations/cards/FindCardByBoardIdAndLeadCodiRepository';
 import { FindCardByColumnIdAndLeadCodiRepository } from './implementations/cards/FindCardByColumnIdAndLeadCodiRepository';
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
 import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
 import { InsertCardRepository } from './implementations/cards/InsertCardRepository';
+import { SortCardsRepository } from './implementations/cards/SortCardsRepository';
 import { UpdateCardRepository } from './implementations/cards/UpdateCardRepository';
 import { UpdateCardsByColumnIdRepository } from './implementations/cards/UpdateCardsByColumnIdRepository';
+import { UpdateCardsRepository } from './implementations/cards/UpdateCardsRepository';
 import { FindColumnByTitleRepository } from './implementations/columns/FindColumnByTitleRepository';
 import { FindColumnRepository } from './implementations/columns/FindColumnRepository';
 import { FindColumnsByBoardIdRepository } from './implementations/columns/FindColumnsByBoardIdRepository';
@@ -103,6 +112,9 @@ import { FindLeadFromMachineByPhoneRepository } from './implementations/leads/Fi
 import { FindLeadsByUsuaSistCodiRepository } from './implementations/leads/FindLeadsByUsuaSistCodiRepository';
 import { InsertLeadOnWhatsAppMachineRepository } from './implementations/leads/InsertLeadOnWhatsAppMachineRepository';
 import { InsertLeadRepository } from './implementations/leads/InsertLeadRepository';
+import { FindLeadTagByNameRepository } from './implementations/leadTags/FindLeadTagByNameRepository';
+import { FindLeadTagsByUsuaSistCodiRepository } from './implementations/leadTags/FindLeadTagsByUsuaSistCodiRepository';
+import { InsertLeadTagRepository } from './implementations/leadTags/InsertLeadTagRepository';
 import { InsertLeadTrackRepository } from './implementations/leadTrack/InsertLeadTrackRepository';
 import { InsertTagsTrackRepository } from './implementations/leadTrack/InsertTagsTrackRepository';
 import { RemoveTagsTrackRepository } from './implementations/leadTrack/RemoveTagsTrackRepository';
@@ -148,6 +160,11 @@ container.registerSingleton<IAverageValueOfOpportunitiesWonRepository>(
 container.registerSingleton<ICountLostOpportunitiesRepository>(
   'CountLostOpportunitiesRepository',
   CountLostOpportunitiesRepository
+);
+
+container.registerSingleton<IDecrementsCardsPositionByColumnIdAndPositionRepository>(
+  'DecrementsCardsPositionByColumnIdAndPositionRepository',
+  DecrementsCardsPositionByColumnIdAndPositionRepository
 );
 
 container.registerSingleton<IFindBoardRepository>(
@@ -260,6 +277,16 @@ container.registerSingleton<IFindLeadsByUsuaSistCodiRepository>(
   FindLeadsByUsuaSistCodiRepository
 );
 
+container.registerSingleton<IFindLeadTagByNameRepository>(
+  'FindLeadTagByNameRepository',
+  FindLeadTagByNameRepository
+);
+
+container.registerSingleton<IFindLeadTagsByUsuaSistCodiRepository>(
+  'FindLeadTagsByUsuaSistCodiRepository',
+  FindLeadTagsByUsuaSistCodiRepository
+);
+
 container.registerSingleton<IFindLeadUsuaSistRepository>(
   'FindLeadUsuaSistRepository',
   FindLeadUsuaSistRepository
@@ -315,14 +342,19 @@ container.registerSingleton<IInsertColumnRepository>(
   InsertColumnRepository
 );
 
+container.registerSingleton<IInsertLeadOnWhatsAppMachineRepository>(
+  'InsertLeadOnWhatsAppMachineRepository',
+  InsertLeadOnWhatsAppMachineRepository
+);
+
 container.registerSingleton<IInsertLeadRepository>(
   'InsertLeadRepository',
   InsertLeadRepository
 );
 
-container.registerSingleton<IInsertLeadOnWhatsAppMachineRepository>(
-  'InsertLeadOnWhatsAppMachineRepository',
-  InsertLeadOnWhatsAppMachineRepository
+container.registerSingleton<IInsertLeadTagRepository>(
+  'InsertLeadTagRepository',
+  InsertLeadTagRepository
 );
 
 container.registerSingleton<IInsertLeadTrackRepository>(
@@ -390,6 +422,11 @@ container.registerSingleton<IRemoveTagsTrackRepository>(
   RemoveTagsTrackRepository
 );
 
+container.registerSingleton<ISortCardsRepository>(
+  'SortCardsRepository',
+  SortCardsRepository
+);
+
 container.registerSingleton<ISumValueOfColumnsRepository>(
   'SumValueOfColumnsRepository',
   SumValueOfColumnsRepository
@@ -408,6 +445,11 @@ container.registerSingleton<IUpdateBoardRepository>(
 container.registerSingleton<IUpdateCardRepository>(
   'UpdateCardRepository',
   UpdateCardRepository
+);
+
+container.registerSingleton<IUpdateCardsRepository>(
+  'UpdateCardsRepository',
+  UpdateCardsRepository
 );
 
 container.registerSingleton<IUpdateCardsByColumnIdRepository>(

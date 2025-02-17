@@ -1,13 +1,14 @@
 import { DealStatus } from '@common/shared/enums/DealStatus';
+import { MachineType } from '@common/shared/enums/MachineType';
 import { z } from 'zod';
 
-export const createOpportunityInput = z.object({
+const opportunityData = z.object({
   userId: z.number().int(),
   crmId: z.number().int(),
   stageId: z.number().int(),
   contactId: z.number().int().optional(),
   name: z.string(),
-  email: z.string().optional(),
+  email: z.string().email().optional(),
   phone: z.string().optional(),
   commercialPhone: z.string().optional(),
   score: z.number().int().default(0),
@@ -33,6 +34,28 @@ export const createOpportunityInput = z.object({
   modelIndex: z.number().int().default(-1),
   dynamicFieldValues: z.record(z.string(), z.string()).default({})
 });
+
+const validateOpportunityData = (
+  val: z.infer<typeof opportunityData>,
+  ctx: z.RefinementCtx
+) => {
+  if (val.machineType != MachineType.WHATSAPP && !val.email) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Please provide an e-mail`
+    });
+  }
+  if (val.machineType == MachineType.WHATSAPP && !val.phone) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Please provide a phone number`
+    });
+  }
+};
+
+export const createOpportunityInput = opportunityData.superRefine(
+  validateOpportunityData
+);
 
 export const createOpportunityOutput = z.object({
   id: z.number().int()

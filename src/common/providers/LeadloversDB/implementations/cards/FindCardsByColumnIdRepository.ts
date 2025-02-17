@@ -1,5 +1,6 @@
 import mssql from 'mssql';
 
+import { CardStatus } from '@common/shared/enums/CardStatus';
 import { Pagination, ResultPaginated } from '@common/shared/types/Pagination';
 import { mssqlPoolConnect } from 'infa/db/mssqlClient';
 import {
@@ -31,6 +32,7 @@ export class FindCardsByColumnIdRepository
       .input('ColumnId', mssql.Int, columnId)
       .input('Limit', mssql.Int, pagination?.limit)
       .input('LastId', mssql.Int, pagination?.lastId ?? null)
+      .input('Status', mssql.Int, CardStatus.ACTIVE)
       .query<Card>(this.makeQuery(pagination, filters));
     return {
       items: recordset,
@@ -85,7 +87,7 @@ export class FindCardsByColumnIdRepository
       WHERE
         (@LastId IS NULL OR PC.Id < @LastId)
         AND PC.ColumnId = @ColumnId
-        AND PC.Status = 1
+        AND PC.Status = @Status
     `;
 
     if (filters.name) query += ` ${filters.name}`;

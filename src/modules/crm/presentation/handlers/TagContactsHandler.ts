@@ -1,17 +1,15 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
-import UpdateStageService from '@modules/crm/application/leadlovers/UpdateStageService';
-import { updateStageInput } from '../dtos/UpdateStageDTO';
+import TagContactsService from '@modules/crm/application/leadlovers/TagContactsService';
+import { tagContactsInput } from '../dtos/TagContactsDTO';
 
-export class UpdateStageHandler {
+export class TagContactsHandler {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const updateStageService = container.resolve(UpdateStageService);
+    const tagContactsService = container.resolve(TagContactsService);
 
-    const input = updateStageInput.safeParse({
+    const input = tagContactsInput.safeParse({
       userId: Number(request.user.key),
-      userEmail: request.user.email,
-      ...request.params,
       ...request.body
     });
     if (!input.success) {
@@ -19,7 +17,7 @@ export class UpdateStageHandler {
         .status(400)
         .json({ status: 'error', result: input.error });
     }
-    await updateStageService.execute(input.data);
+    await tagContactsService.execute(input.data);
     return response.status(204).json({ status: 'success', result: {} });
   }
 }

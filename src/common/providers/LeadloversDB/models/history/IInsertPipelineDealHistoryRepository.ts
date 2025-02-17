@@ -1,7 +1,7 @@
-import { LogType } from '@common/shared/enums/LogType';
+import { OpportunityLog } from '@common/shared/enums/LogType';
 
 export type InsertPipelineDealHistoryParams = {
-  type: LogType;
+  type: OpportunityLog;
   dealId?: number;
   columnSourceId?: number;
   columnDestinationId?: number;

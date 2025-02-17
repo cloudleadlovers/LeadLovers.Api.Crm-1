@@ -74,6 +74,11 @@ export type Sequence = {
   name: string;
 };
 
+export type Tag = {
+  id: number;
+  name: string;
+};
+
 export type OpportunityLogParams = {
   stage: {
     sourceId?: number;
@@ -89,18 +94,53 @@ export type OpportunityLogParams = {
 };
 
 export default interface IOpportunityProvider {
+  assignResponsibleToOpportunity(
+    opportunityId: number,
+    responsibleId: number
+  ): Promise<
+    | {
+        oldValues: { responsibleId: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  >;
+  assignResponsibleToOpportunities(
+    opportunityIds: number[],
+    responsibleId: number
+  ): Promise<
+    {
+      oldValues: { responsibleId: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
   createOpportunity(
     params: Omit<
       Opportunity,
       'id' | 'position' | 'gainedAt' | 'losedAt' | 'createdAt'
     >
   ): Promise<Pick<Opportunity, 'id' | 'position' | 'createdAt'>>;
+  createTag(userId: number, name: string): Promise<Pick<Tag, 'id'>>;
   deleteNotificationByOpportunityId(opportunityId: number): Promise<void>;
   deleteNotificationsByOpportunityIds(opportunityIds: number[]): Promise<void>;
-  deleteOpportunity(stageId: number, opportunityId: number): Promise<void>;
-  deleteOpportunitiesByStageId(
-    stageId: number
-  ): Promise<Omit<Opportunity, 'gainedAt' | 'losedAt'>[]>;
+  deleteOpportunities(opportunityIds: number[]): Promise<
+    {
+      oldValues: { status: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
+  deleteOpportunitiesByStageId(stageId: number): Promise<
+    {
+      oldValues: { status: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
+  deleteOpportunity(opportunityId: number): Promise<
+    | {
+        oldValues: { status: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  >;
   findContacts(
     userId: number,
     pagination: Pagination,
@@ -132,6 +172,32 @@ export default interface IOpportunityProvider {
     machineId: number,
     pagination: Pagination
   ): Promise<ResultPaginated<Sequence>>;
+  findTagByName(userId: number, name: string): Promise<Tag | undefined>;
+  findTagsByUserId(userId: number): Promise<Tag[]>;
   logOpportunityCreation(params: OpportunityLogParams): Promise<void>;
+  logOpportunityMovement(params: OpportunityLogParams): Promise<void>;
   logOpportunityRemoval(params: OpportunityLogParams): Promise<void>;
+  logResponsibleAssignmentToOpportunity(
+    params: OpportunityLogParams
+  ): Promise<void>;
+  moveOpportunity(
+    opportunityId: number,
+    destinationStageId: number
+  ): Promise<
+    | {
+        oldValues: { stageId: number; position: number };
+        currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+      }
+    | undefined
+  >;
+  moveOpportunities(
+    opportunityIds: number[],
+    destinationStageId: number
+  ): Promise<
+    {
+      oldValues: { stageId: number; position: number };
+      currentValues: Omit<Opportunity, 'gainedAt' | 'losedAt'>;
+    }[]
+  >;
+  tagContact(contactId: number, tagId: number): Promise<void>;
 }
