@@ -4,7 +4,11 @@ export type InsertBoardParams = {
   usuaSistCodi: number;
   logo: string;
   title: string;
+  description: string;
   goal: number;
+  goalRecurrency?: number;
+  goalRecurrencyStartIn?: Date;
+  goalRecurrencyFinishIn?: Date;
   rule: CRMRule;
 };
 

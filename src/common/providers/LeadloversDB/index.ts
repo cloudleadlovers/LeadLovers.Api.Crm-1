@@ -52,7 +52,6 @@ import { IFindLeadTagByNameRepository } from './models/leadTags/IFindLeadTagByNa
 import { IFindLeadTagsByUsuaSistCodiRepository } from './models/leadTags/IFindLeadTagsByUsuaSistCodiRepository';
 import { IInsertLeadTagRepository } from './models/leadTags/IInsertLeadTagRepository';
 import { IInsertLeadTrackRepository } from './models/leadTrack/IInsertLeadTrackRepository';
-import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
 import { IRemoveTagsTrackRepository } from './models/leadTrack/IRemoveTagsTrackRepository';
 import { IFindLeadUsuaSistByLeadCodiRepository } from './models/leadUsuaSists/IFindLeadUsuaSistByLeadCodiRepository';
 import { IFindLeadUsuaSistRepository } from './models/leadUsuaSists/IFindLeadUsuaSistRepository';
@@ -131,6 +130,17 @@ import { RemoveCardNotificationRepository } from './implementations/notification
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
+import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
+import { IDeletePendingItemsRepository } from './models/goalQueue/IDeletePendingItemsRepository';
+import { DeletePendingItemsRepository } from './implementations/goalQueue/DeletePendingItemsRepository';
+import { IFindPendingItemRepository } from './models/goalQueue/IFindPendingItemRepository';
+import { FindPendingItemRepository } from './implementations/goalQueue/FindPendingItemRepository_';
+import { IFindLastItemRepository } from './models/goalHistory/IFindLastItemRepository';
+import { FindLastItemRepository } from './implementations/goalHistory/FindLastItemRepository';
+import { IUpdateVerifyDateRepository } from './models/goalQueue/IUpdateVerifyDateRepository';
+import { UpdateVerifyDateRepository } from './implementations/goalQueue/UpdateVerifyDateRepository';
+import { IInsertGoalQueueRepository } from './models/goalQueue/IInsertGoalQueueRepository';
+import { InsertGoalQueueRepository } from './implementations/goalQueue/InsertGoalQueueRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -460,4 +470,29 @@ container.registerSingleton<IUpdateReportFilterRepository>(
 container.registerSingleton<IUpsertLeadCaptureDataRepository>(
   'UpsertLeadCaptureDataRepository',
   UpsertLeadCaptureDataRepository
+);
+
+container.registerSingleton<IDeletePendingItemsRepository>(
+  'DeletePendingItemsRepository',
+  DeletePendingItemsRepository
+);
+
+container.registerSingleton<IFindPendingItemRepository>(
+  'FindPendingItemRepository',
+  FindPendingItemRepository
+);
+
+container.registerSingleton<IFindLastItemRepository>(
+  'FindLastItemRepository',
+  FindLastItemRepository
+);
+
+container.registerSingleton<IUpdateVerifyDateRepository>(
+  'UpdateVerifyDateRepository',
+  UpdateVerifyDateRepository
+);
+
+container.registerSingleton<IInsertGoalQueueRepository>(
+  'InsertGoalQueueRepository',
+  InsertGoalQueueRepository
 );

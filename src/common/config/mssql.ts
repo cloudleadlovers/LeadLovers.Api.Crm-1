@@ -35,6 +35,21 @@ const databases: IDatabase[] = [
     }
   },
   {
+    name: 'queueDb',
+    connection: {
+      server: process.env.CONN_QUEUEDB_SERVER || '',
+      port: Number(process.env.CONN_PORT),
+      database: process.env.CONN_QUEUEDB_DATABASE || '',
+      user: process.env.CONN_QUEUEDB_USER || '',
+      password: process.env.CONN_QUEUEDB_PASS || '',
+      requestTimeout: 120000,
+      connectionTimeout: 120000,
+      options: {
+        trustServerCertificate: true // change to true for local dev / self-signed certs
+      }
+    }
+  },
+  {
     name: 'erros',
     connection: {
       server: process.env.CONN_ERRORS_SERVER || '',

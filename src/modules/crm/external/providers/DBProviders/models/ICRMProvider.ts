@@ -16,7 +16,11 @@ export type CRM = {
   userId: number;
   logo: string;
   name: string;
+  description: string;
   goal: number;
+  goalRecurrency?: number;
+  goalRecurrencyStartIn?: Date;
+  goalRecurrencyFinishIn?: Date;
   rule: CRMRule;
   createdAt: Date;
   opportunity: {

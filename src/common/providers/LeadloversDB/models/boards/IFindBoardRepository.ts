@@ -5,7 +5,11 @@ export type Board = {
   userId: number;
   logo: string;
   title: string;
+  description: string;
   goal: number;
+  goalRecurrency: number;
+  goalRecurrencyStartIn: Date;
+  goalRecurrencyFinishIn: Date;
   rule: CRMRule;
   cardQuantity: number;
   totalCardValue: number;
