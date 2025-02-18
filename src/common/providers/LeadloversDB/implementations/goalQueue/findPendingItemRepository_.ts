@@ -8,14 +8,14 @@ import {
 
 export class FindPendingItemRepository implements IFindPendingItemRepository {
   public async find(boardId: number): Promise<GoalQueue | undefined> {
-    const pool = await mssqlPoolConnect('leadlovers');
+    const pool = await mssqlPoolConnect('queueDb');
     const { recordset: pendingItem } = await pool
       .request()
       .input('BoardId', mssql.Int, boardId).query<GoalQueue>(`
                 SELECT 
                   * 
                 FROM 
-                  queueDb.dbo.crmGoalRecurrencyQueue WITH(NOLOCK) 
+                  crmGoalRecurrencyQueue WITH(NOLOCK) 
                 WHERE 
                   boardId = @BoardId 
                 AND 

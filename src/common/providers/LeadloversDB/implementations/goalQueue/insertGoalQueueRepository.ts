@@ -8,14 +8,14 @@ import {
 
 export class InsertGoalQueueRepository implements IInsertGoalQueueRepository {
   public async insert(params: InsertGoalQueueParams): Promise<void> {
-    const pool = await mssqlPoolConnect('leadlovers');
+    const pool = await mssqlPoolConnect('queueDb');
     await pool
       .request()
       .input('UserId', mssql.Int, params.userId)
       .input('BoardId', mssql.Int, params.boardId)
       .input('VerifyIn', mssql.Date, params.verifyIn).query(`
                 INSERT INTO 
-                    queueDb.dbo.crmGoalRecurrencyQueue (userId, boardId, verifyIn) 
+                    crmGoalRecurrencyQueue (userId, boardId, verifyIn) 
                 VALUES 
                     (@UserId, @BoardId, @VerifyIn);
               `);

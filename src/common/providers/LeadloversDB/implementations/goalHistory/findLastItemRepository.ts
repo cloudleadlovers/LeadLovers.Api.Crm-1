@@ -15,7 +15,7 @@ export class FindLastItemRepository implements IFindLastItemRepository {
                 SELECT TOP 1 
                     * 
                 FROM
-                    leadlovers.dbo.PipelineGoalHistory WITH(NOLOCK) 
+                    PipelineGoalHistory WITH(NOLOCK) 
                 WHERE 
                     boardId = @BoardId 
                 ORDER BY 

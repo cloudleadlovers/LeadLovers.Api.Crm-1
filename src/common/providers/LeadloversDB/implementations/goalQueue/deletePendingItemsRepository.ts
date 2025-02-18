@@ -7,10 +7,10 @@ export class DeletePendingItemsRepository
   implements IDeletePendingItemsRepository
 {
   public async delete(boardId: number): Promise<void> {
-    const pool = await mssqlPoolConnect('leadlovers');
+    const pool = await mssqlPoolConnect('queueDb');
     await pool.request().input('boardId', mssql.Int, boardId).query(`
                 DELETE FROM 
-                    queueDb.dbo.crmGoalRecurrencyQueue
+                    crmGoalRecurrencyQueue
                 WHERE
                     boardId = @boardId 
                 AND 
