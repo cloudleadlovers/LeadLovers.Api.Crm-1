@@ -7,5 +7,5 @@ export type GoalHistory = {
 };
 
 export interface IFindByBoardIdRepository {
-  find(boardId: number): Promise<GoalHistory[] | undefined>;
+  find(boardId: number): Promise<GoalHistory[]>;
 }

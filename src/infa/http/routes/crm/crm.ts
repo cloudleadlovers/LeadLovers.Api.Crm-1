@@ -24,6 +24,7 @@ import { TagContactsHandler } from '@modules/crm/presentation/handlers/TagContac
 import { UpdateCRMHandler } from '@modules/crm/presentation/handlers/UpdateCRMHandler';
 import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateStageHandler';
 import { authenticate } from 'infa/http/middlewares/authJWT';
+import { FindCRMGoalHistoryHandler } from '@modules/crm/presentation/handlers/FindCRMGoalHistoryHandler';
 
 const assignResponsibleToOpportunities =
   new AssignResponsibleToOpportunitiesHandler();
@@ -50,6 +51,7 @@ const removeStage = new RemoveStageHandler();
 const tagContacts = new TagContactsHandler();
 const updateCRM = new UpdateCRMHandler();
 const updateStage = new UpdateStageHandler();
+const findCRMGoalHistory = new FindCRMGoalHistoryHandler();
 
 const crmRouter = Router();
 
@@ -84,6 +86,8 @@ crmRouter.post(
   '/:crmId/stages/:stageId/opportunities',
   createOpportunity.handle
 );
+
+crmRouter.get('/:crmId/goal-history', findCRMGoalHistory.handle);
 
 crmRouter.get('/stages/templates', findStageTemplates.handle);
 

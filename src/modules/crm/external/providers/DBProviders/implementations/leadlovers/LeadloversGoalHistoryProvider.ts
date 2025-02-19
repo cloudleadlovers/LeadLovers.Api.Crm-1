@@ -17,7 +17,7 @@ export default class LeadloversGoalHistoryProvider
     @inject('FindByBoardIdRepository')
     private findByBoardIdRepository: IFindByBoardIdRepository
   ) {}
-  public async getByCrmId(id: number): Promise<GoalHistory[] | undefined> {
+  public async getByCrmId(id: number): Promise<GoalHistory[]> {
     return await this.findByBoardIdRepository.find(id);
   }
 

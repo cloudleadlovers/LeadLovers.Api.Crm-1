@@ -10,5 +10,5 @@ export default interface IGoalHistoryProvider {
   getLastItemByCrmId(
     id: number
   ): Promise<Pick<GoalHistory, 'id' | 'finishedAt'> | undefined>;
-  getByCrmId(id: number): Promise<GoalHistory[] | undefined>;
+  getByCrmId(id: number): Promise<GoalHistory[]>;
 }
