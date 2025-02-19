@@ -141,6 +141,8 @@ import { IUpdateVerifyDateRepository } from './models/goalQueue/IUpdateVerifyDat
 import { UpdateVerifyDateRepository } from './implementations/goalQueue/UpdateVerifyDateRepository';
 import { IInsertGoalQueueRepository } from './models/goalQueue/IInsertGoalQueueRepository';
 import { InsertGoalQueueRepository } from './implementations/goalQueue/InsertGoalQueueRepository';
+import { IFindByBoardIdRepository } from './models/goalHistory/IFindByBoardIdRepository';
+import { FindByBoarIdRepository } from './implementations/goalHistory/findByBoarIdRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -495,4 +497,9 @@ container.registerSingleton<IUpdateVerifyDateRepository>(
 container.registerSingleton<IInsertGoalQueueRepository>(
   'InsertGoalQueueRepository',
   InsertGoalQueueRepository
+);
+
+container.registerSingleton<IFindByBoardIdRepository>(
+  'FindByBoardIdRepository',
+  FindByBoarIdRepository
 );
