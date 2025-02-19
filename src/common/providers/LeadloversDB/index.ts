@@ -134,13 +134,15 @@ import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackR
 import { IDeletePendingItemsRepository } from './models/goalQueue/IDeletePendingItemsRepository';
 import { DeletePendingItemsRepository } from './implementations/goalQueue/DeletePendingItemsRepository';
 import { IFindPendingItemRepository } from './models/goalQueue/IFindPendingItemRepository';
-import { FindPendingItemRepository } from './implementations/goalQueue/FindPendingItemRepository_';
+import { FindPendingItemRepository } from './implementations/goalQueue/FindPendingItemRepository';
 import { IFindLastItemRepository } from './models/goalHistory/IFindLastItemRepository';
 import { FindLastItemRepository } from './implementations/goalHistory/FindLastItemRepository';
 import { IUpdateVerifyDateRepository } from './models/goalQueue/IUpdateVerifyDateRepository';
 import { UpdateVerifyDateRepository } from './implementations/goalQueue/UpdateVerifyDateRepository';
 import { IInsertGoalQueueRepository } from './models/goalQueue/IInsertGoalQueueRepository';
 import { InsertGoalQueueRepository } from './implementations/goalQueue/InsertGoalQueueRepository';
+import { IFindByBoardIdRepository } from './models/goalHistory/IFindByBoardIdRepository';
+import { FindByBoarIdRepository } from './implementations/goalHistory/FindByBoarIdRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -495,4 +497,9 @@ container.registerSingleton<IUpdateVerifyDateRepository>(
 container.registerSingleton<IInsertGoalQueueRepository>(
   'InsertGoalQueueRepository',
   InsertGoalQueueRepository
+);
+
+container.registerSingleton<IFindByBoardIdRepository>(
+  'FindByBoardIdRepository',
+  FindByBoarIdRepository
 );
