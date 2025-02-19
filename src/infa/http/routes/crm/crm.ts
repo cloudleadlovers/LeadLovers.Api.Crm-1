@@ -23,8 +23,8 @@ import { RemoveStageHandler } from '@modules/crm/presentation/handlers/RemoveSta
 import { TagContactsHandler } from '@modules/crm/presentation/handlers/TagContactsHandler';
 import { UpdateCRMHandler } from '@modules/crm/presentation/handlers/UpdateCRMHandler';
 import { UpdateStageHandler } from '@modules/crm/presentation/handlers/UpdateStageHandler';
-import { authenticate } from 'infa/http/middlewares/authJWT';
 import { FindCRMGoalHistoryHandler } from '@modules/crm/presentation/handlers/FindCRMGoalHistoryHandler';
+import { authenticate } from 'infa/http/middlewares/authJWT';
 
 const assignResponsibleToOpportunities =
   new AssignResponsibleToOpportunitiesHandler();
