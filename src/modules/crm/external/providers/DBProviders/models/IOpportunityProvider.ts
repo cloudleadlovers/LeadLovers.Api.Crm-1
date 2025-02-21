@@ -159,9 +159,17 @@ export default interface IOpportunityProvider {
     crmId: number,
     contactId: number
   ): Promise<Pick<Opportunity, 'id'> | undefined>;
+  findOpportunityByCRMIdAndPhone(
+    crmId: number,
+    phone: string
+  ): Promise<Pick<Opportunity, 'id'> | undefined>;
   findOpportunityByStageIdAndContactId(
     stageId: number,
     contactId: number
+  ): Promise<Pick<Opportunity, 'id'> | undefined>;
+  findOpportunityByStageIdAndPhone(
+    stageId: number,
+    phone: string
   ): Promise<Pick<Opportunity, 'id'> | undefined>;
   findOpportunitiesByStageId(
     stageId: number,
