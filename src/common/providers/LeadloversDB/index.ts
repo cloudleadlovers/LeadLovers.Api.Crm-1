@@ -12,7 +12,9 @@ import { IFindCardLayoutByBoardIdRepository } from './models/cardLayouts/IFindCa
 import { IInsertCardLayoutRepository } from './models/cardLayouts/IInsertCardLayoutRepository';
 import { IDecrementsCardsPositionByColumnIdAndPositionRepository } from './models/cards/IDecrementsCardsPositionByColumnIdAndPositionRepository';
 import { IFindCardByBoardIdAndLeadCodiRepository } from './models/cards/IFindCardByBoardIdAndLeadCodiRepository';
+import { IFindCardByBoardIdAndLeadPhoneRepository } from './models/cards/IFindCardByBoardIdAndLeadPhoneRepository';
 import { IFindCardByColumnIdAndLeadCodiRepository } from './models/cards/IFindCardByColumnIdAndLeadCodiRepository';
+import { IFindCardByColumnIdAndLeadPhoneRepository } from './models/cards/IFindCardByColumnIdAndLeadPhoneRepository';
 import { IFindCardsByColumnIdRepository } from './models/cards/IFindCardsByColumnIdRepository';
 import { IFindCardsWonByBoardIdRepository } from './models/cards/IFindCardsWonByBoardIdRepository';
 import { IInsertCardRepository } from './models/cards/IInsertCardRepository';
@@ -26,6 +28,12 @@ import { IFindColumnsByBoardIdRepository } from './models/columns/IFindColumnsBy
 import { IInsertColumnRepository } from './models/columns/IInsertColumnRepository';
 import { IUpdateColumnRepository } from './models/columns/IUpdateColumnRepository';
 import { IFindFunnelsByListCodiRepository } from './models/funnels/IFindFunnelsByListCodiRepository';
+import { IFindGoalHistoriesByBoardIdRepository } from './models/goalHistory/IFindGoalHistoriesByBoardIdRepository';
+import { IFindLastGoalHistoryRepository } from './models/goalHistory/IFindLastGoalHistoryRepository';
+import { IDeletePendingIGoalsInRecurrencyQueueRepository } from './models/goalQueue/IDeletePendingIGoalsInRecurrencyQueueRepository';
+import { IFindPendingGoalInRecurrencyQueueRepository } from './models/goalQueue/IFindPendingGoalInRecurrencyQueueRepository';
+import { IInsertGoalRecurrencyQueueRepository } from './models/goalQueue/IInsertGoalRecurrencyQueueRepository';
+import { IUpdateGoalRecurrencyVerifyDateRepository } from './models/goalQueue/IUpdateGoalRecurrencyVerifyDateRepository';
 import { IInsertPipelineDealHistoryRepository } from './models/history/IInsertPipelineDealHistoryRepository';
 import { IInsertPipelineHistoryRepository } from './models/history/IInsertPipelineHistoryRepository';
 import { IAverageDaysAnOpportunitySpendsInAStageRepository } from './models/insights/IAverageDaysAnOpportunitySpendsInAStageRepository';
@@ -52,6 +60,7 @@ import { IFindLeadTagByNameRepository } from './models/leadTags/IFindLeadTagByNa
 import { IFindLeadTagsByUsuaSistCodiRepository } from './models/leadTags/IFindLeadTagsByUsuaSistCodiRepository';
 import { IInsertLeadTagRepository } from './models/leadTags/IInsertLeadTagRepository';
 import { IInsertLeadTrackRepository } from './models/leadTrack/IInsertLeadTrackRepository';
+import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
 import { IRemoveTagsTrackRepository } from './models/leadTrack/IRemoveTagsTrackRepository';
 import { IFindLeadUsuaSistByLeadCodiRepository } from './models/leadUsuaSists/IFindLeadUsuaSistByLeadCodiRepository';
 import { IFindLeadUsuaSistRepository } from './models/leadUsuaSists/IFindLeadUsuaSistRepository';
@@ -76,7 +85,9 @@ import { FindCardLayoutByBoardIdRepository } from './implementations/cardLayouts
 import { InsertCardLayoutRepository } from './implementations/cardLayouts/InsertCardLayoutRepository';
 import { DecrementsCardsPositionByColumnIdAndPositionRepository } from './implementations/cards/DecrementsCardsPositionByColumnIdAndPositionRepository';
 import { FindCardByBoardIdAndLeadCodiRepository } from './implementations/cards/FindCardByBoardIdAndLeadCodiRepository';
+import { FindCardByBoardIdAndLeadPhoneRepository } from './implementations/cards/FindCardByBoardIdAndLeadPhoneRepository';
 import { FindCardByColumnIdAndLeadCodiRepository } from './implementations/cards/FindCardByColumnIdAndLeadCodiRepository';
+import { FindCardByColumnIdAndLeadPhoneRepository } from './implementations/cards/FindCardByColumnIdAndLeadPhoneRepository';
 import { FindCardsByColumnIdRepository } from './implementations/cards/FindCardsByColumnIdRepository';
 import { FindCardsWonByBoardIdRepository } from './implementations/cards/FindCardsWonByBoardIdRepository';
 import { InsertCardRepository } from './implementations/cards/InsertCardRepository';
@@ -90,6 +101,12 @@ import { FindColumnsByBoardIdRepository } from './implementations/columns/FindCo
 import { InsertColumnRepository } from './implementations/columns/InsertColumnRepository';
 import { UpdateColumnRepository } from './implementations/columns/UpdateColumnRepository';
 import { FindFunnelsByListCodiRepository } from './implementations/funnels/FindFunnelsByListCodiRepository';
+import { FindGoalHistoriesByBoardIdRepository } from './implementations/goalHistory/FindGoalHistoriesByBoardIdRepository';
+import { FindLastGoalHistoryRepository } from './implementations/goalHistory/FindLastGoalHistoryRepository';
+import { DeletePendingIGoalsInRecurrencyQueueRepository } from './implementations/goalQueue/DeletePendingIGoalsInRecurrencyQueueRepository';
+import { FindPendingGoalInRecurrencyQueueRepository } from './implementations/goalQueue/FindPendingGoalInRecurrencyQueueRepository';
+import { InsertGoalRecurrencyQueueRepository } from './implementations/goalQueue/InsertGoalRecurrencyQueueRepository';
+import { UpdateGoalRecurrencyVerifyDateRepository } from './implementations/goalQueue/UpdateGoalRecurrencyVerifyDateRepository';
 import { InsertPipelineDealHistoryRepository } from './implementations/history/InsertPipelineDealHistoryRepository';
 import { InsertPipelineHistoryRepository } from './implementations/history/InsertPipelineHistoryRepository';
 import { AverageDaysAnOpportunitySpendsInAStageRepository } from './implementations/insights/AverageDaysAnOpportunitySpendsInAStageRepository';
@@ -130,19 +147,6 @@ import { RemoveCardNotificationRepository } from './implementations/notification
 import { RemoveCardNotificationsRepository } from './implementations/notifications/RemoveCardNotificationsRepository';
 import { RemoveColumnNotificationRepository } from './implementations/notifications/RemoveColumnNotificationRepository';
 import { FindUsersByUsuaSistCodiRepository } from './implementations/users/FindUsersByUsuaSistCodiRepository';
-import { IInsertTagsTrackRepository } from './models/leadTrack/IInsertTagsTrackRepository';
-import { IDeletePendingItemsRepository } from './models/goalQueue/IDeletePendingItemsRepository';
-import { DeletePendingItemsRepository } from './implementations/goalQueue/DeletePendingItemsRepository';
-import { IFindPendingItemRepository } from './models/goalQueue/IFindPendingItemRepository';
-import { FindPendingItemRepository } from './implementations/goalQueue/FindPendingItemRepository';
-import { IFindLastItemRepository } from './models/goalHistory/IFindLastItemRepository';
-import { FindLastItemRepository } from './implementations/goalHistory/FindLastItemRepository';
-import { IUpdateVerifyDateRepository } from './models/goalQueue/IUpdateVerifyDateRepository';
-import { UpdateVerifyDateRepository } from './implementations/goalQueue/UpdateVerifyDateRepository';
-import { IInsertGoalQueueRepository } from './models/goalQueue/IInsertGoalQueueRepository';
-import { InsertGoalQueueRepository } from './implementations/goalQueue/InsertGoalQueueRepository';
-import { IFindByBoardIdRepository } from './models/goalHistory/IFindByBoardIdRepository';
-import { FindByBoarIdRepository } from './implementations/goalHistory/FindByBoarIdRepository';
 
 container.registerSingleton<IAverageDaysAnOpportunitySpendsInAStageRepository>(
   'AverageDaysAnOpportunitySpendsInAStageRepository',
@@ -167,6 +171,11 @@ container.registerSingleton<ICountLostOpportunitiesRepository>(
 container.registerSingleton<IDecrementsCardsPositionByColumnIdAndPositionRepository>(
   'DecrementsCardsPositionByColumnIdAndPositionRepository',
   DecrementsCardsPositionByColumnIdAndPositionRepository
+);
+
+container.registerSingleton<IDeletePendingIGoalsInRecurrencyQueueRepository>(
+  'DeletePendingIGoalsInRecurrencyQueueRepository',
+  DeletePendingIGoalsInRecurrencyQueueRepository
 );
 
 container.registerSingleton<IFindBoardRepository>(
@@ -199,9 +208,19 @@ container.registerSingleton<IFindCardByBoardIdAndLeadCodiRepository>(
   FindCardByBoardIdAndLeadCodiRepository
 );
 
+container.registerSingleton<IFindCardByBoardIdAndLeadPhoneRepository>(
+  'FindCardByBoardIdAndLeadPhoneRepository',
+  FindCardByBoardIdAndLeadPhoneRepository
+);
+
 container.registerSingleton<IFindCardByColumnIdAndLeadCodiRepository>(
   'FindCardByColumnIdAndLeadCodiRepository',
   FindCardByColumnIdAndLeadCodiRepository
+);
+
+container.registerSingleton<IFindCardByColumnIdAndLeadPhoneRepository>(
+  'FindCardByColumnIdAndLeadPhoneRepository',
+  FindCardByColumnIdAndLeadPhoneRepository
 );
 
 container.registerSingleton<IFindCardsByColumnIdRepository>(
@@ -264,6 +283,16 @@ container.registerSingleton<IFindGainConversionRateGraphDataRepository>(
   FindGainConversionRateGraphDataRepository
 );
 
+container.registerSingleton<IFindGoalHistoriesByBoardIdRepository>(
+  'FindGoalHistoriesByBoardIdRepository',
+  FindGoalHistoriesByBoardIdRepository
+);
+
+container.registerSingleton<IFindLastGoalHistoryRepository>(
+  'FindLastGoalHistoryRepository',
+  FindLastGoalHistoryRepository
+);
+
 container.registerSingleton<IFindLeadCaptureFieldsByUserIdRepository>(
   'FindLeadCaptureFieldsByUserIdRepository',
   FindLeadCaptureFieldsByUserIdRepository
@@ -309,6 +338,11 @@ container.registerSingleton<IFindOpportunityStatisticsByResponsibleRepository>(
   FindOpportunityStatisticsByResponsibleRepository
 );
 
+container.registerSingleton<IFindPendingGoalInRecurrencyQueueRepository>(
+  'FindPendingGoalInRecurrencyQueueRepository',
+  FindPendingGoalInRecurrencyQueueRepository
+);
+
 container.registerSingleton<IFindReportFiltersByUsuaSistCodiRepository>(
   'FindReportFiltersByUsuaSistCodiRepository',
   FindReportFiltersByUsuaSistCodiRepository
@@ -342,6 +376,11 @@ container.registerSingleton<IInsertCardLayoutRepository>(
 container.registerSingleton<IInsertColumnRepository>(
   'InsertColumnRepository',
   InsertColumnRepository
+);
+
+container.registerSingleton<IInsertGoalRecurrencyQueueRepository>(
+  'InsertGoalRecurrencyQueueRepository',
+  InsertGoalRecurrencyQueueRepository
 );
 
 container.registerSingleton<IInsertLeadOnWhatsAppMachineRepository>(
@@ -464,6 +503,11 @@ container.registerSingleton<IUpdateColumnRepository>(
   UpdateColumnRepository
 );
 
+container.registerSingleton<IUpdateGoalRecurrencyVerifyDateRepository>(
+  'UpdateGoalRecurrencyVerifyDateRepository',
+  UpdateGoalRecurrencyVerifyDateRepository
+);
+
 container.registerSingleton<IUpdateReportFilterRepository>(
   'UpdateReportFilterRepository',
   UpdateReportFilterRepository
@@ -472,34 +516,4 @@ container.registerSingleton<IUpdateReportFilterRepository>(
 container.registerSingleton<IUpsertLeadCaptureDataRepository>(
   'UpsertLeadCaptureDataRepository',
   UpsertLeadCaptureDataRepository
-);
-
-container.registerSingleton<IDeletePendingItemsRepository>(
-  'DeletePendingItemsRepository',
-  DeletePendingItemsRepository
-);
-
-container.registerSingleton<IFindPendingItemRepository>(
-  'FindPendingItemRepository',
-  FindPendingItemRepository
-);
-
-container.registerSingleton<IFindLastItemRepository>(
-  'FindLastItemRepository',
-  FindLastItemRepository
-);
-
-container.registerSingleton<IUpdateVerifyDateRepository>(
-  'UpdateVerifyDateRepository',
-  UpdateVerifyDateRepository
-);
-
-container.registerSingleton<IInsertGoalQueueRepository>(
-  'InsertGoalQueueRepository',
-  InsertGoalQueueRepository
-);
-
-container.registerSingleton<IFindByBoardIdRepository>(
-  'FindByBoardIdRepository',
-  FindByBoarIdRepository
 );
