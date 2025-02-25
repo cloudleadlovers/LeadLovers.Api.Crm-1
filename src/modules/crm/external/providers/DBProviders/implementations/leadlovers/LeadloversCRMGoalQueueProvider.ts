@@ -1,61 +1,59 @@
 import { inject, injectable } from 'tsyringe';
 
+import { IDeletePendingIGoalsInRecurrencyQueueRepository } from '@common/providers/LeadloversDB/models/goalQueue/IDeletePendingIGoalsInRecurrencyQueueRepository';
+import { IFindPendingGoalInRecurrencyQueueRepository } from '@common/providers/LeadloversDB/models/goalQueue/IFindPendingGoalInRecurrencyQueueRepository';
+import { IInsertGoalRecurrencyQueueRepository } from '@common/providers/LeadloversDB/models/goalQueue/IInsertGoalRecurrencyQueueRepository';
+import { IUpdateGoalRecurrencyVerifyDateRepository } from '@common/providers/LeadloversDB/models/goalQueue/IUpdateGoalRecurrencyVerifyDateRepository';
 import ICRMGoalQueueProvider, {
   GoalQueue
 } from '@modules/crm/external/providers/DBProviders/models/ICRMGoalQueueProvider';
-import { IDeletePendingItemsRepository } from '@common/providers/LeadloversDB/models/goalQueue/IDeletePendingItemsRepository';
-import { IFindPendingItemRepository } from '@common/providers/LeadloversDB/models/goalQueue/IFindPendingItemRepository';
-import { IUpdateVerifyDateRepository } from '@common/providers/LeadloversDB/models/goalQueue/IUpdateVerifyDateRepository';
-import { IInsertGoalQueueRepository } from '@common/providers/LeadloversDB/models/goalQueue/IInsertGoalQueueRepository';
 
 @injectable()
 export default class LeadloversCRMGoalQueueProvider
   implements ICRMGoalQueueProvider
 {
   constructor(
-    @inject('InsertGoalQueueRepository')
-    private insertGoalQueueRepository: IInsertGoalQueueRepository,
-
-    @inject('DeletePendingItemsRepository')
-    private deletePendingItemsRepository: IDeletePendingItemsRepository,
-
-    @inject('FindPendingItemRepository')
-    private findPendingItemRepository: IFindPendingItemRepository,
-
-    @inject('UpdateVerifyDateRepository')
-    private updateVerifyDateRepository: IUpdateVerifyDateRepository
+    @inject('DeletePendingIGoalsInRecurrencyQueueRepository')
+    private deletePendingIGoalsInRecurrencyQueueRepository: IDeletePendingIGoalsInRecurrencyQueueRepository,
+    @inject('FindPendingGoalInRecurrencyQueueRepository')
+    private findPendingGoalInRecurrencyQueueRepository: IFindPendingGoalInRecurrencyQueueRepository,
+    @inject('InsertGoalRecurrencyQueueRepository')
+    private insertGoalRecurrencyQueueRepository: IInsertGoalRecurrencyQueueRepository,
+    @inject('UpdateGoalRecurrencyVerifyDateRepository')
+    private updateGoalRecurrencyVerifyDateRepository: IUpdateGoalRecurrencyVerifyDateRepository
   ) {}
 
-  public async create(
+  public async createGoal(
     params: Pick<GoalQueue, 'userId' | 'crmId' | 'verifyIn'>
   ): Promise<void> {
-    await this.insertGoalQueueRepository.insert({
+    await this.insertGoalRecurrencyQueueRepository.insert({
       userId: params.userId,
       boardId: params.crmId,
       verifyIn: params.verifyIn
     });
   }
 
-  public async deleteByCrmId(id: number): Promise<void> {
-    await this.deletePendingItemsRepository.delete(id);
+  public async deletePendingGoalsByCrmId(crmId: number): Promise<void> {
+    await this.deletePendingIGoalsInRecurrencyQueueRepository.delete(crmId);
   }
 
-  public async getPendingItemByCrmId(
-    id: number
+  public async findPendingGoalByCrmId(
+    crmId: number
   ): Promise<GoalQueue | undefined> {
-    const queue = await this.findPendingItemRepository.find(id);
+    const goal =
+      await this.findPendingGoalInRecurrencyQueueRepository.find(crmId);
 
-    if (!queue) return undefined;
+    if (!goal) return undefined;
 
     return {
-      id: queue.id,
-      userId: queue.userId,
-      crmId: queue.boardId,
-      verifyIn: queue.verifyIn
+      id: goal.id,
+      userId: goal.userId,
+      crmId: goal.boardId,
+      verifyIn: goal.verifyIn
     };
   }
 
-  public async updateVerifyDateById(id: number, verifyIn: Date): Promise<void> {
-    await this.updateVerifyDateRepository.update(id, verifyIn);
+  public async updateGoalVerifyDate(id: number, verifyIn: Date): Promise<void> {
+    await this.updateGoalRecurrencyVerifyDateRepository.update(id, verifyIn);
   }
 }

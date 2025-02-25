@@ -11,6 +11,6 @@ export default class FindCRMGoalHistoryService {
   ) {}
 
   public async execute(crmId: number): Promise<FindCRMGoalHistoryOutput> {
-    return this.goalHistoryProvider.getByCrmId(crmId);
+    return this.goalHistoryProvider.findGoalHistoryByCrmId(crmId);
   }
 }

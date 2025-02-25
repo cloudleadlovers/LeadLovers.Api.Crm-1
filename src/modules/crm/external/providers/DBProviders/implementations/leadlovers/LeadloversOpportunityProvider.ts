@@ -1,7 +1,9 @@
 import { inject, injectable } from 'tsyringe';
 
 import { IFindCardByBoardIdAndLeadCodiRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardByBoardIdAndLeadCodiRepository';
+import { IFindCardByBoardIdAndLeadPhoneRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardByBoardIdAndLeadPhoneRepository';
 import { IFindCardByColumnIdAndLeadCodiRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardByColumnIdAndLeadCodiRepository';
+import { IFindCardByColumnIdAndLeadPhoneRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardByColumnIdAndLeadPhoneRepository';
 import { IFindCardsByColumnIdRepository } from '@common/providers/LeadloversDB/models/cards/IFindCardsByColumnIdRepository';
 import { IInsertCardRepository } from '@common/providers/LeadloversDB/models/cards/IInsertCardRepository';
 import { IUpdateCardRepository } from '@common/providers/LeadloversDB/models/cards/IUpdateCardRepository';
@@ -42,8 +44,12 @@ export default class LeadloversOpportunityProvider
   constructor(
     @inject('FindCardByBoardIdAndLeadCodiRepository')
     private findCardByBoardIdAndLeadCodiRepository: IFindCardByBoardIdAndLeadCodiRepository,
+    @inject('FindCardByBoardIdAndLeadPhoneRepository')
+    private findCardByBoardIdAndLeadPhoneRepository: IFindCardByBoardIdAndLeadPhoneRepository,
     @inject('FindCardByColumnIdAndLeadCodiRepository')
     private findCardByColumnIdAndLeadCodiRepository: IFindCardByColumnIdAndLeadCodiRepository,
+    @inject('FindCardByColumnIdAndLeadPhoneRepository')
+    private findCardByColumnIdAndLeadPhoneRepository: IFindCardByColumnIdAndLeadPhoneRepository,
     @inject('FindCardsByColumnIdRepository')
     private findCardsByColumnIdRepository: IFindCardsByColumnIdRepository,
     @inject('FindDefaultModelsByFuniCodiRepository')
@@ -379,6 +385,18 @@ export default class LeadloversOpportunityProvider
     return { id: cardId };
   }
 
+  public async findOpportunityByCRMIdAndPhone(
+    crmId: number,
+    phone: string
+  ): Promise<Pick<Opportunity, 'id'> | undefined> {
+    const cardId = await this.findCardByBoardIdAndLeadPhoneRepository.find(
+      crmId,
+      phone
+    );
+    if (!cardId) return undefined;
+    return { id: cardId };
+  }
+
   public async findOpportunityByStageIdAndContactId(
     stageId: number,
     contactId: number
@@ -386,6 +404,18 @@ export default class LeadloversOpportunityProvider
     const cardId = await this.findCardByColumnIdAndLeadCodiRepository.find(
       stageId,
       contactId
+    );
+    if (!cardId) return undefined;
+    return { id: cardId };
+  }
+
+  public async findOpportunityByStageIdAndPhone(
+    stageId: number,
+    phone: string
+  ): Promise<Pick<Opportunity, 'id'> | undefined> {
+    const cardId = await this.findCardByColumnIdAndLeadPhoneRepository.find(
+      stageId,
+      phone
     );
     if (!cardId) return undefined;
     return { id: cardId };

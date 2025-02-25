@@ -6,10 +6,10 @@ export type GoalQueue = {
 };
 
 export default interface ICRMGoalQueueProvider {
-  create(
+  createGoal(
     params: Pick<GoalQueue, 'userId' | 'crmId' | 'verifyIn'>
   ): Promise<void>;
-  deleteByCrmId(id: number): Promise<void>;
-  getPendingItemByCrmId(id: number): Promise<GoalQueue | undefined>;
-  updateVerifyDateById(id: number, verifyIn: Date): Promise<void>;
+  deletePendingGoalsByCrmId(crmId: number): Promise<void>;
+  findPendingGoalByCrmId(crmId: number): Promise<GoalQueue | undefined>;
+  updateGoalVerifyDate(id: number, verifyIn: Date): Promise<void>;
 }

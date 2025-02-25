@@ -6,6 +6,6 @@ export type GoalHistory = {
   finishedAt: Date;
 };
 
-export interface IFindByBoardIdRepository {
+export interface IFindGoalHistoriesByBoardIdRepository {
   find(boardId: number): Promise<GoalHistory[]>;
 }

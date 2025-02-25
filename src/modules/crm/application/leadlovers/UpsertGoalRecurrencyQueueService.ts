@@ -1,9 +1,9 @@
-import { inject, injectable } from 'tsyringe';
 import { addDays, isAfter, startOfDay } from 'date-fns';
+import { inject, injectable } from 'tsyringe';
 
 import ICRMGoalQueueProvider from '@modules/crm/external/providers/DBProviders/models/ICRMGoalQueueProvider';
-import { UpsertGoalRecurrencyQueue } from '@modules/crm/presentation/dtos/UpsertGoalRecurrencyQueueDTO';
 import IGoalHistoryProvider from '@modules/crm/external/providers/DBProviders/models/IGoalHistoryProvider';
+import { UpsertGoalRecurrencyQueue } from '@modules/crm/presentation/dtos/UpsertGoalRecurrencyQueueDTO';
 
 @injectable()
 export default class UpsertGoalRecurrencyQueueService {
@@ -16,11 +16,11 @@ export default class UpsertGoalRecurrencyQueueService {
 
   public async execute(params: UpsertGoalRecurrencyQueue): Promise<void> {
     if (!params.goalRecurrency || !params.goalRecurrencyStartIn) {
-      await this.crmGoalQueueProvider.deleteByCrmId(params.crmId);
+      await this.crmGoalQueueProvider.deletePendingGoalsByCrmId(params.crmId);
       return;
     }
 
-    const pendingItem = await this.crmGoalQueueProvider.getPendingItemByCrmId(
+    const pendingItem = await this.crmGoalQueueProvider.findPendingGoalByCrmId(
       params.crmId
     );
 
@@ -28,7 +28,9 @@ export default class UpsertGoalRecurrencyQueueService {
 
     if (pendingItem != undefined) {
       const lastHistoryItem =
-        await this.crmGoalHistoryProvider.getLastItemByCrmId(params.crmId);
+        await this.crmGoalHistoryProvider.findLastGoalHistoryByCrmId(
+          params.crmId
+        );
 
       if (lastHistoryItem) {
         verifyIn = addDays(
@@ -38,7 +40,7 @@ export default class UpsertGoalRecurrencyQueueService {
 
         verifyIn = this.verifyPeriod(verifyIn, params.goalRecurrencyFinishIn);
 
-        await this.crmGoalQueueProvider.updateVerifyDateById(
+        await this.crmGoalQueueProvider.updateGoalVerifyDate(
           pendingItem.id,
           verifyIn
         );
@@ -53,7 +55,7 @@ export default class UpsertGoalRecurrencyQueueService {
 
       verifyIn = this.verifyPeriod(verifyIn, params.goalRecurrencyFinishIn);
 
-      await this.crmGoalQueueProvider.updateVerifyDateById(
+      await this.crmGoalQueueProvider.updateGoalVerifyDate(
         pendingItem.id,
         verifyIn
       );
@@ -66,7 +68,7 @@ export default class UpsertGoalRecurrencyQueueService {
       params.goalRecurrency || 0
     );
 
-    await this.crmGoalQueueProvider.create({
+    await this.crmGoalQueueProvider.createGoal({
       userId: params.userId,
       crmId: params.crmId,
       verifyIn: this.verifyPeriod(verifyIn, params.goalRecurrencyFinishIn)

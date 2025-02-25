@@ -3,6 +3,6 @@ export type GoalHistory = {
   finishedAt: Date;
 };
 
-export interface IFindLastItemRepository {
+export interface IFindLastGoalHistoryRepository {
   find(boardId: number): Promise<GoalHistory | undefined>;
 }

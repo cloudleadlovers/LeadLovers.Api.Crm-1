@@ -7,8 +7,8 @@ export type GoalHistory = {
 };
 
 export default interface IGoalHistoryProvider {
-  getLastItemByCrmId(
-    id: number
+  findGoalHistoryByCrmId(crmId: number): Promise<GoalHistory[]>;
+  findLastGoalHistoryByCrmId(
+    crmId: number
   ): Promise<Pick<GoalHistory, 'id' | 'finishedAt'> | undefined>;
-  getByCrmId(id: number): Promise<GoalHistory[]>;
 }
